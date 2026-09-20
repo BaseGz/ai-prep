@@ -250,20 +250,35 @@ feat(day09): 手写 while 循环 Agent，脱离框架
 
 ## 9. 新会话开场提示词（可直接复制）
 
+**完整版**（粘进新建的项目聊天，第一次发言用）：
+
 ```text
-我在准备影石（Insta360）AI 应用开发实习，这件事的完整上下文在
-D:\insta360-ai-prep\docs\context.md 里，请先读这个文件，再看
-D:\insta360-ai-prep\docs\progress.md 和 docs/journal/ 里最新的日志。
+我在准备影石（Insta360）AI 应用开发实习，这件事不是从零开始：完整的项目上下文我已经整理在
+D:\insta360-ai-prep\docs\context.md，请先完整读它，再读同目录下的 progress.md 和 journal/ 里最新
+的那篇日志，然后严格按里面的约定往下推。
 
-背景一句话：我是大三学生，RAG / LangChain / MCP 之前的基础都学完了，
-现在已经定好 35 天路线和 4 份交付物，仓库骨架也建好了，接下来是逐天执行。
+背景一句话：我是大三学生，RAG / LangChain / MCP 之前的基础（编程语言、HTTP/API/JSON、后端接口、
+大模型 API、Coze/Dify、Cursor 等 AI 编程工具）都已经学完；目标岗位的硬条件是「每周实习 5 天、连续
+6 个月以上，能独立完成小型全栈原型，有能演示的 AI 小项目」，加分项里要求了解 RAG / LangChain /
+MCP 任意一项。目前已经定好 35 天路线（2026-09-21 起，每天 3 小时，四个重点日 D9 手写 Agent 循环 /
+D17 切分粒度实验 / D23 RAG 评估 / D34 提效度量），四份交付物放在 D:\insta360-ai-prep\docs\plan\，
+仓库骨架也已建好在 D:\insta360-ai-prep，接下来就是逐天执行。
 
-请遵守我的习惯：
-1. 我用 PyCharm 做 git 提交，不要给我命令行指令，按 GUI 描述操作。
-2. 要精确到章节：视频具体到第几讲几时几分，文档具体到哪个页面。
-3. 中文交付、结论先行、能直接打开（HTML / Markdown）。
+有三条我的习惯必须遵守：一是我用 PyCharm 做 git 提交，不要给我命令行指令，按 GUI 描述操作（提交是
+Ctrl+K，打 tag 在 Alt+9 的 Git 工具窗里右键 New Tag）；二是内容要精确到章节，视频具体到第几讲几时
+几分、文档具体到哪个页面；三是中文交付、结论先行、能给可直接打开的文件（HTML 或 Markdown）。
 
-今天我要做 D__（对应日期 ____），请按 docs/context.md 里的约定帮我往下推。
+还有一个待办：docs\stack.md 里的技术栈（Python 还是 JS/TS）我还没拍板，你可以先问我，定了之后再把
+后面的任务细化到具体包和写法。
+
+我今天要做 D__（日期 ____），请开始。
+```
+
+**精简版**（只想快速接上时用）：
+
+```text
+继续我的影石实习准备项目：先读 D:\insta360-ai-prep\docs\context.md，再读 docs\progress.md 和
+journal/ 里最新的日志。我用 PyCharm 提交、要精确到章节、中文交付结论先行。今天做 D__。
 ```
 
 ---
@@ -273,6 +288,7 @@ D:\insta360-ai-prep\docs\progress.md 和 docs/journal/ 里最新的日志。
 | 用途 | 路径 |
 |---|---|
 | 上下文交接（本文件） | `D:\insta360-ai-prep\docs\context.md` |
+| 新会话开场提示词（可复制） | `D:\insta360-ai-prep\docs\新会话提示词.md` |
 | 策划工作区 | `C:\Users\Lenovo\WorkBuddy\2026-09-20-14-20-17\` |
 | 4 份 HTML 交付物 | 同上 `outputs\` ｜ 副本在 `D:\insta360-ai-prep\docs\plan\` |
 | 日常执行入口 | `D:\insta360-ai-prep\docs\progress.md` |
