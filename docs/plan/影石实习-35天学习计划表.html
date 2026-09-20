@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>影石实习 · 35 天 AI 学习计划表（每天 2–4 小时）</title>
+<style>
+:root{
+  --bg:#f6f7f9; --card:#fff; --line:#e5e7eb; --line2:#eef0f3;
+  --tx:#1a1d21; --tx2:#586170; --tx3:#8b939e;
+  --must:#b4232a; --mustbg:#fdecec;
+  --accent:#0f766e; --accentbg:#e6f4f2;
+  --vidbg:#eef2ff; --vidtx:#3538cd;
+  --docbg:#e9f7ef; --doctx:#1a7f4b;
+  --labbg:#fdf3e3; --labtx:#8a5200;
+  --keybg:#fdecec; --keytx:#b4232a;
+  --radius:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0e1014; --card:#161920; --line:#252a33; --line2:#1e222a;
+    --tx:#e7e9ec; --tx2:#a2aab6; --tx3:#767e8a;
+    --must:#f08b8b; --mustbg:#3a1e20;
+    --accent:#2dd4bf; --accentbg:#12312e;
+    --vidbg:#1d2440; --vidtx:#9aa8f5;
+    --docbg:#12281c; --doctx:#6fd39c;
+    --labbg:#3a2e18; --labtx:#e0b070;
+    --keybg:#3a1e20; --keytx:#f08b8b;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0; padding:0 20px 90px; background:var(--bg); color:var(--tx);
+  font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif;
+  font-size:15px; line-height:1.7; -webkit-font-smoothing:antialiased;}
+.wrap{max-width:940px; margin:0 auto}
+header{padding:44px 0 8px}
+h1{font-size:25px; font-weight:600; margin:0 0 8px; letter-spacing:-.01em}
+.sub{color:var(--tx2); font-size:14px; margin:0 0 22px}
+.bar{height:8px; background:var(--line); border-radius:99px; overflow:hidden}
+.fill{height:100%; width:0; background:var(--accent); border-radius:99px; transition:width .25s}
+.pbar{display:flex; align-items:center; gap:14px; margin-bottom:10px}
+.pbar .bar{flex:1}
+.ptext{font-size:13px; color:var(--tx2); font-variant-numeric:tabular-nums; white-space:nowrap}
+.pbar button{font-size:12.5px; padding:5px 12px; border-radius:8px; border:1px solid var(--line); background:var(--card); color:var(--tx2); cursor:pointer; font-family:inherit}
+.pbar button:hover{border-color:var(--accent); color:var(--accent)}
+.note{background:var(--accentbg); border-left:3px solid var(--accent); padding:14px 16px; border-radius:0 var(--radius) var(--radius) 0; font-size:14px; margin:18px 0}
+.note b{color:var(--accent)}
+h2.week{font-size:17px; font-weight:600; margin:42px 0 6px; padding-bottom:9px; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+.wnum{font-size:12px; font-weight:600; background:var(--accentbg); color:var(--accent); padding:2px 9px; border-radius:99px}
+.wgoal{color:var(--tx3); font-size:13.5px; margin:0 0 16px}
+.day{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); margin-bottom:12px; overflow:hidden}
+.day.done{border-color:var(--accent); opacity:.72}
+.dhead{display:flex; align-items:flex-start; gap:12px; padding:15px 18px 12px; border-bottom:1px solid var(--line2)}
+.dnum{flex:0 0 auto; font-size:12px; font-weight:600; color:#fff; background:var(--tx3); padding:2px 9px; border-radius:6px; margin-top:3px; font-variant-numeric:tabular-nums}
+.day.done .dnum{background:var(--accent)}
+.dtitle{flex:1; font-size:15.5px; font-weight:600; line-height:1.5}
+.dhours{flex:0 0 auto; font-size:12px; color:var(--tx3); border:1px solid var(--line); padding:1px 8px; border-radius:99px; margin-top:3px; white-space:nowrap}
+.chk{flex:0 0 auto; width:20px; height:20px; cursor:pointer; accent-color:var(--accent); margin-top:3px}
+.tasks{padding:12px 18px 16px; display:flex; flex-direction:column; gap:10px}
+.task{display:flex; gap:10px; align-items:flex-start; font-size:14px}
+.tag{flex:0 0 auto; font-size:11px; font-weight:600; padding:2px 7px; border-radius:5px; margin-top:4px; letter-spacing:.02em}
+.t-vid{background:var(--vidbg); color:var(--vidtx)}
+.t-doc{background:var(--docbg); color:var(--doctx)}
+.t-lab{background:var(--labbg); color:var(--labtx)}
+.t-key{background:var(--keybg); color:var(--keytx)}
+.tbody{flex:1; min-width:0; color:var(--tx2)}
+.tbody b{color:var(--tx); font-weight:600}
+.tbody a{color:var(--accent); text-decoration:none; border-bottom:1px solid transparent; word-break:break-all}
+.tbody a:hover{border-bottom-color:var(--accent)}
+.tbody .tm{color:var(--tx3); font-size:12.5px}
+.dtitle .star{display:inline-block; font-size:11px; font-weight:600; color:#fff; background:var(--must); padding:1px 7px; border-radius:5px; vertical-align:2px; margin-left:6px}
+.foot{margin-top:48px; padding-top:18px; border-top:1px solid var(--line); color:var(--tx3); font-size:13px}
+@media (max-width:640px){
+  body{padding:0 14px 70px; font-size:14.5px}
+  h1{font-size:21px}
+  .dhead{padding:13px 14px 10px; gap:9px}
+  .dtitle{font-size:14.5px}
+  .tasks{padding:11px 14px 14px}
+  .dhours{display:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>35 天 AI 学习计划表</h1>
+  <p class="sub">每天 2–4 小时 · 精确到视频章节 · 含文档阅读量与实操任务 · 勾选自动保存进度</p>
+  <div class="pbar">
+    <div class="bar"><div class="fill" id="fill"></div></div>
+    <div class="ptext" id="ptext">0 / 35 天</div>
+    <button id="reset">重置进度</button>
+  </div>
+  <div class="note">
+    <b>时间不够怎么调：</b>按 3 小时设计。<b>只有 2 小时</b>→ 只做「视频 + 实操」两块，文档缩到 10 分钟只扫标题；<b>有 4 小时</b>→ 加写 200 字学习笔记，把当天代码推一次 GitHub，并记下今天最值得在面试里讲的 1 个发现。
+  </div>
+  <div class="note">
+    <b>三条铁律：</b>① 当天代码当天跑通，跑不通第二天早上第一件事补上；② 每个第 7 天不上新课，只做产出和复盘；③ 从第 15 天起，所有练习一律用你自己的语料库——面试时它就是你的项目。
+  </div>
+</header>
+<div id="root"></div>
+<p class="foot">
+链接为公开搜索结果整理，B 站 BV 号若因 UP 主调整失效，直接用视频标题在站内搜索即可。<br>
+官方文档地址为 docs.langchain.com，页面路径形如 /oss/python/langchain/models。<br>
+整理时间：2026-09-20
+</p>
+</div>
+<script>
+var S = {
+  sl: "https://www.bilibili.com/video/BV1rv7A6oEeP/",
+  hm: "https://www.bilibili.com/video/BV178w1z7EHQ/",
+  frag: "https://www.bilibili.com/video/BV1WgcZzRE9E/",
+  rag: "https://www.bilibili.com/video/BV1hccSeJEUD/",
+  ragfull: "https://www.bilibili.com/video/BV1TKe3zmEQT/",
+  nange: "https://space.bilibili.com/509246474",
+  acad: "https://academy.langchain.com/courses/intro-to-langgraph",
+  dOverview: "https://docs.langchain.com/oss/python/langchain/overview",
+  dModels: "https://docs.langchain.com/oss/python/langchain/models",
+  dTools: "https://docs.langchain.com/oss/python/langchain/tools",
+  dAgents: "https://docs.langchain.com/oss/python/langchain/agents",
+  dGraph: "https://docs.langchain.com/oss/python/langgraph/overview",
+  dRetrieval: "https://docs.langchain.com/oss/python/langchain/retrieval",
+  dSmith: "https://docs.langchain.com/langsmith/observability",
+  dTrace: "https://docs.langchain.com/langsmith/trace-with-langchain",
+  chroma: "https://docs.trychroma.com/"
+};
+
+var PLAN = [
+ { w:1, title:"打通链路", goal:"把模型、消息、管道、结构化输出这四块基础组件摸熟，产出一个能跑的 CLI 工具。",
+   days:[
+   { t:"环境搭建 + LangChain 全景", h:"2.5h", tasks:[
+     {k:"vid", x:"尚硅谷《LangChain 从入门到实战 2026 版》<b>第 01 章 LangChain 概述</b>（家族 4 大支柱、大模型 4 大开发场景）", l:S.sl, tm:"约 40 分钟"},
+     {k:"vid", x:"B 站《LangChain 从基础到实战全模块拆解》<b>第 1 讲 课程简介</b> 29:51", l:S.frag, tm:"30 分钟"},
+     {k:"doc", x:"官方文档 <b>Overview</b> 页面（看懂 Agent development lifecycle 那张图即可）", l:S.dOverview, tm:"20 分钟"},
+     {k:"lab", x:"<b>实操：</b>建 Python 虚拟环境，装 langchain + langchain-openai，配好 DeepSeek 或通义的 base_url 与 key，跑通第一次模型调用", tm:"50 分钟"},
+     {k:"key", x:"今天不求快。<b>目标是环境一次配好，后面 34 天不用再折腾配置。</b>"}
+   ]},
+   { t:"模型的创建与调用", h:"3h", tasks:[
+     {k:"vid", x:"尚硅谷 <b>第 02 章 模型的创建与调用</b>前半（多平台多模型创建）", l:S.sl, tm:"约 45 分钟"},
+     {k:"vid", x:"全模块拆解 <b>第 3 讲 LLM 模块</b> 31:12", l:S.frag, tm:"31 分钟"},
+     {k:"doc", x:"官方 <b>Models</b> 页面 → 初始化模型 + 参数配置两节", l:S.dModels, tm:"25 分钟"},
+     {k:"lab", x:"<b>实操：</b>同一份代码切换 3 家模型（DeepSeek / 通义 / 智谱），只改模型名和 base_url，确认结果一致", tm:"60 分钟"},
+     {k:"key", x:"记住这件事：<b>换供应商只改一行</b>。这是框架给你的第一个真实价值，面试可以直接讲。"}
+   ]},
+   { t:"调用方式与流式输出", h:"3h", tasks:[
+     {k:"vid", x:"尚硅谷 <b>第 02 章</b>后半（invoke / stream 调用与多参数剖析）", l:S.sl, tm:"约 45 分钟"},
+     {k:"doc", x:"官方 Models 页面 → invoke / stream / batch 调用方法", l:S.dModels, tm:"20 分钟"},
+     {k:"lab", x:"<b>实操：</b>改成流式输出；temperature 分别设 0 和 1 各跑 5 次比较稳定性；max_tokens 设小一点观察截断", tm:"70 分钟"},
+     {k:"key", x:"亲手感受过参数影响，面试被问 temperature 时你才有话讲。"}
+   ]},
+   { t:"Message 与提示词模板", h:"3h", tasks:[
+     {k:"vid", x:"尚硅谷 <b>第 04 章 Message 与提示词模板</b>（多 Message 类型、多参数、ChatPromptTemplate）", l:S.sl, tm:"约 60 分钟"},
+     {k:"doc", x:"官方文档消息与提示词模板页面（站内搜 Messages / Prompt templates）", l:S.dOverview, tm:"25 分钟"},
+     {k:"lab", x:"<b>实操：</b>手动拼 messages 列表做 3 轮对话（自己 append 历史，不用任何记忆类），体会「上下文就是你自己维护的数组」", tm:"60 分钟"},
+     {k:"key", x:"这一步想明白，后面理解 Agent 记忆和上下文裁剪会轻松很多。"}
+   ]},
+   { t:"LCEL 管道", h:"2.5h", tasks:[
+     {k:"vid", x:"全模块拆解 <b>第 5 讲 链结构</b> 25:00", l:S.frag, tm:"25 分钟"},
+     {k:"vid", x:"尚硅谷中 LCEL 相关小节（管道与 Runnable 接口）", l:S.sl, tm:"约 35 分钟"},
+     {k:"doc", x:"官方 Models 页面中 LCEL / Runnable 部分", l:S.dModels, tm:"20 分钟"},
+     {k:"lab", x:"<b>实操：</b>把第 4 天的对话改写成 prompt | model | parser，四种调用各写一遍（invoke / stream / batch / ainvoke）", tm:"60 分钟"},
+     {k:"key", x:"要能一句话说清「管道符到底做了什么」——说不出就是没懂。"}
+   ]},
+   { t:"结构化输出", h:"3h", tasks:[
+     {k:"vid", x:"尚硅谷 <b>第 06 章 结构化输出</b>（4 种输出模式、类型校验、获取结构化结果）", l:S.sl, tm:"约 60 分钟"},
+     {k:"doc", x:"官方文档结构化输出页面（站内搜 Structured output）", l:S.dModels, tm:"25 分钟"},
+     {k:"lab", x:"<b>实操：</b>用 Pydantic 定义 schema，做「一句话抽取：姓名 / 公司 / 需求 / 紧急度」，输出直接交给程序做判断分支", tm:"60 分钟"},
+     {k:"key", x:"这是玩具和工程的分界线。后面所有工具、所有内部工具都靠它把模型输出接进代码。"}
+   ]},
+   { t:"周末产出：流式对话 CLI 工具", h:"2.5h", tasks:[
+     {k:"lab", x:"<b>实操：</b>把前 6 天串起来，做一个流式对话 CLI 工具，带一个结构化抽取命令", tm:"90 分钟"},
+     {k:"lab", x:"<b>实操：</b>写 README，记录 3 个踩过的坑和解决办法（现象 → 我以为 → 实际 → 怎么定位）", tm:"40 分钟"},
+     {k:"key", x:"今天不学新内容。<b>能稳定跑起来，比功能多重要。</b>"}
+   ]}
+ ]},
+ { w:2, title:"工具与 Agent", goal:"从「会调 API」跨到「会做 Agent」。第 9 天是整份计划的最高价值节点。",
+   days:[
+   { t:"工具（Tools）基础", h:"3h", tasks:[
+     {k:"vid", x:"尚硅谷 <b>第 05 章 Tools</b> 前半（多工具创建方式）", l:S.sl, tm:"约 50 分钟"},
+     {k:"doc", x:"官方 <b>Tools</b> 页面 → 创建与定制工具", l:S.dTools, tm:"25 分钟"},
+     {k:"lab", x:"<b>实操：</b>写两个 @tool（查天气 / 算数），bind_tools 之后<b>把模型返回的 tool_calls 原始结构打印出来</b>", tm:"65 分钟"},
+     {k:"key", x:"第一次亲眼看到「模型返回的是一个调函数请求」的 JSON——这是理解 Agent 的真正起点。"}
+   ]},
+   { t:"手写 Agent 循环（脱离框架）", h:"3h", star:true, tasks:[
+     {k:"vid", x:"尚硅谷 <b>第 05 章 Tools</b> 后半（强制使用工具等）", l:S.sl, tm:"约 40 分钟"},
+     {k:"doc", x:"官方 Tools 页面 → 工具执行与返回值处理", l:S.dTools, tm:"20 分钟"},
+     {k:"lab", x:"<b>实操：不用任何框架</b>，用 while 循环手写 Agent：调模型 → 有 tool_calls 就执行 → 结果塞回消息 → 再调模型，直到没有 tool_calls 为止", tm:"90 分钟"},
+     {k:"key", x:"这 30 行代码比看 10 小时教程有用。做完你就知道框架到底替你做了什么——这是面试最能体现深度的一题。"}
+   ]},
+   { t:"用 create_agent 重建", h:"3h", tasks:[
+     {k:"vid", x:"尚硅谷 <b>第 07 章 智能体</b>（Agent 创建方式、3 种基础用法）", l:S.sl, tm:"约 60 分钟"},
+     {k:"doc", x:"官方 <b>Agents</b> 页面", l:S.dAgents, tm:"25 分钟"},
+     {k:"lab", x:"<b>实操：</b>用 create_agent 接上第 8 天的工具，和昨天手写的循环逐条对比，写下「框架多做了什么、少做了什么」", tm:"65 分钟"},
+     {k:"key", x:"这份对比笔记本身就是面试素材，直接抄进你的学习笔记里。"}
+   ]},
+   { t:"Agent 进阶用法", h:"3h", tasks:[
+     {k:"vid", x:"尚硅谷 <b>第 07 章</b>后半（Agent 4 种高级用法）", l:S.sl, tm:"约 50 分钟"},
+     {k:"doc", x:"官方 Agents 页面剩余部分（多工具、错误处理）", l:S.dAgents, tm:"20 分钟"},
+     {k:"lab", x:"<b>实操：</b>工具加到 4 个；故意让一个工具抛异常，观察 Agent 如何处理、你要怎么做才能让它恢复继续", tm:"70 分钟"},
+     {k:"key", x:"「工具失败时不要中断整个循环，把错误当结果回传给模型」——这个设计点面试很爱问。"}
+   ]},
+   { t:"上下文与记忆", h:"3h", tasks:[
+     {k:"vid", x:"尚硅谷 <b>第 09 章 上下文与记忆</b>（上下文工程、短期记忆、长期记忆）", l:S.sl, tm:"约 55 分钟"},
+     {k:"doc", x:"官方短期记忆相关页面（站内搜 short-term memory）", l:S.dOverview, tm:"25 分钟"},
+     {k:"lab", x:"<b>实操：</b>给 Agent 加上多轮记忆，验证它能记住 3 轮之前提到的信息", tm:"60 分钟"}
+   ]},
+   { t:"记忆持久化", h:"3h", tasks:[
+     {k:"vid", x:"南哥 AGI 研习社 EP03「Agent 3 种调用方式」与 EP04「短期记忆持久化与记忆管理策略」", l:S.nange, tm:"约 50 分钟"},
+     {k:"doc", x:"LangGraph 持久化（persistence / checkpointer）相关页面", l:S.dGraph, tm:"20 分钟"},
+     {k:"lab", x:"<b>实操：</b>把对话历史存到 SQLite 或文件，重启进程后还能接着聊", tm:"70 分钟"},
+     {k:"key", x:"「重启不丢上下文」是内部工具的基本要求，不是加分项。"}
+   ]},
+   { t:"周末产出：多功能智能助手", h:"3h", tasks:[
+     {k:"lab", x:"<b>实操：</b>整合成多功能助手——查 / 算 / 写 三类工具 + 记忆 + 流式输出 + 一个简单界面", tm:"120 分钟"},
+     {k:"lab", x:"<b>实操：</b>写 200 字周复盘（搞懂了什么 / 还没懂什么 / 下周验证什么）+ 存一张截图", tm:"40 分钟"}
+   ]}
+ ]},
+ { w:3, title:"RAG 核心链路", goal:"从零搭出一个真正可用的文档问答系统，并用数据证明它有效。",
+   days:[
+   { t:"RAG 原理与三种架构", h:"3h", tasks:[
+     {k:"vid", x:"《大模型 RAG 入门到精通》<b>第 1 讲 RAG 工作原理 05:48 + 第 2 讲 大模型的固有局限 10:24 + 第 3 讲 检索增强生成 08:16</b>", l:S.rag, tm:"25 分钟"},
+     {k:"vid", x:"《RAG 向量数据库全套》<b>第 2 讲 RAG 的原理是什么 05:21 + 第 5 讲 深入 RAG 08:46</b>", l:S.ragfull, tm:"15 分钟"},
+     {k:"doc", x:"官方 <b>Retrieval</b> 页面——重点看 RAG 三种架构（2-Step / Agentic / Hybrid）与各自的控制力、灵活性、延迟对比", l:S.dRetrieval, tm:"25 分钟"},
+     {k:"lab", x:"<b>实操：</b>选定你自己的语料库（课程资料 / 影石产品说明 / 你熟悉的技术文档），写清 RAG 要解决的 3 个具体问题", tm:"60 分钟"},
+     {k:"key", x:"从今天起所有练习一律用你自己的语料。<b>面试时这套语料就是你的项目。</b>"}
+   ]},
+   { t:"文档加载", h:"3h", tasks:[
+     {k:"vid", x:"RAG 入门到精通 <b>第 4 讲 文档的加载与切割 07:10 + 第 34 讲 文件加载器（一）17:48 + 第 35 讲（二）25:05</b>", l:S.rag, tm:"50 分钟"},
+     {k:"doc", x:"官方文档加载器相关页面（站内搜 document loaders）", l:S.dRetrieval, tm:"20 分钟"},
+     {k:"lab", x:"<b>实操：</b>加载 3 种格式（PDF / Markdown / 网页），打印 Document 的正文和 metadata，看清元数据里有什么可用信息", tm:"70 分钟"}
+   ]},
+   { t:"文本切分（关键实验）", h:"3.5h", star:true, tasks:[
+     {k:"vid", x:"RAG 入门到精通 <b>第 36–39 讲 文本拆分器</b>（21:19 / 26:06 / 06:36 / 17:45）", l:S.rag, tm:"约 72 分钟"},
+     {k:"doc", x:"官方文本切分器页面（站内搜 text splitters）参数说明", l:S.dOverview, tm:"20 分钟"},
+     {k:"lab", x:"<b>实操：</b>同一份文档用 500 / 1000 / 2000 三种粒度、不同重叠各切一遍，记录 chunk 数量、内容完整性、有没有把一句话切断", tm:"80 分钟"},
+     {k:"key", x:"把这份对比结果写成结论（例如「500 太碎丢上下文，2000 检索精度下降，最终选 1000 + 15% 重叠」）。<b>面试必问「你怎么切的、为什么」，这就是答案。</b>"}
+   ]},
+   { t:"向量与 Embedding", h:"3h", tasks:[
+     {k:"vid", x:"RAG 入门到精通 <b>第 7 讲 什么是向量 06:58 + 第 8 讲 文本向量 09:14 + 第 9 讲 文本向量是怎么得到的 10:52 + 第 10 讲 Vector Store 11:36</b>", l:S.rag, tm:"40 分钟"},
+     {k:"doc", x:"Chroma 官方文档 Getting started", l:S.chroma, tm:"20 分钟"},
+     {k:"lab", x:"<b>实操：</b>把文档向量化，手工计算两句话的相似度，验证「语义相近 = 向量相近」；中文场景换 bge-large-zh 或通义 embedding 再比一次", tm:"70 分钟"},
+     {k:"key", x:"中文 Embedding 选型是常被忽略、但效果差异很大的点。"}
+   ]},
+   { t:"向量库 + 最小可用 RAG", h:"3h", tasks:[
+     {k:"vid", x:"RAG 入门到精通 <b>第 11 讲 Chroma 使用 11:49 + 第 12 讲 向量数据库选型 12:14 + 第 40 讲 RAG 综合案例 28:04</b>", l:S.rag, tm:"55 分钟"},
+     {k:"doc", x:"Chroma 文档 Querying 部分", l:S.chroma, tm:"20 分钟"},
+     {k:"lab", x:"<b>实操：</b>把切好的 chunk 灌进 Chroma，跑通完整链路——检索 top-4 → 拼进提示词 → 生成回答 → 打印引用来源", tm:"70 分钟"},
+     {k:"key", x:"今天你有了第一个真正意义上的 RAG。<b>保留这一版代码，它是后面所有优化的基线。</b>"}
+   ]},
+   { t:"检索优化", h:"3h", tasks:[
+     {k:"vid", x:"RAG 入门到精通 <b>第 13 讲 RAG 高级进阶实战 09:30 + 第 14 讲 文本分割粒度 10:59 + 第 15 讲 检索后排序 12:18</b>", l:S.rag, tm:"35 分钟"},
+     {k:"doc", x:"官方检索器相关页面（retriever / MMR / metadata 过滤）", l:S.dRetrieval, tm:"20 分钟"},
+     {k:"lab", x:"<b>实操：</b>加 metadata 过滤（按来源或日期筛），加 MMR 减少重复片段；和基线版本对比", tm:"80 分钟"}
+   ]},
+   { t:"Rerank 与混合检索", h:"3.5h", tasks:[
+     {k:"vid", x:"RAG 入门到精通 <b>第 16 讲 Re-Ranker 模型 10:04 + 第 17 讲 混合检索 14:21 + 第 18 讲 RRF 06:50</b>", l:S.rag, tm:"35 分钟"},
+     {k:"doc", x:"官方集成检索器（ensemble retriever）相关页面", l:S.dRetrieval, tm:"15 分钟"},
+     {k:"lab", x:"<b>实操：</b>加上 BM25 + 向量混合检索 + RRF 融合，和纯向量检索对比命中率差异", tm:"100 分钟"},
+     {k:"key", x:"到这里你已经做过 4 组对比实验（切分 / 过滤 / MMR / 混合检索）。<b>这些实验记录就是「你真的动手调过」的证据。</b>"}
+   ]}
+ ]},
+ { w:4, title:"RAG 进阶 + LangGraph + 可观测", goal:"把 RAG 变成能给别人用的产品，用 LangGraph 加上流程控制和人工确认，再补上可观测。",
+   days:[
+   { t:"表格处理与长文摘要", h:"3h", tasks:[
+     {k:"vid", x:"RAG 入门到精通 <b>第 19 讲 PDF 文档表格处理 18:23 + 第 20 讲 GraphRAG 基本介绍 24:17</b>", l:S.rag, tm:"45 分钟"},
+     {k:"vid", x:"RAG 全套 <b>第 30 讲 文本自动摘要 Stuff 方式 17:43</b>（理解分段汇总思路）", l:S.ragfull, tm:"18 分钟"},
+     {k:"lab", x:"<b>实操：</b>处理一个带表格的 PDF；对一篇长文做一次「分段摘要 → 再汇总」", tm:"75 分钟"}
+   ]},
+   { t:"RAG 评估（数据意识）", h:"3.5h", star:true, tasks:[
+     {k:"vid", x:"RAG 全套 <b>第 10 讲 自我评估 RAG 开发 18:49</b>", l:S.ragfull, tm:"19 分钟"},
+     {k:"doc", x:"LangSmith 评估相关文档", l:S.dSmith, tm:"25 分钟"},
+     {k:"lab", x:"<b>实操：</b>准备 20 个测试问题 + 标准答案（含 3 个「资料里没有」的问题），跑一遍，记录四项指标：<b>检索命中率 / 答案正确率 / 平均耗时 / 平均 token 消耗</b>", tm:"110 分钟"},
+     {k:"key", x:"这张表直接对应 JD 最后一条「有数据意识」。<b>没有它，前面所有工作都只是「我感觉还行」。</b>"}
+   ]},
+   { t:"包成能给别人用的产品", h:"3.5h", tasks:[
+     {k:"vid", x:"RAG 入门到精通 <b>第 30 讲 使用 Streamlit 创建 Web 应用实战 11:59</b>", l:S.rag, tm:"12 分钟"},
+     {k:"doc", x:"Streamlit 或 Next.js 快速开始文档", tm:"20 分钟"},
+     {k:"lab", x:"<b>实操：</b>把 RAG 包成网页——上传文档 + 提问 + 显示引用来源；发给一个同学试用，收集 3 条反馈", tm:"120 分钟"},
+     {k:"key", x:"JD 有一条「有把工具交付给别人真正用起来的经验」，今天就是在攒这条。<b>记得截图别人试用时的界面。</b>"}
+   ]},
+   { t:"LangGraph 入门：状态图", h:"3h", tasks:[
+     {k:"vid", x:"LangChain Academy《Introduction to LangGraph》<b>Module 1 Lesson 1–4</b>（Motivation / Simple Graph / LangSmith Studio / Chain）", l:S.acad, tm:"约 60 分钟"},
+     {k:"doc", x:"LangGraph 官方概览页面", l:S.dGraph, tm:"20 分钟"},
+     {k:"lab", x:"<b>实操：</b>跑通第一个状态图——State（TypedDict）+ Node + Edge，理解「Agent 就是一个被画出来的 while 循环」", tm:"70 分钟"}
+   ]},
+   { t:"状态、记忆与图化改造", h:"3h", tasks:[
+     {k:"vid", x:"Academy <b>Module 1 Lesson 5–7</b>（Router / Agent / Agent with Memory）", l:S.acad, tm:"约 45 分钟"},
+     {k:"doc", x:"LangGraph 持久化与状态管理页面", l:S.dGraph, tm:"20 分钟"},
+     {k:"lab", x:"<b>实操：</b>把第 24 天的 RAG 改写成节点式（检索节点 + 生成节点 + 条件边），为加分支和确认步骤做准备", tm:"75 分钟"}
+   ]},
+   { t:"人工介入（Human-in-the-Loop）", h:"3h", tasks:[
+     {k:"vid", x:"Academy <b>Module 3 Lesson 1–5</b>（Streaming / Breakpoints / Editing State / Human Feedback / Dynamic Breakpoints / Time Travel）", l:S.acad, tm:"约 60 分钟"},
+     {k:"doc", x:"官方 human-in-the-loop / interrupt 相关页面", l:S.dGraph, tm:"20 分钟"},
+     {k:"lab", x:"<b>实操：</b>加 interrupt——敏感操作执行前先弹确认，用户同意才继续", tm:"70 分钟"},
+     {k:"key", x:"内部工具几乎都需要这一步（AI 不能自己瞎执行）。<b>面试讲这个非常加分，因为它体现你有工程风险意识。</b>"}
+   ]},
+   { t:"可观测：trace 与成本", h:"3h", tasks:[
+     {k:"vid", x:"尚硅谷 <b>第 08 章 中间件</b> + <b>第 03 章 LangSmith 的使用</b>", l:S.sl, tm:"约 60 分钟"},
+     {k:"doc", x:"LangSmith 可观测文档 + trace 快速开始", l:S.dTrace, tm:"25 分钟"},
+     {k:"lab", x:"<b>实操：</b>接上 LangSmith（国内网络不便时用自建 LangFuse），跑一遍项目，在 trace 里截图每一步的耗时和 token", tm:"65 分钟"},
+     {k:"key", x:"面试时「我通过 trace 定位到检索为空导致回答跑偏」比任何理论都更有说服力。"}
+   ]}
+ ]},
+ { w:5, title:"项目冲刺（强烈建议做）", goal:"把前面所有碎片变成一个能演示、有数据、能写进简历的完整作品。没有这一周，前面 28 天在面试里几乎等于白学。",
+   days:[
+   { t:"选题与数据准备", h:"3h", tasks:[
+     {k:"lab", x:"<b>实操：</b>按两个方向之一定题——① 多模态素材整理 Agent（照片/视频自动打标签 + 文案 + 语义检索）② 内部知识库 Agent（文档问答 + 工具调用 + 人工确认）", tm:"60 分钟"},
+     {k:"lab", x:"<b>实操：</b>写一页需求说明：解决什么问题 / 谁用 / 现在怎么做 / 预计能省多少时间 / 这版做什么不做什么", tm:"60 分钟"},
+     {k:"lab", x:"<b>实操：</b>准备真实数据（不少于 50 条样本），做好清洗", tm:"60 分钟"},
+     {k:"key", x:"<b>先写「不做什么」。</b>范围失控是学生项目最大的死因。"}
+   ]},
+   { t:"数据管线", h:"3h", tasks:[
+     {k:"lab", x:"<b>实操：</b>搭数据管线：加载 → 清洗 → 切分 → 向量化 → 入库，做成一个可重复执行的脚本（不要手动跑一遍就完）", tm:"120 分钟"},
+     {k:"lab", x:"<b>实操：</b>为每条数据补 metadata（来源、时间、类型），后面检索过滤要用", tm:"50 分钟"}
+   ]},
+   { t:"Agent 主链路", h:"3.5h", tasks:[
+     {k:"lab", x:"<b>实操：</b>搭主链路：Agent + 工具 + 检索。工具至少 2 个（一个查内部数据、一个做实际动作）", tm:"130 分钟"},
+     {k:"lab", x:"<b>实操：</b>用结构化输出约束返回格式（答案 + 依据 + 是否找到依据）", tm:"70 分钟"}
+   ]},
+   { t:"界面与可用性", h:"3.5h", tasks:[
+     {k:"lab", x:"<b>实操：</b>做界面：输入、结果、引用来源、加载状态、错误提示", tm:"150 分钟"},
+     {k:"lab", x:"<b>实操：</b>找人试用（同学 / 朋友都行），记录他们卡在哪一步", tm:"60 分钟"},
+     {k:"key", x:"「第一次用的人会不会懵」是判断工具好坏的唯一标准。别人卡住的地方就是你要改的地方。"}
+   ]},
+   { t:"健壮性补齐", h:"3h", tasks:[
+     {k:"lab", x:"<b>实操：</b>加 interrupt 人工确认（涉及写操作时）；加超时与重试（指数退避）；空检索结果给明确提示而不是硬编答案", tm:"110 分钟"},
+     {k:"lab", x:"<b>实操：</b>在干净环境（新建虚拟环境）重新装一遍跑一遍，确认别人也能跑起来", tm:"60 分钟"},
+     {k:"key", x:"<b>演示当天跑不起来的项目，不如不做。</b>这一步不能省。"}
+   ]},
+   { t:"提效度量（最关键的一天）", h:"3h", star:true, tasks:[
+     {k:"lab", x:"<b>实操：</b>测真实数据：人工做 100 条样本计时 vs 工具做同样 100 条计时，同时对比准确率", tm:"90 分钟"},
+     {k:"lab", x:"<b>实操：</b>做成一张表 + 一张图：单次省多少分钟、按每周用 5 次折算、准确率差异、成本（token 花费）", tm:"60 分钟"},
+     {k:"key", x:"<b>这是整个计划里最对应 JD 的一天。</b>「100 条人工 40 分钟 → 工具 2 分钟，每周省 3 小时」——这句话就是你面试时最有力的输出。"}
+   ]},
+   { t:"演示、文档与包装", h:"3.5h", tasks:[
+     {k:"lab", x:"<b>实操：</b>录一段 2–3 分钟演示视频（讲清输入什么、输出什么、省了多少时间），作为面试兜底", tm:"60 分钟"},
+     {k:"lab", x:"<b>实操：</b>写 README 四段：解决什么问题 / 怎么跑 / 效果数据 / 我踩的坑", tm:"60 分钟"},
+     {k:"lab", x:"<b>实操：</b>凭记忆画一张架构图（不要看代码），画不出来说明结构还没想清楚", tm:"40 分钟"},
+     {k:"lab", x:"<b>实操：</b>对着《学习留存与面试准备手册》第四部分，把每道题在心里答一遍", tm:"50 分钟"}
+   ]}
+ ]}
+];
+
+var LSKEY = "insta360-ai-plan-35d";
+var state = {};
+try { state = JSON.parse(localStorage.getItem(LSKEY) || "{}"); } catch(e) { state = {}; }
+
+var root = document.getElementById("root");
+var html = [];
+for (var wi = 0; wi < PLAN.length; wi++) {
+  var wk = PLAN[wi];
+  html.push('<h2 class="week"><span class="wnum">第 ' + wk.w + ' 周</span>' + wk.title + '</h2>');
+  html.push('<p class="wgoal">' + wk.goal + '</p>');
+  for (var di = 0; di < wk.days.length; di++) {
+    var day = wk.days[di];
+    var id = "d" + wk.w + "-" + (di + 1);
+    html.push('<div class="day" id="box-' + id + '">');
+    html.push('<div class="dhead">');
+    html.push('<span class="dnum">DAY ' + (wi * 7 + di + 1) + '</span>');
+    html.push('<div class="dtitle">' + day.t + (day.star ? ' <span class="star">重点</span>' : '') + '</div>');
+    html.push('<span class="dhours">' + day.h + '</span>');
+    html.push('<input type="checkbox" class="chk" data-id="' + id + '">');
+    html.push('</div><div class="tasks">');
+    for (var ti = 0; ti < day.tasks.length; ti++) {
+      var tk = day.tasks[ti];
+      var cls = "task";
+      var label = {vid:"视频", doc:"文档", lab:"实操", key:"重点"}[tk.k];
+      var body = tk.l ? tk.x + ' <a href="' + tk.l + '" target="_blank">打开</a>' : tk.x;
+      var tm = tk.tm ? ' <span class="tm">· ' + tk.tm + '</span>' : '';
+      html.push('<div class="' + cls + '"><span class="tag t-' + (tk.k === "key" ? "key" : tk.k) + '">' + label + '</span><div class="tbody">' + body + tm + '</div></div>');
+    }
+    html.push('</div></div>');
+  }
+}
+root.innerHTML = html.join("");
+
+var total = document.querySelectorAll(".chk").length;
+var fill = document.getElementById("fill");
+var ptext = document.getElementById("ptext");
+
+function upd() {
+  var n = 0;
+  document.querySelectorAll(".chk").forEach(function(c) {
+    var box = document.getElementById("box-" + c.dataset.id);
+    if (c.checked) { n++; box.classList.add("done"); } else { box.classList.remove("done"); }
+  });
+  fill.style.width = (total ? Math.round(n / total * 100) : 0) + "%";
+  ptext.textContent = n + " / " + total + " 天";
+}
+
+document.querySelectorAll(".chk").forEach(function(c) {
+  if (state[c.dataset.id]) c.checked = true;
+  c.addEventListener("change", function() {
+    if (c.checked) { state[c.dataset.id] = 1; } else { delete state[c.dataset.id]; }
+    try { localStorage.setItem(LSKEY, JSON.stringify(state)); } catch(e) {}
+    upd();
+  });
+});
+
+document.getElementById("reset").addEventListener("click", function() {
+  if (!confirm("确定要清空所有打卡记录吗？")) return;
+  state = {};
+  try { localStorage.removeItem(LSKEY); } catch(e) {}
+  document.querySelectorAll(".chk").forEach(function(c) { c.checked = false; });
+  upd();
+});
+
+upd();
+</script>
+</body>
+</html>

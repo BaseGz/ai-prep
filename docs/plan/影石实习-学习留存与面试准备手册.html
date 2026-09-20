@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>影石实习 · 学习留存与面试准备手册</title>
+<style>
+:root{
+  --bg:#f6f7f9; --card:#ffffff; --line:#e5e7eb; --line2:#eef0f3;
+  --tx:#1a1d21; --tx2:#586170; --tx3:#8b939e;
+  --must:#b4232a; --mustbg:#fdecec;
+  --accent:#0f766e; --accentbg:#e6f4f2;
+  --vidbg:#eef2ff; --vidtx:#3538cd;
+  --labbg:#fdf3e3; --labtx:#8a5200;
+  --keybg:#fdecec; --keytx:#b4232a;
+  --qbg:#f3f4f6;
+  --radius:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0e1014; --card:#161920; --line:#252a33; --line2:#1e222a;
+    --tx:#e7e9ec; --tx2:#a2aab6; --tx3:#767e8a;
+    --must:#f08b8b; --mustbg:#3a1e20;
+    --accent:#2dd4bf; --accentbg:#12312e;
+    --vidbg:#1d2440; --vidtx:#9aa8f5;
+    --labbg:#3a2e18; --labtx:#e0b070;
+    --keybg:#3a1e20; --keytx:#f08b8b;
+    --qbg:#1c2028;
+  }
+}
+*{box-sizing:border-box}
+body{
+  margin:0; padding:40px 20px 80px; background:var(--bg); color:var(--tx);
+  font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif;
+  font-size:15px; line-height:1.75; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:940px; margin:0 auto}
+h1{font-size:25px; font-weight:600; margin:0 0 8px; letter-spacing:-.01em}
+.sub{color:var(--tx2); font-size:14px; margin:0 0 24px}
+h2{font-size:19px; font-weight:600; margin:48px 0 8px; padding-bottom:10px; border-bottom:1px solid var(--line)}
+h2:first-of-type{margin-top:32px}
+.lead{color:var(--tx2); font-size:14px; margin:0 0 18px}
+h3{font-size:15px; font-weight:600; margin:26px 0 10px}
+.note{background:var(--accentbg); border-left:3px solid var(--accent); padding:14px 16px; border-radius:0 var(--radius) var(--radius) 0; font-size:14px; margin:16px 0}
+.note b{color:var(--accent)}
+.card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:18px 20px; margin-bottom:12px}
+ul{margin:0; padding-left:20px}
+li{margin-bottom:8px}
+li:last-child{margin-bottom:0}
+ul.clean{list-style:none; padding-left:0}
+ul.clean li{position:relative; padding-left:22px}
+ul.clean li:before{content:""; position:absolute; left:5px; top:10px; width:5px; height:5px; border-radius:50%; background:var(--accent)}
+ul.clean li.warn:before{background:var(--must)}
+li b{font-weight:600}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:13px; background:var(--qbg); padding:1.5px 5px; border-radius:4px}
+table{width:100%; border-collapse:collapse; font-size:14px}
+th,td{text-align:left; padding:10px 12px; border-bottom:1px solid var(--line2); vertical-align:top}
+th{font-weight:600; font-size:13px; color:var(--tx3)}
+td:first-child{white-space:nowrap; font-weight:500}
+tr:last-child td{border-bottom:none}
+.tbl-wrap{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; margin-bottom:14px}
+details{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); margin-bottom:9px; overflow:hidden}
+details[open]{border-color:var(--accent)}
+summary{cursor:pointer; padding:13px 18px; font-size:14.5px; font-weight:500; list-style:none; display:flex; gap:10px; align-items:flex-start}
+summary::-webkit-details-marker{display:none}
+summary:before{content:""; flex:0 0 auto; width:6px; height:6px; margin-top:8px; border-right:1.5px solid var(--tx3); border-bottom:1.5px solid var(--tx3); transform:rotate(-45deg); transition:transform .15s}
+details[open] summary:before{transform:rotate(45deg)}
+summary:hover{background:var(--line2)}
+.ans{padding:0 18px 16px 34px; font-size:14px; color:var(--tx2); border-top:1px solid var(--line2); margin-top:0; padding-top:14px}
+.ans b{color:var(--tx); font-weight:600}
+.ans ul{padding-left:18px; margin-top:8px}
+.tag{display:inline-block; font-size:11.5px; font-weight:600; padding:2px 7px; border-radius:5px; margin-right:6px; vertical-align:1px}
+.t-a{background:var(--vidbg); color:var(--vidtx)}
+.t-b{background:var(--labbg); color:var(--labtx)}
+.t-c{background:var(--keybg); color:var(--keytx)}
+.pri{display:inline-block; font-size:11.5px; font-weight:600; padding:2px 8px; border-radius:20px; margin-left:6px}
+.p1{background:var(--mustbg); color:var(--must)}
+.p2{background:var(--labbg); color:var(--labtx)}
+.p3{background:var(--qbg); color:var(--tx3)}
+.qgroup{margin-top:22px}
+.qgroup-t{font-size:13px; font-weight:600; color:var(--tx3); letter-spacing:.04em; margin-bottom:10px}
+.foot{margin-top:48px; padding-top:18px; border-top:1px solid var(--line); color:var(--tx3); font-size:13px}
+@media (max-width:640px){
+  body{padding:24px 14px 60px; font-size:14.5px}
+  h1{font-size:21px}
+  table{font-size:13px}
+  th,td{padding:8px 9px}
+  .card{padding:15px}
+  .ans{padding:14px 14px 14px 20px}
+  summary{padding:12px 14px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>学习留存与面试准备手册</h1>
+<p class="sub">学的时候留下什么 · 每天要问自己什么 · 面试能拿出什么 · 面试官会问什么</p>
+
+<div class="note">
+<b>先说结论：</b>面试官不会考你「LangChain 有几个组件」，只会问「你做过什么、怎么做的、为什么这么做」。所以从学习第一天起，你产生的<b>副产品</b>（代码、踩坑记录、评估数据、演示录屏）才是真正决定成败的东西。这份手册就是告诉你哪些副产品必须留。
+</div>
+
+<h2>一、学习过程中必须保留的东西</h2>
+<p class="lead">按「每天 / 每周 / 项目期」三层来留，留的东西要能被陌生人看懂——这是判断标准。</p>
+
+<h3>每天留（10 分钟内能做完，不要偷懒）</h3>
+<div class="card">
+<ul class="clean">
+<li><b>代码 commit。</b>哪怕只有 20 行，当天推一次 GitHub。仓库要有连续的提交记录——面试官点开你的 GitHub，看的是「有没有在持续做」，不是「代码多漂亮」。</li>
+<li><b>一条结论式笔记（3 行以内）。</b>不是记「今天学了 Tools」，而是记「Tools 的本质是模型输出 JSON 意图、代码负责执行，所以模型本身没有权限」。流水账没用，结论才有用。</li>
+<li><b>报错 + 解决方式。</b>这是全场最值钱的东西。格式：<code>现象 → 我以为是 A → 实际是 B → 怎么定位到的</code>。面试问「你踩过什么坑」时，这个能直接答，而且答得具体就赢一半。</li>
+</ul>
+</div>
+
+<h3>每周留</h3>
+<div class="card">
+<ul class="clean">
+<li><b>一个能跑起来的产出。</b>能跑 > 功能多。跑不起来的代码等于没写。</li>
+<li><b>200 字周复盘：</b>这周搞懂了什么 / 还没搞懂什么 / 下周要验证什么。三个月后回看，这份复盘就是你面试前最好的复习材料。</li>
+<li><b>一张截图。</b>界面、trace、终端输出、评估表格——都可以。面试演示时你会庆幸自己留了图。</li>
+</ul>
+</div>
+
+<h3>项目期必须留（这决定面试成败）</h3>
+<div class="tbl-wrap">
+<table>
+<thead><tr><th>留存物</th><th>为什么重要</th><th>做到什么程度算合格</th></tr></thead>
+<tbody>
+<tr><td>可演示的 Demo</td><td>JD 原文写了「面试请准备演示」</td><td>能当场在 2 分钟内跑通主流程，不依赖临场调试</td></tr>
+<tr><td>2–3 分钟录屏</td><td>面试环境出问题时的兜底</td><td>有解说或字幕，讲清「输入什么 → 输出什么」</td></tr>
+<tr><td>README</td><td>面试官的第一印象</td><td>四段：解决什么问题 / 怎么跑 / 效果数据 / 我踩的坑</td></tr>
+<tr><td>架构图</td><td>证明你想清楚了结构</td><td>一张图能看出数据从哪来、经过哪些步骤、到哪去</td></tr>
+<tr><td><b>提效数据表</b></td><td>直接对应 JD 的「数据意识」</td><td>人工做多久 vs 工具做多久，样本量、统计方式都写清楚</td></tr>
+<tr><td>评估结果</td><td>证明你不是「感觉还行」</td><td>20 个测试问题、命中率、答案正确率、平均耗时、token 消耗</td></tr>
+<tr><td>对比实验记录</td><td>证明你真的动手调过</td><td>「切分 500 vs 1000，命中率 62% vs 78%」这种</td></tr>
+<tr><td>trace 截图</td><td>证明你会用工具定位问题</td><td>能指出某一步耗时异常或检索为空</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2>二、学习时要一直问自己的问题</h2>
+<p class="lead">把这些问题贴在你写代码的窗口旁边。它们不是学习内容，是学习方式——直接决定你面试时能不能讲深。</p>
+
+<h3>每学完一个组件，问三句</h3>
+<div class="card">
+<ul class="clean">
+<li><b>它解决什么问题？没有它会怎样？</b>答不出来说明你只是会背 API。比如 LCEL——没有它你也能串流程，那它到底带来了什么？</li>
+<li><b>这一行是我写的，还是框架替我做的？</b>这是区分「调包侠」和「工程师」的分界线。Agent 的循环、消息的拼接、历史的裁剪，哪些是框架做的？</li>
+<li><b>如果让我写个简化版，我会怎么写？</b>不用真写，但要能说出思路。手写过一次 Agent 循环，你对框架的理解会完全不一样。</li>
+</ul>
+</div>
+
+<h3>每做一个技术选择，问三句</h3>
+<div class="card">
+<ul class="clean">
+<li><b>我为什么选 A 而不是 B？</b>选 Chroma 是因为本地零配置，不是因为它最好。</li>
+<li><b>代价是什么？</b>每个选择都有代价。说不出代价，说明你还没理解这个选择。</li>
+<li><b>什么条件下我会换掉它？</b>数据量到多少换 Milvus、成本到多少换成小模型——能回答这个，你在面试官眼里就是「有判断力的人」而不是「跟着教程走的人」。</li>
+</ul>
+</div>
+
+<h3>每周问自己</h3>
+<div class="card">
+<ul class="clean">
+<li><b>这周做的东西，能给别人用吗？</b>不能的话，下周想办法让它能用。JD 有一条是「有把工具交付给别人真正用起来的经验」。</li>
+<li><b>我能不能用 3 分钟给外行讲明白它？</b>讲不明白，就还没真懂。</li>
+<li><b>这周有什么是我「以为懂了但其实没懂」的？</b>把它找出来，下周第一件事就是验证它。</li>
+</ul>
+</div>
+
+<h3>每做一个功能，问一句</h3>
+<div class="card">
+<ul class="clean">
+<li class="warn"><b>谁会用这个功能？能省他多少时间？我怎么证明？</b>这是 JD 最后一条原文「做工具时会想怎么证明它省了多少时间」。从现在起每做一个功能都问一遍，面试时你就有源源不断的例子。</li>
+</ul>
+</div>
+
+<h2>三、面试时可以拿出什么（按优先级）</h2>
+<div class="tbl-wrap">
+<table>
+<thead><tr><th>顺序</th><th>东西</th><th>怎么用</th></tr></thead>
+<tbody>
+<tr><td>1 <span class="pri p1">核心</span></td><td>可演示的 AI 项目</td><td>面试时主动说「我做了个东西，可以直接看」，然后 2 分钟跑完主流程</td></tr>
+<tr><td>2 <span class="pri p1">核心</span></td><td>提效数据表</td><td>演示完立刻给数据：「100 张图人工 40 分钟，工具 2 分钟」</td></tr>
+<tr><td>3 <span class="pri p2">加分</span></td><td>GitHub 仓库 + README</td><td>简历上放链接，面试前对方会点开看</td></tr>
+<tr><td>4 <span class="pri p2">加分</span></td><td>2 分钟录屏</td><td>网络或环境出问题时的兜底，也能发在简历附件里</td></tr>
+<tr><td>5 <span class="pri p2">加分</span></td><td>踩坑记录 / 实验对比</td><td>被问「遇到最难的问题是什么」时直接调出来讲</td></tr>
+<tr><td>6 <span class="pri p3">可选</span></td><td>技术笔记 / 博客</td><td>把踩坑记录整理成文发出去，能反向带来机会</td></tr>
+</tbody>
+</table>
+</div>
+<div class="note">
+<b>一句话原则：</b>能演示 &gt; 能看代码 &gt; 能讲原理。<b>不要花时间把 GitHub 装修得很漂亮，要把 Demo 调到能稳定跑通。</b>前者是自我感动，后者是面试通过率。
+</div>
+
+<h2>四、面试官大概率会问什么</h2>
+<p class="lead">点开每条看回答要点。答案里加粗的都是「答到点上」的关键句——面试官在等的其实就是那一句。</p>
+
+<div class="qgroup">
+<div class="qgroup-t">A · 开场与项目</div>
+
+<details><summary>讲一下你最近做的这个 AI 项目</summary>
+<div class="ans">
+<b>用固定结构讲，25 秒到 40 秒：问题 → 方案取舍 → 结果数据 → 踩过的坑。</b>
+不要从技术栈开始讲，要从「我遇到了什么问题」开始。例如：我们有一批素材要人工打标签，一个人一天只能处理 200 张，我做了个工具把这步自动化到 2 分钟。
+关键是把「去掉这个 AI，事情还能不能做」讲清楚——能讲清楚，说明你做的不是玩具。
+</div></details>
+
+<details><summary>这个项目里哪部分是你自己写的？</summary>
+<div class="ans">
+这是<b>过滤「AI 生成的简历项目」</b>的问题。答法：分三层说清楚。
+<ul>
+<li>业务流程和数据结构是我设计的（哪些字段、怎么流转）</li>
+<li>模型这部分我用了框架的 X，但工具函数和检索逻辑是我写的</li>
+<li>模型给的代码我会先看它的调用链，跑不通就自己改</li>
+</ul>
+<b>提前准备一个「我改过 AI 生成的错误代码」的具体例子</b>，这个例子能一次回答好几个问题。
+</div></details>
+</div>
+
+<div class="qgroup">
+<div class="qgroup-t">B · LangChain 与框架理解</div>
+
+<details><summary>为什么要用 LangChain？直接调 API 不行吗？</summary>
+<div class="ans">
+<b>不要答「因为方便」，要答出它的边界。</b>
+<ul>
+<li>它解决的是三件事：多模型接入标准化（换供应商只改一行）、组件可替换（向量库/Embedding 随时换）、以及 Agent 循环这种容易写错的逻辑有成熟实现</li>
+<li><b>但简单场景我不用它。</b>只调一次模型、要个摘要，直接调 API 更轻，还少一层依赖</li>
+</ul>
+能说出「什么时候不用」，比说它多好更能证明你想过。
+</div></details>
+
+<details><summary>Tool Calling 的原理是什么？</summary>
+<div class="ans">
+<b>关键句：模型不执行任何东西，它只输出「我想调哪个函数、参数是什么」的结构化请求，真正的执行和结果回填是我的代码做的。</b>
+所以：
+<ul>
+<li>工具函数必须由我实现，模型只负责决定调不调、怎么传参</li>
+<li>调用结果要以特定角色（工具消息）塞回对话里，模型才能基于结果继续推理</li>
+<li>模型看的是<b>函数名和参数描述</b>——描述写得烂，模型就选错工具，所以文档字符串很重要</li>
+</ul>
+</div></details>
+
+<details><summary>Agent 会不会死循环？怎么防止？</summary>
+<div class="ans">
+会。要有兜底：
+<ul>
+<li>设最大迭代次数上限，超了就直接返回当前结果并报错</li>
+<li>给工具加超时，避免外部接口卡死整个循环</li>
+<li>工具执行失败时，把错误信息作为结果回传给模型，它通常会换个方式重试——<b>不要把异常直接抛出去中断整个循环</b></li>
+<li>在提示词里明确「如果连续两次拿不到有效结果，就告诉我失败原因」</li>
+</ul>
+</div></details>
+
+<details><summary>LangChain 和 LangGraph 有什么区别？</summary>
+<div class="ans">
+<b>LangChain 是组件层（模型、提示词、工具、检索的标准化接口），LangGraph 是编排层（状态、节点、边）。</b>
+一句话对比：LangChain 帮你把「单步操作」写整齐，LangGraph 帮你把「多步流程」画成图，尤其是需要条件分支、循环、人工介入、断点续跑的场景。
+「Agent 其实就是一个 while 循环」——LangGraph 把这个循环显式地画出来，所以更可控、可调试。
+</div></details>
+</div>
+
+<div class="qgroup">
+<div class="qgroup-t">C · RAG（几乎必问）</div>
+
+<details><summary>你的文档怎么切分的？为什么这么切？</summary>
+<div class="ans">
+<b>答不上来的话，这一题基本就凉了。</b>要有实验支撑：
+<ul>
+<li>我试过 500 / 1000 / 2000 三种粒度，500 太碎会丢上下文，2000 检索精度下降，最后选 1000 加 15% 重叠</li>
+<li>切分要跟着文档结构走：按标题层级切比硬按字数切效果好，因为一个完整的语义单元更容易被检索对</li>
+<li><b>还留了原文位置信息（metadata）</b>，方便回答里给引用来源</li>
+</ul>
+有数字、有取舍、有对比——这三样凑齐，这题就是加分题。
+</div></details>
+
+<details><summary>检索结果不准确，你怎么排查？</summary>
+<div class="ans">
+这是一道<b>流程题</b>，展示你会不会系统排查，比给一个答案更重要：
+<ul>
+<li>先看是<b>检索的问题</b>还是<b>生成的问题</b>——把检索到的片段单独打出来看，命中了没有</li>
+<li>如果是检索问题：切分粒度不合适？Embedding 对中文不行？查询词和文档用词不匹配（这时候上混合检索）？</li>
+<li>如果是生成问题：检索到的片段是对的但模型没用——检查提示词是否明确要求「只根据给定资料回答」</li>
+<li>加一层<b>重排序（Rerank）</b>，把召回的候选重新打分，通常能明显改善 top 结果质量</li>
+</ul>
+</div></details>
+
+<details><summary>怎么评估你的 RAG 好不好？</summary>
+<div class="ans">
+<b>答「感觉回答得挺准的」= 不合格。</b>
+正确答法：
+<ul>
+<li>建一个测试集：20–50 个问题 + 标准答案，覆盖常见问题、边界问题、问不到的问题</li>
+<li>分两段评估：<b>检索命中率</b>（正确答案所在的片段有没有被召回）和<b>答案正确率</b>（生成的回答对不对）</li>
+<li>再看成本指标：平均耗时、平均 token 消耗</li>
+<li>每次改动（换切分、加 Rerank）都跑一遍，用数字决定留不留这个改动</li>
+</ul>
+<b>能说出「我怎么证明它变好了」，就已经超过大多数实习候选人了。</b>
+</div></details>
+
+<details><summary>RAG 和微调（Fine-tuning）怎么选？</summary>
+<div class="ans">
+一个口诀：<b>RAG 管「知道什么」，微调管「怎么说、怎么做」。</b>
+<ul>
+<li>知识是动态的、需要引用来源、要能随时更新 → RAG（改文档即可，不用重训）</li>
+<li>要固定输出风格、语气、格式，或者特定领域的表达习惯 → 微调</li>
+<li>成本上：RAG 便宜得多，微调要数据、要算力、要迭代周期</li>
+<li>实际项目里常见的是<b>先 RAG，不行再考虑微调</b>，而不是二选一</li>
+</ul>
+</div></details>
+
+<details><summary>模型产生幻觉怎么办？</summary>
+<div class="ans">
+分三层防：
+<ul>
+<li><b>输入侧</b>：检索质量先做好，垃圾进垃圾出；提示词里明确「只依据给定材料回答」</li>
+<li><b>输出侧</b>：强制返回结构化结果，包含「答案 + 依据片段 + 是否找到依据」；如果没检索到就让它说「资料里没有」，而不是硬编</li>
+<li><b>兜底</b>：界面上展示引用来源，用户能自己核对——<b>把可验证性交给用户</b>，这是内部工具很重要的设计思路</li>
+</ul>
+</div></details>
+</div>
+
+<div class="qgroup">
+<div class="qgroup-t">D · AI 提效（JD 明确要求，一定会问）</div>
+
+<details><summary>你平时怎么用 Cursor / Claude Code 这类工具？</summary>
+<div class="ans">
+<b>不要答「帮我写代码很方便」，要答出你的工作流。</b>准备一个具体流程：
+<ul>
+<li>先自己拆需求和定接口，再让 AI 填充实现——<b>不让 AI 决定结构</b></li>
+<li>写测试或样例数据先给 AI 当上下文，它给的代码正确率明显更高</li>
+<li>报错时把完整堆栈和相关文件一起给它，而不是只贴一行错误</li>
+<li><b>AI 给的代码我一定跑一遍再信</b>——它写得像对的，不代表是对的</li>
+</ul>
+最后补一句它的边界：复杂业务逻辑和跨文件重构我还是自己来，AI 在那些地方容易「看起来很合理但是错的」。
+</div></details>
+
+<details><summary>有了 AI 工具，你觉得你的核心竞争力是什么？</summary>
+<div class="ans">
+<b>判断力和验证能力。</b>
+AI 能写代码，但决定「写什么、为什么这么写、写完了怎么证明是对的」还是人。
+具体说三件 AI 目前做不好的事：把模糊需求变成可执行的方案、在多个方案之间做取舍并承担后果、以及<b>验证结果是否真的解决了问题</b>。
+</div></details>
+
+<details><summary>你做的工具，怎么证明它省了时间？</summary>
+<div class="ans">
+<b>这是 JD 里最独特的一条，一定要准备一个真实数字。</b>
+模板：
+<ul>
+<li>基准：找真实场景，人工做 100 个样本，计时（比如 40 分钟）</li>
+<li>工具：同样 100 个样本，计时（比如 2 分钟）</li>
+<li>质量：不能只看快，还要看准确率（人工 95% vs 工具 90%，差值可接受）</li>
+<li>结论：单次省 38 分钟，按每周用 5 次算，一周省 3 小时</li>
+</ul>
+<b>顺便说明样本量和统计方式</b>——这会让面试官觉得你是认真测过而不是拍脑袋。
+</div></details>
+</div>
+
+<div class="qgroup">
+<div class="qgroup-t">E · 工程基础与协作</div>
+
+<details><summary>接口调用失败、超时怎么处理？</summary>
+<div class="ans">
+<ul>
+<li>超时：所有外部调用都要设超时，不能默认无限等</li>
+<li>重试：只对可恢复的错误重试（限流、网络抖动），并且要<b>指数退避</b>，不要立即重试打爆对方</li>
+<li>降级：模型不可用时给明确提示，而不是页面卡死</li>
+<li>日志：把请求参数、耗时、结果状态记下来，出问题能定位</li>
+</ul>
+</div></details>
+
+<details><summary>你了解 MCP 吗？</summary>
+<div class="ans">
+<b>一句话定义 + 一个对比。</b>
+MCP 是一套标准化协议，让模型能统一地访问外部工具和数据源。它和「我自己写工具函数」的区别在于：自己写的工具只服务于自己这个应用，MCP 让同一个服务能被不同的 AI 客户端复用——写一次，Claude Code、Cursor 都能连。
+如果做过小 Demo，直接说「我写过一个 server，让 Claude Code 连上了我本地的 X」，比背定义强十倍。
+</div></details>
+
+<details><summary>你怎么保证多轮对话的记忆不会爆掉上下文？</summary>
+<div class="ans">
+<ul>
+<li>只保留最近 N 轮 + 一份滚动摘要，而不是全量历史</li>
+<li>把长期信息（用户偏好、关键结论）抽出来单独存，需要时再注入，而不是塞在对话里</li>
+<li>结构化数据比自然语言省 token——能存字段就不存一句话</li>
+<li>用框架提供的消息裁剪/摘要机制，但要知道它什么时候裁、裁掉了什么</li>
+</ul>
+</div></details>
+</div>
+
+<div class="qgroup">
+<div class="qgroup-t">F · 岗位匹配与软素质</div>
+
+<details><summary>为什么想来影石？为什么做内部工具方向？</summary>
+<div class="ans">
+<b>要具体，不要说「贵司是行业龙头」。</b>
+可以聊：影石是做影像产品的，而 AI 在影像素材的处理、检索、整理上有天然空间；再加上 JD 里提到的设计工程、内部工具方向，正好是你想做的——<b>不追求做最炫的模型，而是想做真正被人每天用起来的东西</b>。
+有作品能对应这个方向，说服力会强很多。
+</div></details>
+
+<details><summary>你还在上学，能保证每周 5 天、连续 6 个月吗？</summary>
+<div class="ans">
+<b>这是硬性条件，JD 写明了，一定会确认。</b>提前想清楚并诚实回答：
+<ul>
+<li>说清你的课程安排和可行的到岗时间，给出具体日期</li>
+<li>如果确实有冲突，明确说明能保证的天数，不要含糊承诺</li>
+<li>补一句你是怎么安排时间的（比如已经提前修完某门课）——<b>体现你是规划过的，不是随口答应</b></li>
+</ul>
+</div></details>
+
+<details><summary>你还有什么想问我们的？</summary>
+<div class="ans">
+<b>一定要问，而且要问能体现你在想「怎么把事做成」的问题：</b>
+<ul>
+<li>团队现在做的内部工具，主要服务哪些角色？</li>
+<li>一个新工具从想法到被人用起来，中间大概走什么流程？</li>
+<li>实习生做的工具，通常怎么衡量有没有效果？</li>
+</ul>
+避免一上来就问薪资和转正。
+</div></details>
+</div>
+
+<h2>五、学习过程中要特别注意的</h2>
+<div class="card">
+<ul class="clean">
+<li class="warn"><b>别只留代码，不留「为什么」。</b>三个月后你会忘记当时的选择理由，而面试官最想听的就是理由。写下来的成本是 3 行字，不写的代价是面试时讲不出深度。</li>
+<li class="warn"><b>别等到最后再整理作品集。</b>项目做完了再回头补 README、补数据，细节全忘了。每做完一个阶段就顺手写一段。</li>
+<li class="warn"><b>别做「只有自己能跑」的项目。</b>换个环境就报错的 Demo，演示当天就是灾难。项目期最后一件事一定是在干净环境里重装跑一遍。</li>
+<li><b>别把「学完了」当成目标。</b>面试官不看你学了什么，只看你做出了什么。每学一个模块，都要有一个能拿出来的小产出。</li>
+<li><b>别忽略「非技术」的留存。</b>你怎么用 AI 提效、怎么和需求方确认、怎么决定优先级——这些 JD 明确在问，但没人会主动记录。从现在开始记。</li>
+<li><b>给每个阶段留一张「证据」。</b>截图、trace、对比表格。面试是信息不对称的博弈，证据越多，你的话越可信。</li>
+</ul>
+</div>
+
+<h2>六、每周固定动作（照着做就行）</h2>
+<div class="tbl-wrap">
+<table>
+<thead><tr><th>时间点</th><th>动作</th><th>花费</th></tr></thead>
+<tbody>
+<tr><td>每天结束</td><td>commit 代码 + 写 3 行结论 + 记一个坑</td><td>10 分钟</td></tr>
+<tr><td>每周日</td><td>写 200 字复盘 + 存一张截图 + 想一个「怎么证明有用」的点</td><td>30 分钟</td></tr>
+<tr><td>每完成一个阶段</td><td>整理该阶段产物进作品集目录，补一段说明</td><td>1 小时</td></tr>
+<tr><td>项目完成时</td><td>干净环境重跑 + 录屏 + README + 提效数据表</td><td>半天</td></tr>
+<tr><td>投递前</td><td>过一遍本手册第四部分，每道题都在心里答一遍</td><td>2 小时</td></tr>
+</tbody>
+</table>
+</div>
+
+<p class="foot">
+说明：本手册配合《AI 学习资源导航》和《AI 学习计划表》使用。<br>
+面试题部分基于影石实习 JD 的要求整理（全栈原型 / AI 小项目演示 / AI 工具提效 / 数据意识 / 实习时长）。<br>
+整理时间：2026-09-20
+</p>
+
+</div>
+</body>
+</html>

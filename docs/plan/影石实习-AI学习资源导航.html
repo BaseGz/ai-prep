@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>影石实习 · AI 应用开发学习资源导航</title>
+<style>
+:root{
+  --bg:#f6f7f9; --card:#ffffff; --line:#e5e7eb; --line2:#eef0f3;
+  --tx:#1a1d21; --tx2:#586170; --tx3:#8b939e;
+  --must:#b4232a; --mustbg:#fdecec; --plus:#9a5b00; --plusbg:#fdf3e3; --know:#5a6472; --knowbg:#eef1f4;
+  --accent:#0f766e; --accentbg:#e6f4f2;
+  --vidbg:#eef2ff; --vidtx:#3538cd; --docbg:#e9f7ef; --doctx:#1a7f4b;
+  --radius:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0e1014; --card:#161920; --line:#252a33; --line2:#1e222a;
+    --tx:#e7e9ec; --tx2:#a2aab6; --tx3:#767e8a;
+    --must:#f08b8b; --mustbg:#3a1e20; --plus:#e0b070; --plusbg:#3a2e18; --know:#a8b0bb; --knowbg:#22262e;
+    --accent:#2dd4bf; --accentbg:#12312e;
+    --vidbg:#1d2440; --vidtx:#9aa8f5; --docbg:#12281c; --doctx:#6fd39c;
+  }
+}
+*{box-sizing:border-box}
+body{
+  margin:0; padding:40px 20px 80px; background:var(--bg); color:var(--tx);
+  font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif;
+  font-size:15px; line-height:1.7; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:960px; margin:0 auto}
+h1{font-size:26px; font-weight:600; margin:0 0 8px; letter-spacing:-.01em}
+.sub{color:var(--tx2); font-size:14px; margin:0 0 28px}
+h2{font-size:19px; font-weight:600; margin:44px 0 16px; padding-bottom:10px; border-bottom:1px solid var(--line)}
+h2:first-of-type{margin-top:32px}
+.note{background:var(--accentbg); border-left:3px solid var(--accent); padding:14px 16px; border-radius:0 var(--radius) var(--radius) 0; font-size:14px; color:var(--tx); margin:16px 0}
+.note b{color:var(--accent)}
+.card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:20px 22px; margin-bottom:14px}
+.chead{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; margin-bottom:6px}
+.cnum{font-size:13px; font-weight:600; color:var(--tx3); font-variant-numeric:tabular-nums}
+.ctitle{font-size:16px; font-weight:600}
+.badge{font-size:12px; font-weight:500; padding:2px 8px; border-radius:20px; white-space:nowrap}
+.b-must{background:var(--mustbg); color:var(--must)}
+.b-plus{background:var(--plusbg); color:var(--plus)}
+.b-know{background:var(--knowbg); color:var(--know)}
+.goal{font-size:14px; color:var(--tx2); margin:8px 0 14px; padding-left:2px}
+.goal b{color:var(--tx); font-weight:500}
+.res{display:flex; flex-direction:column; gap:8px}
+.row{display:flex; gap:10px; align-items:flex-start; font-size:14px}
+.tag{flex:0 0 auto; font-size:11px; font-weight:600; padding:2px 7px; border-radius:5px; margin-top:3px; letter-spacing:.02em}
+.t-vid{background:var(--vidbg); color:var(--vidtx)}
+.t-doc{background:var(--docbg); color:var(--doctx)}
+.rbody{flex:1; min-width:0}
+.rbody a{color:var(--accent); text-decoration:none; border-bottom:1px solid transparent; word-break:break-all}
+.rbody a:hover{border-bottom-color:var(--accent)}
+.rbody .meta{display:block; color:var(--tx3); font-size:12.5px; line-height:1.55; margin-top:1px}
+.sect{margin-top:14px; padding-top:14px; border-top:1px solid var(--line2)}
+.sect:first-child{margin-top:0; padding-top:0; border-top:none}
+.sect-t{font-size:13px; font-weight:600; color:var(--tx3); letter-spacing:.04em; margin-bottom:10px}
+table{width:100%; border-collapse:collapse; font-size:14px}
+th,td{text-align:left; padding:10px 12px; border-bottom:1px solid var(--line2); vertical-align:top}
+th{font-weight:600; font-size:13px; color:var(--tx3); background:transparent}
+td:first-child{white-space:nowrap; font-weight:500}
+tr:last-child td{border-bottom:none}
+.tbl-wrap{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; margin-bottom:14px}
+ul.warn{margin:0; padding-left:0; list-style:none}
+ul.warn li{position:relative; padding-left:22px; margin-bottom:10px; font-size:14px; color:var(--tx2)}
+ul.warn li:before{content:""; position:absolute; left:6px; top:9px; width:5px; height:5px; border-radius:50%; background:var(--must)}
+ul.warn li b{color:var(--tx); font-weight:500}
+.foot{margin-top:44px; padding-top:18px; border-top:1px solid var(--line); color:var(--tx3); font-size:13px}
+@media (max-width:640px){
+  body{padding:24px 14px 60px; font-size:14.5px}
+  h1{font-size:21px}
+  table{font-size:13px}
+  th,td{padding:8px 9px}
+  .card{padding:16px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>影石实习 · AI 应用开发学习资源导航</h1>
+<p class="sub">按「先视频、后文档」排序 · 全部为可点击直链 · 面向 LangChain / RAG / Agent / MCP 方向</p>
+
+<div class="note">
+<b>一句话定位：</b>学到「能独立交付一个可演示的 AI 项目」就停。JD 里 LangChain 只是加分项三选一（RAG、Agent 框架、MCP），真正决定成败的是「有自己做的 AI 小项目 + 面试能演示 + 说清怎么提效」。
+</div>
+
+<h2>学习模块总览</h2>
+<div class="tbl-wrap">
+<table>
+<thead><tr><th>模块</th><th>优先级</th><th>产出的东西</th></tr></thead>
+<tbody>
+<tr><td>1 模型接入与多模态</td><td><span class="badge b-must">必须</span></td><td>一套代码切换 4 家模型，能读图</td></tr>
+<tr><td>2 消息体系与提示词</td><td><span class="badge b-must">必须</span></td><td>稳定可控的多轮对话</td></tr>
+<tr><td>3 结构化输出</td><td><span class="badge b-must">必须</span></td><td>模型稳定吐 JSON</td></tr>
+<tr><td>4 LCEL 管道与流式</td><td><span class="badge b-must">必须</span></td><td>打字机效果的前端体验</td></tr>
+<tr><td>5 Tool Calling</td><td><span class="badge b-must">必须</span></td><td>会调用真实接口的 Agent</td></tr>
+<tr><td>6 Agent 与 LangGraph</td><td><span class="badge b-must">必须</span></td><td>带记忆/人工确认的智能体</td></tr>
+<tr><td>7 RAG 全链路</td><td><span class="badge b-must">必须</span></td><td>文档问答 + 评估表</td></tr>
+<tr><td>8 可观测与评估</td><td><span class="badge b-plus">加分</span></td><td>trace 截图 + 提效数据</td></tr>
+<tr><td>9 MCP</td><td><span class="badge b-know">了解</span></td><td>一个连上 Claude Code 的 server</td></tr>
+<tr><td>10 实战项目</td><td><span class="badge b-plus">决定成败</span></td><td>可演示的影石向 Demo</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2>逐模块资源</h2>
+
+<div class="card">
+  <div class="chead"><span class="cnum">01</span><span class="ctitle">模型接入与多模态输入</span><span class="badge b-must">必须</span></div>
+  <p class="goal"><b>掌握标准：</b>能用同一套代码在 OpenAI / DeepSeek / 通义 / 智谱之间切换（只改 base_url 和 key）；能把图片传给模型并拿到描述——影石是做相机的，多模态是天然加分位。</p>
+  <div class="res">
+    <div class="row"><span class="tag t-vid">视频</span><div class="rbody"><a href="https://www.bilibili.com/video/BV1rv7A6oEeP/" target="_blank">尚硅谷《LangChain 从入门到实战（2026 版）》</a><span class="meta">基于 LangChain 1.2.12 讲解，看「第 02 章 · 模型的创建与调用」：多平台多模型创建、invoke/stream 调用与多参数剖析。这是本清单的主力教程，全部模块都能对上。</span></div></div>
+    <div class="row"><span class="tag t-doc">文档</span><div class="rbody"><a href="https://docs.langchain.com/" target="_blank">LangChain 官方文档（docs.langchain.com）</a><span class="meta">已从 python.langchain.com 迁移到新地址。进站后看 Models / Chat models 章节，Python 和 JavaScript 两个版本可以切换。</span></div></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="chead"><span class="cnum">02</span><span class="ctitle">消息体系与提示词模板</span><span class="badge b-must">必须</span></div>
+  <p class="goal"><b>掌握标准：</b>能用 SystemMessage / HumanMessage / AIMessage 手动组装多轮上下文；会用 ChatPromptTemplate + few-shot 把输出稳住。</p>
+  <div class="res">
+    <div class="row"><span class="tag t-vid">视频</span><div class="rbody"><a href="https://www.bilibili.com/video/BV1rv7A6oEeP/" target="_blank">尚硅谷 2026 版 · 第 04 章 Message 与提示词模板</a><span class="meta">多 Message 类型、多参数讲解、ChatPromptTemplate。</span></div></div>
+    <div class="row"><span class="tag t-vid">视频</span><div class="rbody"><a href="https://www.bilibili.com/video/BV1WgcZzRE9E/" target="_blank">B 站《【2026 版】LangChain 从基础到实战全模块拆解》</a><span class="meta">10 讲短片，适合当第二遍复习。第 2 讲环境与 hello world、第 3 讲 LLM 模块、第 4 讲数据连接，单讲 25–47 分钟。</span></div></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="chead"><span class="cnum">03</span><span class="ctitle">结构化输出（Pydantic / Zod）</span><span class="badge b-must">必须</span></div>
+  <p class="goal"><b>掌握标准：</b>用 Pydantic（Python）或 Zod（TS）定义 schema，通过 with_structured_output 让模型稳定返回可校验的 JSON。<b>这是玩具和工程的分水岭</b>——所有内部工具都靠它把模型输出接到下游。</p>
+  <div class="res">
+    <div class="row"><span class="tag t-vid">视频</span><div class="rbody"><a href="https://www.bilibili.com/video/BV1rv7A6oEeP/" target="_blank">尚硅谷 2026 版 · 第 06 章 结构化输出</a><span class="meta">4 种输出模式讲解、类型校验、获取结构化结果。</span></div></div>
+    <div class="row"><span class="tag t-doc">文档</span><div class="rbody"><a href="https://docs.langchain.com/" target="_blank">官方文档 · Structured output</a><span class="meta">重点看 Pydantic 模型定义和字段描述（description 直接影响模型准确率，值得细读）。</span></div></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="chead"><span class="cnum">04</span><span class="ctitle">LCEL 管道与流式输出</span><span class="badge b-must">必须</span></div>
+  <p class="goal"><b>掌握标准：</b>徒手写出 <code>prompt | model | parser</code>，会用 invoke / stream / batch / ainvoke；能解释 stream 为什么能让前端出现打字机效果。</p>
+  <div class="res">
+    <div class="row"><span class="tag t-vid">视频</span><div class="rbody"><a href="https://www.bilibili.com/video/BV1WgcZzRE9E/" target="_blank">B 站全模块拆解 · 第 5 讲 链结构（25:00）</a><span class="meta">LCEL 管道语法讲得比较直白，适合入门先建立直觉。</span></div></div>
+    <div class="row"><span class="tag t-doc">文档</span><div class="rbody"><a href="https://docs.langchain.com/" target="_blank">官方文档 · LCEL / Runnable interface</a><span class="meta">把 invoke / stream / batch 三兄弟的返回值类型搞清楚，写前端时不会踩坑。</span></div></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="chead"><span class="cnum">05</span><span class="ctitle">Tool Calling 工具调用</span><span class="badge b-must">必须</span></div>
+  <p class="goal"><b>掌握标准：</b>会写 @tool 函数、bind_tools、处理 ToolMessage 回传、跑通多轮循环。能讲清这句话：<b>模型不执行任何东西，它只输出「我想调哪个函数、参数是什么」，真正的执行和结果回填是你的代码干的。</b>能讲清这句，面试官就知道你不是调包侠。</p>
+  <div class="res">
+    <div class="row"><span class="tag t-vid">视频</span><div class="rbody"><a href="https://www.bilibili.com/video/BV1rv7A6oEeP/" target="_blank">尚硅谷 2026 版 · 第 05 章 Tools</a><span class="meta">多工具创建方式、多实操案例、强制使用工具等。</span></div></div>
+    <div class="row"><span class="tag t-vid">视频</span><div class="rbody"><a href="https://space.bilibili.com/509246474" target="_blank">南哥 AGI 研习社 ·《LangChain V1.x + LangGraph + DeepAgents 全家桶》</a><span class="meta">免费开源系列，含 EP03「Agent 3 种调用方式」、EP04「短期记忆持久化与记忆管理策略」。配套源码在 GitHub：github.com/NanGePlus</span></div></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="chead"><span class="cnum">06</span><span class="ctitle">Agent 与 LangGraph</span><span class="badge b-must">必须</span></div>
+  <p class="goal"><b>掌握标准：</b>能用 create_agent 或 StateGraph 搭出带记忆的 Agent；会 checkpointer 做多轮持久化、interrupt 做执行前人工确认（内部工具场景刚需）。</p>
+  <div class="res">
+    <div class="row"><span class="tag t-vid">视频</span><div class="rbody"><a href="https://www.bilibili.com/video/BV1rv7A6oEeP/" target="_blank">尚硅谷 2026 版 · 第 07 章 智能体 + 第 08 章 中间件 + 第 09 章 上下文与记忆</a><span class="meta">Agent 创建方式与 3 种基础用法、4 种高级用法；官方 12 大核心中间件；短期记忆与长期记忆。</span></div></div>
+    <div class="row"><span class="tag t-vid">视频</span><div class="rbody"><a href="https://www.bilibili.com/video/BV178w1z7EHQ/" target="_blank">黑马程序员《2026 最新版 LangChain + LangGraph 开发实战全套》</a><span class="meta">想专门补 LangGraph 看这套，比尚硅谷更偏图结构实操。</span></div></div>
+    <div class="row"><span class="tag t-vid">视频</span><div class="rbody"><a href="https://www.bilibili.com/video/BV1z3NY66EY1/" target="_blank">尚硅谷《LangGraph 教程》</a><span class="meta">LangGraph 单独成课，讲入门与组件。</span></div></div>
+    <div class="row"><span class="tag t-vid">视频</span><div class="rbody"><a href="https://academy.langchain.com/courses/intro-to-langgraph" target="_blank">LangChain Academy《Introduction to LangGraph》（官方免费课）</a><span class="meta">英文，55 节课约 6 小时，完全免费。内容最系统：State / Nodes / Edges / Memory / Human-in-the-loop / 时间旅行 / 长期记忆 / 部署。**如果只挑一门英文课，就挑这个。** 官方另有 TypeScript 版同名课。</span></div></div>
+    <div class="row"><span class="tag t-doc">文档</span><div class="rbody"><a href="https://github.com/langchain-ai/langgraph/tree/main/examples" target="_blank">LangGraph 官方示例仓库（30+ 示例）</a><span class="meta">覆盖人在回路、多智能体、RAG + Agent 等场景，抄结构最快。</span></div></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="chead"><span class="cnum">07</span><span class="ctitle">RAG 全链路</span><span class="badge b-must">必须</span></div>
+  <p class="goal"><b>掌握标准：</b>能独立搭出文档问答，并且回答得出三个问题——「为什么这么切分？」「检索不到时你怎么排查？」「怎么证明它比直接把文档塞进上下文更好？」</p>
+  <div class="res">
+    <div class="row"><span class="tag t-vid">视频</span><div class="rbody"><a href="https://www.bilibili.com/video/BV1hccSeJEUD/" target="_blank">B 站《大模型 RAG 入门到精通实战教程》</a><span class="meta">共 54 讲，**RAG 知识点覆盖最全**：文档加载与切割、文本向量、Chroma 使用、向量库选型、检索后排序、Re-Ranker、混合检索、RRF、PDF 表格处理、GraphRAG、效果评估。第 13–20 讲是精华。</span></div></div>
+    <div class="row"><span class="tag t-vid">视频</span><div class="rbody"><a href="https://www.bilibili.com/video/BV1yjz5BLEoY/" target="_blank">黑马程序员《大模型 RAG 与 Agent 智能体项目实战》</a><span class="meta">偏项目落地，适合学完原理后跟着做一个完整系统。</span></div></div>
+    <div class="row"><span class="tag t-vid">视频</span><div class="rbody"><a href="https://www.bilibili.com/video/BV1rv7A6oEeP/" target="_blank">尚硅谷 2026 版 · 第 10 章 RAG</a><span class="meta">五大核心流程 + Docker 与 Milvus 安装 + 向量数据库存储与检索。</span></div></div>
+    <div class="row"><span class="tag t-doc">文档</span><div class="rbody"><a href="https://docs.trychroma.com/" target="_blank">Chroma 官方文档</a><span class="meta">本地起步首选向量库，pip 装完就能用，不用起服务。</span></div></div>
+    <div class="row"><span class="tag t-doc">文档</span><div class="rbody"><a href="https://docs.langchain.com/" target="_blank">官方文档 · Retrieval / RAG 章节</a><span class="meta">重点看 Retriever 接口、MMR、metadata 过滤、引用溯源（citation）怎么落地。</span></div></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="chead"><span class="cnum">08</span><span class="ctitle">可观测与评估（决定你能不能说出「省了多少时间」）</span><span class="badge b-plus">加分</span></div>
+  <p class="goal"><b>掌握标准：</b>接上 LangSmith 或 LangFuse，能在 trace 里逐步看到耗时和 token 消耗；有一张自己做出来的 RAG 命中率 / 正确率评估表。这一条直接对应 JD 最后的「有数据意识：做工具时会想怎么证明它省了多少时间」。</p>
+  <div class="res">
+    <div class="row"><span class="tag t-vid">视频</span><div class="rbody"><a href="https://www.bilibili.com/video/BV1rv7A6oEeP/" target="_blank">尚硅谷 2026 版 · 第 03 章 LangSmith 的使用</a><span class="meta">核心应用与开发、提示工具、部署与沙盒。</span></div></div>
+    <div class="row"><span class="tag t-doc">文档</span><div class="rbody"><a href="https://docs.langchain.com/" target="_blank">LangSmith 官方文档</a><span class="meta">从 docs.langchain.com 左侧导航进 LangSmith 分区。国内网络访问可能受限时，备选开源方案 LangFuse（langfuse.com，可自建）。</span></div></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="chead"><span class="cnum">09</span><span class="ctitle">MCP（了解即可，但做个 Demo 很出彩）</span><span class="badge b-know">了解</span></div>
+  <p class="goal"><b>掌握标准：</b>能说清 MCP 是什么（模型与外部工具/数据源之间的标准化协议），以及它和你「自己写 @tool 函数」的区别；最好动手写一个 MCP server 让 Claude Code 连上——成本很低，面试很出彩。</p>
+  <div class="res">
+    <div class="row"><span class="tag t-vid">视频</span><div class="rbody"><a href="https://www.bilibili.com/video/BV1TKe3zmEQT/" target="_blank">B 站《RAG 向量数据库全套教程》中的 MCP + Agent 部分</a><span class="meta">第 7 讲 MCP + Agent（15:19）、第 9 讲 MCP + Agent 代码实战（18:47），单独看这两讲即可。</span></div></div>
+    <div class="row"><span class="tag t-doc">文档</span><div class="rbody"><a href="https://modelcontextprotocol.io/" target="_blank">MCP 官方文档</a><span class="meta">协议规范与 Quickstart。重点理解 Host / Client / Server 三层和 Tools / Resources / Prompts 三种能力。</span></div></div>
+    <div class="row"><span class="tag t-doc">文档</span><div class="rbody"><a href="https://github.com/modelcontextprotocol/servers" target="_blank">官方 MCP Server 仓库</a><span class="meta">看官方怎么实现一个 server，照抄结构改自己的。</span></div></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="chead"><span class="cnum">10</span><span class="ctitle">实战项目（这一项决定面试成败）</span><span class="badge b-plus">决定成败</span></div>
+  <p class="goal"><b>要求：</b>能当场演示 + 有一份「用之前 vs 用之后」的时间对比数据。JD 原文写着「面试请准备演示」，没有可演示的 Demo，前面学再多都白搭。</p>
+  <div class="sect">
+    <div class="sect-t">方向 A · 多模态素材整理 Agent（推荐）</div>
+    <div class="res">
+      <div class="row"><span class="tag t-doc">思路</span><div class="rbody">拖一批照片/视频进去 → 视觉模型自动打标签、生成文案 → 支持自然语言语义检索。技术栈：LangChain 编排 + 视觉模型 + 向量库。<span class="meta">踩中「多模态」+「内部工具」+「设计工程」三个加分点，影石是做相机的，面试官一看就懂价值。</span></div></div>
+    </div>
+  </div>
+  <div class="sect">
+    <div class="sect-t">方向 B · 内部知识库 Agent</div>
+    <div class="res">
+      <div class="row"><span class="tag t-doc">思路</span><div class="rbody">说明书 / FAQ / 客服工单做成 RAG，再挂工具调用（查工单状态、生成回复草稿），加 interrupt 做人工确认。<span class="meta">经典但扎实，能体现你对「AI 不能瞎执行」这件事有工程意识。</span></div></div>
+    </div>
+  </div>
+  <div class="sect">
+    <div class="sect-t">参考资源</div>
+    <div class="res">
+      <div class="row"><span class="tag t-doc">GitHub</span><div class="rbody"><a href="https://github.com/kyrolabs/awesome-langgraph" target="_blank">Awesome LangGraph</a><span class="meta">社区最全的 LangGraph 资源汇总：项目模板、案例、插件。</span></div></div>
+      <div class="row"><span class="tag t-doc">手册</span><div class="rbody"><a href="https://www.freecodecamp.org/news/the-open-source-llm-agent-handbook/" target="_blank">freeCodeCamp · 开源 LLM Agent 手册</a><span class="meta">英文，讲 Agent 循环、工具使用、记忆、规划。适合理解「Agent 本质上就是个 while 循环，LLM 只负责做分支决策」。</span></div></div>
+    </div>
+  </div>
+</div>
+
+<h2>四周节奏</h2>
+<div class="tbl-wrap">
+<table>
+<thead><tr><th>周次</th><th>主线</th><th>看什么</th><th>周末产出</th></tr></thead>
+<tbody>
+<tr><td>第 1 周</td><td>模型 + 消息 + LCEL</td><td>尚硅谷 02 / 04 章 + 全模块拆解第 2–5 讲</td><td>一个能流式对话的 CLI 工具</td></tr>
+<tr><td>第 2 周</td><td>结构化输出 + Tool Calling</td><td>尚硅谷 05 / 06 章 + 南哥 EP03</td><td>带 3 个工具的 Agent（能查、能算、能写）</td></tr>
+<tr><td>第 3 周</td><td>RAG 全链路</td><td>RAG 入门到精通第 1–20 讲 + 尚硅谷 10 章</td><td>文档问答 + 一张命中率评估表</td></tr>
+<tr><td>第 4 周</td><td>LangGraph + 追踪 + 包成接口</td><td>官方 Academy LangGraph 课 + 尚硅谷 03 / 07–09 章</td><td>可演示 Demo + 提效时间对比</td></tr>
+</tbody>
+</table>
+</div>
+<p class="sub" style="margin-top:-4px">时间紧的话，<b>优先保证第 2 周和第 4 周</b>——面试时「能演示的、带工具的、包成接口的东西」比「RAG 念得滚瓜烂熟」值钱得多。</p>
+
+<h2>技术栈：Python 还是 JS/TS</h2>
+<div class="note">
+B 站上的中文教程 95% 是 <b>Python 版</b>。如果你走前端 / 全栈路线，建议「<b>概念看 Python 教程，代码用 LangChain.js 重写一遍</b>」——这样既拿到了最好的中文讲解，又保住了自己的技术栈，而且影石 JD 明确提到了浏览器插件、Figma 插件、Design Engineering，JS/TS 在这条线上是加分位。
+</div>
+<div class="tbl-wrap">
+<table>
+<thead><tr><th>技术栈</th><th>包 / 关键类</th><th>资源</th></tr></thead>
+<tbody>
+<tr><td>Python</td><td>langchain / langgraph / langchain-openai / pydantic</td><td>上面列的全部 B 站教程</td></tr>
+<tr><td>JS / TS</td><td>langchain / @langchain/core / @langchain/openai / @langchain/langgraph / zod</td><td><a href="https://docs.langchain.com/" target="_blank">官方文档切换 JavaScript 分区</a> · <a href="https://github.com/langchain-ai/langchainjs" target="_blank">langchainjs 仓库</a> · <a href="https://github.com/langchain-ai/langgraphjs" target="_blank">langgraphjs 仓库</a> · 官方 Academy 有 TypeScript 版 LangGraph 课</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2>选教程的避坑清单</h2>
+<ul class="warn">
+<li><b>看到这些名字直接换教程：</b>LLMChain、initialize_agent、AgentExecutor、ConversationBufferMemory、SequentialChain。这是 LangChain 0.x 的老 API，中文教程里大量存在。现在要认准 <b>create_agent</b> 和 <b>LangGraph</b>。用这一条筛，能帮你省掉一大半无效学习时间。</li>
+<li><b>别把「绑定一个第三方服务」当成学习内容。</b>LangChain 有几百个 loader / integration，用到再查文档，不要逐个看。</li>
+<li><b>不要只刷视频不动手。</b>JD 写着「面试请准备演示」，看完一章就立刻写一遍，哪怕只有 20 行。</li>
+<li><b>模型别用太贵的。</b>练手用 DeepSeek / 通义 / 智谱，都走 OpenAI 兼容协议，便宜且不用折腾网络；Embedding 用 bge-large-zh 或通义 embedding，中文效果明显好过 OpenAI 的。</li>
+<li><b>MCP 和 RAG、Agent 别贪多。</b>JD 是「三选一」，把 LangChain（Agent + Tool）和 RAG 吃透，MCP 了解 + 一个小 Demo 就够。</li>
+<li><b>项目最后一定要有「省了多少时间」的数字。</b>100 张图人工整理 40 分钟 → 工具 2 分钟，做成一张表 + 截图。这条比技术本身更打动面试官。</li>
+</ul>
+
+<h2>面试讲项目的固定结构</h2>
+<div class="note">
+<b>问题是什么 → 我为什么这么选（舍弃了什么）→ 结果数据 → 踩过的坑。</b><br>
+尤其「舍弃了什么」和「踩过的坑」这两段，是面试官判断你有没有真做过的最快方式。准备了演示 Demo 的同学，这两段一定要提前演练。
+</div>
+
+<p class="foot">
+资源链接来自公开搜索结果整理，B 站视频的 BV 号可能因 UP 主调整而变动；若某个链接失效，直接用标题在 B 站搜索即可。<br>
+整理时间：2026-09-20
+</p>
+
+</div>
+</body>
+</html>

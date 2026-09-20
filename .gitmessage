@@ -1,0 +1,12 @@
+<type>(<scope>): 一句话标题
+
+现象：
+我以为：
+做法：
+结论：
+
+# ──────────── 以下是提示，提交前可删 ────────────
+# type：feat 新功能 / exp 对比实验 / fix 修 bug / refactor 重构 / docs 文档 / chore 环境
+# scope：day09 / rag / langgraph / chunking / retrieval / rag-eval / project / journal
+# 「我以为」写你当时的错误判断 —— 这段最值钱
+# 以 # 开头的行 Git 通常会自动删除

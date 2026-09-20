@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>影石实习 · Git 记录规范与逐日 Commit 安排</title>
+<style>
+:root{
+  --bg:#f7f8fa;
+  --card:#ffffff;
+  --ink:#1a1f2b;
+  --ink2:#4a5468;
+  --ink3:#8b93a5;
+  --line:#e4e7ee;
+  --line2:#eef0f5;
+  --accent:#4a5fd6;
+  --accent-bg:#eef1fd;
+  --must:#d94a3d;
+  --must-bg:#fdeeec;
+  --ok:#2e9e6b;
+  --ok-bg:#eaf7f1;
+  --warn:#c98a17;
+  --warn-bg:#fdf5e6;
+  --code-bg:#1e2430;
+  --code-ink:#d8dee9;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:15px; line-height:1.75; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1080px; margin:0 auto; padding:0 24px 80px}
+header{
+  background:linear-gradient(160deg,#2b3350 0%,#3d4568 55%,#4a5480 100%);
+  color:#fff; padding:44px 0 38px; margin-bottom:32px;
+}
+header .wrap{padding-bottom:0}
+.h-kicker{font-size:12.5px; letter-spacing:2.4px; text-transform:uppercase; color:#9aa6d4; font-weight:600; margin-bottom:12px}
+header h1{margin:0 0 14px; font-size:29px; line-height:1.35; font-weight:700; letter-spacing:-0.4px}
+header p{margin:0; color:#c3cae6; font-size:14.5px; max-width:760px}
+.h-meta{margin-top:20px; display:flex; gap:10px; flex-wrap:wrap}
+.h-chip{background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.18); padding:5px 12px; border-radius:20px; font-size:12.5px; color:#e2e7f8}
+
+nav.toc{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px 20px; margin-bottom:34px; display:flex; flex-wrap:wrap; gap:8px 18px}
+nav.toc a{color:var(--ink2); text-decoration:none; font-size:13.5px; padding:3px 0; border-bottom:1.5px solid transparent; transition:.15s}
+nav.toc a:hover{color:var(--accent); border-bottom-color:var(--accent)}
+
+section{margin-bottom:46px; scroll-margin-top:20px}
+h2{font-size:21px; margin:0 0 6px; font-weight:700; letter-spacing:-0.2px; display:flex; align-items:center; gap:10px}
+h2 .n{display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:8px; background:var(--accent); color:#fff; font-size:13px; font-weight:700; flex:none}
+.h2sub{color:var(--ink3); font-size:13.5px; margin:0 0 20px 36px}
+h3{font-size:16px; margin:26px 0 10px; font-weight:650}
+
+.lead{background:var(--card); border:1px solid var(--line); border-left:4px solid var(--accent); border-radius:10px; padding:18px 22px; margin-bottom:22px}
+.lead p{margin:0 0 8px}
+.lead p:last-child{margin-bottom:0}
+.lead b{color:var(--accent)}
+
+.card{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px 24px; margin-bottom:16px}
+.card p:first-child{margin-top:0}
+.card p:last-child{margin-bottom:0}
+
+.grid3{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; margin-bottom:18px}
+.pillar{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px 20px; position:relative; overflow:hidden}
+.pillar:before{content:""; position:absolute; top:0; left:0; right:0; height:3px}
+.pillar.a:before{background:var(--ink3)}
+.pillar.b:before{background:var(--accent)}
+.pillar.c:before{background:var(--ok)}
+.pillar h4{margin:0 0 6px; font-size:15px; font-weight:700}
+.pillar .tag{display:inline-block; font-size:11px; font-weight:700; padding:2px 8px; border-radius:5px; margin-bottom:9px}
+.pillar.a .tag{background:#eef0f5; color:var(--ink3)}
+.pillar.b .tag{background:var(--accent-bg); color:var(--accent)}
+.pillar.c .tag{background:var(--ok-bg); color:var(--ok)}
+.pillar p{margin:0; font-size:13.5px; color:var(--ink2)}
+.pillar .q{margin-top:10px; font-size:12.5px; color:var(--ink3); border-top:1px dashed var(--line); padding-top:9px}
+
+pre.tree{background:var(--code-bg); color:var(--code-ink); border-radius:10px; padding:20px 22px; overflow-x:auto; font-family:"SF Mono",Consolas,"Cascadia Mono",Menlo,monospace; font-size:12.8px; line-height:1.85; margin:16px 0}
+pre.tree .c{color:#7b8699}
+pre.tree .k{color:#9ecbff}
+pre.tree .e{color:#ffca85}
+
+table{width:100%; border-collapse:collapse; background:var(--card); font-size:13.5px; border-radius:10px; overflow:hidden; border:1px solid var(--line)}
+th{background:#f2f4f9; text-align:left; padding:11px 14px; font-weight:650; font-size:13px; color:var(--ink2); border-bottom:1px solid var(--line); white-space:nowrap}
+td{padding:11px 14px; border-bottom:1px solid var(--line2); vertical-align:top}
+tr:last-child td{border-bottom:none}
+code.inl{background:#eef0f5; padding:1.5px 6px; border-radius:4px; font-family:"SF Mono",Consolas,monospace; font-size:12.5px; color:#3f4a63}
+
+.codebox{background:var(--code-bg); border-radius:10px; padding:14px 16px; margin:12px 0; position:relative; overflow-x:auto}
+.codebox pre{margin:0; color:#c8e1ff; font-family:"SF Mono",Consolas,"Cascadia Mono",monospace; font-size:12.6px; line-height:1.8; white-space:pre}
+.codebox .ok-line{color:#8ee6b0}
+.cp{position:absolute; top:10px; right:12px; background:rgba(255,255,255,.1); color:#c3cce0; border:1px solid rgba(255,255,255,.16); border-radius:6px; font-size:11.5px; padding:3px 9px; cursor:pointer; font-family:inherit; transition:.15s}
+.cp:hover{background:rgba(255,255,255,.2); color:#fff}
+.cp.done{background:var(--ok); color:#fff; border-color:var(--ok)}
+
+.two{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+@media(max-width:720px){.two{grid-template-columns:1fr}}
+.bad,.good{border-radius:10px; padding:14px 16px; font-size:13.5px}
+.bad{background:#fdf1ef; border:1px solid #f5d5d0}
+.good{background:var(--ok-bg); border:1px solid #cfeadd}
+.bad .h,.good .h{font-size:12.5px; font-weight:700; margin-bottom:8px; letter-spacing:.5px}
+.bad .h{color:var(--must)}
+.good .h{color:var(--ok)}
+.bad pre,.good pre{margin:0; white-space:pre-wrap; word-break:break-word; font-family:"SF Mono",Consolas,monospace; font-size:12.2px; line-height:1.75; color:var(--ink2)}
+
+.week{margin-bottom:30px}
+.weekhead{display:flex; align-items:baseline; gap:12px; margin:0 0 4px; padding-bottom:10px; border-bottom:2px solid var(--line)}
+.weekhead .wn{font-size:12px; font-weight:700; letter-spacing:1.6px; color:#fff; background:var(--accent); padding:3px 10px; border-radius:6px}
+.weekhead h3{margin:0; font-size:17px; font-weight:700}
+.weekhead .wd{margin-left:auto; font-family:"SF Mono",Consolas,monospace; font-size:12.5px; color:var(--ink3)}
+.weekgo{font-size:13px; color:var(--ink3); margin:10px 0 16px}
+
+.day{background:var(--card); border:1px solid var(--line); border-radius:12px; margin-bottom:14px; overflow:hidden}
+.day.star{border-color:#f0cdc7; box-shadow:0 0 0 3px var(--must-bg)}
+.dh{display:flex; align-items:center; gap:12px; padding:13px 18px; background:#fafbfd; border-bottom:1px solid var(--line2); flex-wrap:wrap}
+.dh .dno{font-family:"SF Mono",Consolas,monospace; font-size:12px; font-weight:700; color:var(--accent); background:var(--accent-bg); padding:2px 9px; border-radius:5px}
+.dh .dtt{font-weight:650; font-size:14.5px}
+.dh .st{font-size:11px; font-weight:700; color:#fff; background:var(--must); padding:2px 8px; border-radius:5px}
+.dh .ddir{margin-left:auto; font-family:"SF Mono",Consolas,monospace; font-size:12px; color:var(--ink3)}
+.dbody{padding:14px 18px 16px}
+.clist{margin:0 0 10px; padding:0; list-style:none}
+.clist li{position:relative; padding-left:16px; font-size:13.5px; color:var(--ink2); margin-bottom:5px}
+.clist li:before{content:""; position:absolute; left:0; top:9px; width:6px; height:6px; border-radius:50%; background:var(--line); border:1.5px solid var(--ink3)}
+.note{background:var(--warn-bg); border-left:3px solid var(--warn); border-radius:0 8px 8px 0; padding:9px 14px; font-size:13px; color:#7d5a10; margin-top:11px}
+.tagline{margin-top:11px; font-size:13px}
+.tagline .tg{font-family:"SF Mono",Consolas,monospace; font-size:12.3px; background:#eef0f5; color:#3f4a63; padding:3px 9px; border-radius:5px}
+
+.dlabel{font-size:12.5px; font-weight:700; color:var(--ink3); letter-spacing:.6px; margin-bottom:9px}
+.cblock{position:relative; background:var(--code-bg); border-radius:10px; padding:15px 16px 12px; margin-bottom:11px}
+.cblock .cno{position:absolute; top:-8px; left:14px; font-size:10.5px; font-weight:700; color:#9aa6bd; background:var(--code-bg); padding:0 6px; letter-spacing:.8px}
+.cblock pre{margin:0; color:#c8e1ff; font-family:"SF Mono",Consolas,"Cascadia Mono",monospace; font-size:12.5px; line-height:1.85; white-space:pre-wrap; word-break:break-word}
+.cbtns{display:flex; gap:8px; margin-top:11px; border-top:1px solid rgba(255,255,255,.09); padding-top:10px}
+.cbtns button{background:rgba(255,255,255,.09); color:#c3cce0; border:1px solid rgba(255,255,255,.15); border-radius:6px; font-size:11.5px; padding:4px 12px; cursor:pointer; font-family:inherit; transition:.15s}
+.cbtns button:hover{background:rgba(255,255,255,.19); color:#fff}
+.cbtns button.primary{background:rgba(110,140,255,.28); border-color:rgba(140,165,255,.42); color:#dbe3ff}
+.cbtns button.done{background:var(--ok); border-color:var(--ok); color:#fff}
+
+.check{list-style:none; padding:0; margin:0}
+.check li{padding:9px 0 9px 30px; position:relative; border-bottom:1px dashed var(--line); font-size:14px}
+.check li:last-child{border-bottom:none}
+.check li:before{content:"✓"; position:absolute; left:4px; top:8px; color:var(--ok); font-weight:700}
+.check li b{color:var(--ink)}
+
+.callout{background:var(--accent-bg); border:1px solid #ccd5f8; border-radius:10px; padding:16px 20px; font-size:14px; color:#2f3d80}
+.callout b{color:var(--accent)}
+.foot{margin-top:50px; padding-top:20px; border-top:1px solid var(--line); font-size:13px; color:var(--ink3); text-align:center}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="h-kicker">Insta360 Intern Prep</div>
+    <h1>Git 记录规范与逐日 Commit 安排</h1>
+    <p>按 35 天学习计划排好的仓库结构、commit 消息模板和每天要敲的命令。核心只有一句：<b style="color:#fff">git log 就是你的学习证明，它比简历更有说服力。</b></p>
+    <div class="h-meta">
+      <span class="h-chip">5 个板块</span>
+      <span class="h-chip">7 种 commit 类型</span>
+      <span class="h-chip">35 天逐日命令</span>
+      <span class="h-chip">6 个里程碑 tag</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<nav class="toc">
+  <a href="#principle">核心原则</a>
+  <a href="#boards">一、分什么板块</a>
+  <a href="#tree">二、仓库结构</a>
+  <a href="#commit">三、Commit 写什么</a>
+  <a href="#compare">四、好与坏对比</a>
+  <a href="#pycharm">五、用 PyCharm 提交</a>
+  <a href="#daily">六、35 天逐日安排</a>
+  <a href="#rules">七、禁入清单与自查</a>
+</nav>
+
+<!-- ============ 核心原则 ============ -->
+<section id="principle">
+  <h2><span class="n">0</span>先记住三句话</h2>
+  <p class="h2sub">这三句话决定了后面所有细节，看不懂细节时回来对一下</p>
+
+  <div class="lead">
+    <p><b>1. 仓库不是给你复习用的，是给面试官看的。</b>你复习用的是笔记，面试官看的是证据。所以目录要按<b>「能不能被面试官直接看懂」</b>来分，不是按「我学没学过」来分。</p>
+    <p><b>2. 每天都要有 commit，时间要真实。</b>面试官会看提交记录的日期分布——连续 35 天的痕迹，比一个塞满代码但只提交过 3 次的仓库可信得多。切忌最后一天一次补 50 条。</p>
+    <p><b>3. commit message 是你未来的面试稿。</b>面试问「踩过什么坑」时，你不会记得三个月前的细节，但 <code class="inl">git log</code> 记得。所以每条 commit 都要写正文，写清楚「现象 / 原因 / 做法 / 结论」。</p>
+  </div>
+
+  <div class="callout">
+    <b>面试官读你的仓库，顺序永远是：</b>README 顶部 → benchmarks（效果数据）→ <code class="inl">git log --oneline</code>（看你是否真连续做了）→ 只有感兴趣才会点进源码。所以这三样东西的优先级，高于你的代码写得漂不漂亮。
+  </div>
+</section>
+
+<!-- ============ 板块划分 ============ -->
+<section id="boards">
+  <h2><span class="n">1</span>分什么板块：学 / 证 / 用</h2>
+  <p class="h2sub">整个仓库只分三个板块，任何文件都能归到其中之一</p>
+
+  <div class="grid3">
+    <div class="pillar a">
+      <span class="tag">板块 A · learning</span>
+      <h4>学 · 每天的练习目录</h4>
+      <p><code class="inl">week1-basics/</code> → <code class="inl">week4-adv/</code>，每天一个 <code class="inl">dayNN-主题/</code> 文件夹，里面放当天跑通的脚本。</p>
+      <div class="q">作用：证明你每天在学。面试官基本不会细看，但目录整齐本身就传递「这人做事有条理」。</div>
+    </div>
+    <div class="pillar b">
+      <span class="tag">板块 B · evidence</span>
+      <h4>证 · 能证明你动手调过的东西</h4>
+      <p><code class="inl">experiments/</code>（对比实验数据）、<code class="inl">errors/</code>（报错档案）、<code class="inl">docs/decisions.md</code>（技术选型）、<code class="inl">benchmarks/</code>（提效度量）。</p>
+      <div class="q">作用：<b>这是整个仓库最值钱的部分。</b>「你怎么切的、为什么」「踩过什么坑」「怎么证明省了时间」——三张考卷全在这里。</div>
+    </div>
+    <div class="pillar c">
+      <span class="tag">板块 C · product</span>
+      <h4>用 · 能演示的完整作品</h4>
+      <p><code class="inl">project/</code>，第 5 周的唯一产物。有 README、有数据、有界面、有提效表。</p>
+      <div class="q">作用：面试 80% 的时间会花在这里。没有它，前 28 天在面试里几乎等于白学。</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <p><b>为什么把「证」单独拎出来，而不是把实验散在各个 day 文件夹里？</b></p>
+    <p>因为散着放，面试时你要翻 35 个文件夹才能找出一份对比数据，等于没有。集中在 <code class="inl">experiments/</code> 下，面试前 5 分钟就能打开四个实验的结论页——切分对比、检索方案对比、RAG 评估表、提效度量表。<b>这四份东西就是你面试时手里的牌。</b></p>
+  </div>
+</section>
+
+<!-- ============ 仓库结构 ============ -->
+<section id="tree">
+  <h2><span class="n">2</span>仓库结构长什么样</h2>
+  <p class="h2sub">第 1 天就把骨架建好，之后每天只往里面填东西，不再改结构</p>
+
+<pre class="tree">insta360-ai-prep/
+├── <span class="k">README.md</span>              <span class="c">← 总入口：顶部放 3 个链接（效果数据 / 踩的坑 / 演示视频）</span>
+├── .gitignore              <span class="c">← 第 1 天必须写好，尤其 .env</span>
+├── .env.example            <span class="c">← 只放变量名，不放值</span>
+│
+├── <span class="k">docs/</span>
+│   ├── journal/            <span class="c">← 每日日志 2026-09-21.md ...（一条结论 + 今天的坑）</span>
+│   ├── decisions.md        <span class="c">← 技术选型决策：选了什么、为什么不选另一个</span>
+│   ├── feedback.md         <span class="c">← 别人试用的反馈（D24 起）</span>
+│   ├── traces/             <span class="c">← trace 截图（D28）</span>
+│   └── interview.md        <span class="c">← 面试题自答，边学边填</span>
+│
+├── <span class="k">errors/</span>
+│   └── index.md            <span class="c">← 报错档案：现象 / 我以为 / 实际 / 怎么定位（最值钱）</span>
+│
+├── <span class="k">week1-basics/</span>          <span class="c">← D1–D7  打通链路</span>
+│   ├── day01-setup/
+│   ├── day02-switch-model/
+│   └── ...
+├── <span class="k">week2-tools-agent/</span>      <span class="c">← D8–D14 工具与 Agent</span>
+├── <span class="k">week3-rag/</span>              <span class="c">← D15–D21 RAG 核心链路</span>
+├── <span class="k">week4-adv/</span>              <span class="c">← D22–D28 RAG 进阶 + LangGraph + 可观测</span>
+│
+├── <span class="k">experiments/</span>            <span class="c">← ★ 对比实验，面试主打</span>
+│   ├── chunking/           <span class="c">← D17 切分粒度对比（含结论页）</span>
+│   ├── embedding/          <span class="c">← D18 中文 embedding 选型</span>
+│   ├── retrieval/          <span class="c">← D20–21 四组检索方案对比</span>
+│   └── rag-eval/           <span class="c">← D23 20 题测试集 + 四项指标</span>
+│
+├── <span class="k">datasets/</span>
+│   ├── raw/                <span class="c">← 原始语料，进 .gitignore（大文件不入库）</span>
+│   └── README.md           <span class="c">← 说明数据来源与获取方式</span>
+│
+└── <span class="k">project/</span>                <span class="c">← ★ D29–D35 最终作品</span>
+    ├── src/
+    ├── data_pipeline/      <span class="c">← 可重复执行的管线脚本</span>
+    ├── benchmarks/         <span class="c">← 提效度量原始记录 + 图表</span>
+    └── README.md           <span class="c">← 解决什么问题 / 怎么跑 / 效果数据 / 我踩的坑</span>
+</pre>
+
+  <div class="card">
+    <p><b>两条容易忽略的规则</b></p>
+    <p>① <b>能重新生成的东西不入库，生成它的代码必须入库。</b>向量库文件（<code class="inl">chroma_db/</code>）、虚拟环境、<code class="inl">__pycache__</code> 全部 gitignore；但数据管线脚本一定要提交——「别人 clone 下来能重建整个库」才是工程能力。</p>
+    <p>② <b>大文件和密钥永不入库。</b>数据集超过 10MB 就把原始文件 gitignore，只提交 <code class="inl">datasets/README.md</code> 说明来源。<code class="inl">.env</code> 一旦推上去，key 就永久留在历史里，删文件也救不回来。</p>
+  </div>
+</section>
+
+<!-- ============ Commit 规范 ============ -->
+<section id="commit">
+  <h2><span class="n">3</span>每次 commit 写什么</h2>
+  <p class="h2sub">标题说清「做了什么」，正文说清「为什么这么做、结论是什么」</p>
+
+  <h3>标题格式</h3>
+  <div class="codebox"><pre>&lt;type&gt;(&lt;scope&gt;): &lt;中文一句话，用动词开头&gt;</pre></div>
+
+  <h3>type 只用这 7 种</h3>
+  <table>
+    <tr><th style="width:110px">type</th><th style="width:200px">什么时候用</th><th>对应你计划里的哪一天</th></tr>
+    <tr><td><code class="inl">feat</code></td><td>做出了一个能跑的新东西</td><td>绝大多数天，如 D2 切模型、D8 工具、D19 RAG 基线</td></tr>
+    <tr><td><code class="inl">exp</code></td><td><b>跑了一组对比实验，有数据</b></td><td>D3 参数对比、D17 切分、D18 选型、D21 检索、D23 评估、D34 提效</td></tr>
+    <tr><td><code class="inl">fix</code></td><td>修掉一个 bug</td><td>D11 异常中断、D33 超时重试</td></tr>
+    <tr><td><code class="inl">refactor</code></td><td>功能没变，代码结构变了</td><td>D5 改 LCEL、D26 RAG 改图结构</td></tr>
+    <tr><td><code class="inl">docs</code></td><td>日志、README、决策记录、面试题</td><td>每天都可能有</td></tr>
+    <tr><td><code class="inl">chore</code></td><td>环境、配置、依赖、仓库维护</td><td>D1 环境、D33 干净环境验证</td></tr>
+    <tr><td><code class="inl">test</code></td><td>测试代码</td><td>可选，做 RAG 评估脚本时可用</td></tr>
+  </table>
+
+  <div class="callout" style="margin-top:16px">
+    <b><code class="inl">exp</code> 是这里唯一非标准的类型，但对你最有价值。</b>面试官搜 <code class="inl">git log --grep="exp"</code> 就能一次看到你所有做过对比实验的痕迹——这比任何自述都硬。别把它混进 feat。
+  </div>
+
+  <h3>scope 用模块名或 day 编号</h3>
+  <table>
+    <tr><th style="width:170px">scope</th><th>含义</th></tr>
+    <tr><td><code class="inl">day09</code></td><td>当天的练习目录（week1–week4 都用这个）</td></tr>
+    <tr><td><code class="inl">rag</code> / <code class="inl">langgraph</code> / <code class="inl">assistant</code></td><td>已经成型的模块，跨天迭代时用</td></tr>
+    <tr><td><code class="inl">chunking</code> / <code class="inl">retrieval</code> / <code class="inl">rag-eval</code></td><td>experiments 下的实验名</td></tr>
+    <tr><td><code class="inl">project</code></td><td>第 5 周主项目</td></tr>
+    <tr><td><code class="inl">journal</code> / <code class="inl">decisions</code> / <code class="inl">feedback</code></td><td>docs 下各类文档</td></tr>
+  </table>
+
+  <h3>正文用「四段式」——这是核心</h3>
+  <p style="font-size:14px; color:var(--ink2); margin:8px 0 4px">不用写长，每段一两句就够。但这四段决定了三个月后你还讲不讲得出来。</p>
+  <table>
+    <tr><th style="width:110px">段落</th><th>写给谁看</th></tr>
+    <tr><td><b>现象</b></td><td>发生了什么（报错、结果不对、效果差）</td></tr>
+    <tr><td><b>我以为 / 原因</b></td><td>你当时的错误判断，以及真实原因。<b>「我以为」这一段最值钱</b>——面试官能从中看出你是想过的</td></tr>
+    <tr><td><b>做法</b></td><td>最后怎么改的</td></tr>
+    <tr><td><b>结论</b></td><td>一句话可复用的经验，面试时直接说这句</td></tr>
+  </table>
+
+  <h3>每天的 commit 数量</h3>
+  <p style="font-size:14px; color:var(--ink2)">每天 <b>至少 2 条</b>（代码 + 日志），<b>不超过 6 条</b>。一个 commit 只做一件事——把「加了工具」和「修了工具的 bug」分成两条，别合成一条。</p>
+</section>
+
+<!-- ============ 好与坏 ============ -->
+<section id="compare">
+  <h2><span class="n">4</span>同样一天，好坏两种写法</h2>
+  <p class="h2sub">以 D9「手写 Agent 循环」为例——这是整份计划里最重要的一天</p>
+
+  <div class="two">
+    <div class="bad">
+      <div class="h">✕ 大多数人的写法</div>
+<pre>git commit -m "update"
+git commit -m "学习"
+git commit -m "完成第9天内容"
+git commit -m "修复bug"</pre>
+    </div>
+    <div class="good">
+      <div class="h">✓ 你应该的写法</div>
+<pre>feat(day09): 手写 while 循环 Agent，脱离框架
+
+现象：模型返回的 tool_calls 结构看不懂，
+     第一次直接把它塞回 messages 报错
+原因：tool_calls 是「意图」不是「消息」，
+     必须先执行工具，再把结果包成
+     ToolMessage 回传
+做法：循环 调模型 → 有 tool_calls 就执行
+     → 追加 ToolMessage → 直到没有
+结论：框架替我做的就是循环控制 + 消息
+     组装 + 异常兜底；模型本身没有
+     任何执行权限，权限全在我代码里</pre>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <p><b>差别在哪：</b>左边那四条，三个月后面试时你只能说出「我手写过 Agent」。右边这条，你能直接讲出「模型不执行任何东西，它只输出意图」这句话——面试官听完就知道你不是调包侠。</p>
+    <p>而且右边的细节是<b>当天记住的，不是事后编的</b>。事后补的笔记会变成「我学会了 Tools 和 Agent」这种废话，因为细节已经忘了。</p>
+  </div>
+</section>
+
+<!-- ============ 逐日安排 ============ -->
+<!-- ============ PyCharm ============ -->
+<section id="pycharm">
+  <h2><span class="n">5</span>用 PyCharm 提交（替代命令行）</h2>
+  <p class="h2sub">下面 35 天里所有的提交内容都按 PyCharm 的操作来；命令行只是备选，两边的文字内容完全一样</p>
+
+  <h3>每天固定四个动作</h3>
+  <table>
+    <tr><th style="width:46px">#</th><th style="width:170px">动作</th><th>要点</th></tr>
+    <tr><td>1</td><td>Ctrl + K 打开提交窗口</td><td><b>注意：Ctrl + K 会默认勾选整个 changelist，也就是当天所有改动。</b>不属于这条 commit 的文件必须手动取消勾选——这一步决定了你的提交干不干净</td></tr>
+    <tr><td>2</td><td>勾选这条 commit 要含的文件</td><td>一条 commit 只勾一个主题。「加了工具」和「修了工具的 bug」要分两次勾选、提交两次</td></tr>
+    <tr><td>3</td><td>粘贴提交信息</td><td>点下面对应那条的「复制消息」，粘进窗口下方的输入框。<b>第一行是标题，空一行，后面是四段正文</b></td></tr>
+    <tr><td>4</td><td>Commit / Commit and Push</td><td>Ctrl + K 提交本地，Ctrl + Shift + K 推送。<b>一天结束时推一次就够</b>，不用每条都推</td></tr>
+  </table>
+
+  <div class="callout" style="margin-top:16px">
+    PyCharm 的提交框是<b>一个大文本框，没有分开的「标题」和「正文」字段</b>。Git 是按「第一行 + 一个空行」来切标题和正文的，所以<b>那个空行必须留</b>，否则你整段消息会变成一条超长标题，<code class="inl">git log --oneline</code> 里会糊成一团。
+  </div>
+
+  <h3>三个必须改的设置</h3>
+  <p style="font-size:13.5px;color:var(--ink2);margin:6px 0 12px">路径：<code class="inl">File | Settings | Version Control | Commit</code>（Mac 是 <code class="inl">PyCharm | Settings</code>），快捷键 Ctrl + Alt + S 打开设置后搜 <code class="inl">commit</code> 最快。</p>
+  <table>
+    <tr><th style="width:250px">设置项</th><th style="width:80px">建议</th><th>为什么</th></tr>
+    <tr><td><b>Clear initial commit message</b></td><td>勾上</td><td>PyCharm 默认会把<b>上一次的提交信息</b>自动填进输入框。你的消息是四段长文，不清空就得每次全选删掉，非常烦</td></tr>
+    <tr><td><b>Force non-empty commit comments</b></td><td>勾上</td><td>防止手滑提交一条空信息的 commit</td></tr>
+    <tr><td><b>Reformat code / Rearrange code / Optimize imports</b></td><td>全关</td><td>这三个会在提交前<b>自动改你的代码</b>，让 diff 里混进一堆和今天无关的改动。学习阶段最忌讳这个——diff 一乱，「今天到底改了什么」就说不清了</td></tr>
+  </table>
+  <p style="font-size:13.5px;color:var(--ink2);margin:10px 0 0">同页面的 <b>Commit message inspections</b> 区域，把「限制主题行宽度」和「限制正文行宽度」都勾上、都设 <b>72</b>。写太长时 PyCharm 会标黄提醒，帮你自然写成多行。<br>
+  （<b>Analyze code</b> 可以留着，它只提示、不改代码。）</p>
+
+  <h3>最省事的一招：把四段式设成默认模板</h3>
+  <p style="font-size:13.5px;color:var(--ink2)">PyCharm 支持 Git 的提交模板。把 <code class="inl">gitmessage-template.txt</code> 放进仓库根目录、改名为 <code class="inl">.gitmessage</code>，然后执行一次：</p>
+  <div class="codebox"><pre>git config --local commit.template .gitmessage</pre><button class="cp">复制</button></div>
+  <p style="font-size:13.5px;color:var(--ink2)">之后每次打开提交框，「现象 / 我以为 / 做法 / 结论」四段骨架已经在那儿了，你只要往里填。<br>
+  <b>必须配合勾上 Clear initial commit message</b>，否则上一条的旧消息会盖住模板。以 <code class="inl">#</code> 开头的行 Git 通常会自动删掉，所以模板里可以放心写提示——但<b>第一次提交后请用 <code class="inl">git log -1</code> 看一眼</b>，如果那些提示行没被删掉，就把 <code class="inl">#</code> 行从模板里去掉。</p>
+
+  <h3>还有两个 PyCharm 专属提醒</h3>
+  <ul class="check">
+    <li><b>第一次提交时 PyCharm 会问 <code class="inl">.idea/</code> 要不要纳入版本控制</b>，个人学习仓库直接选忽略。</li>
+    <li><b>打 tag 在 Git 工具窗里：</b>Alt + 9 打开 → Log 标签页 → 右键某条 commit → New Tag。只在 8 个里程碑日做这一步，对应下面表格里标了 tag 的那几天。</li>
+    <li><b>提交前点一下文件看 diff。</b>这是 PyCharm 比命令行强的地方——你能一眼看出有没有混进无关改动，多用。</li>
+  </ul>
+</section>
+
+<!-- ============ 逐日安排 ============ -->
+<section id="daily">
+  <h2><span class="n">6</span>35 天逐日 Commit 安排</h2>
+  <p class="h2sub">每天列出目录和几条 commit。点「复制消息」直接粘进 PyCharm 的提交框；标 <span style="color:var(--must);font-weight:700">重点</span> 的四天不要跳过</p>
+  <div id="daily-root"></div>
+</section>
+
+<!-- ============ 规则 ============ -->
+<section id="rules">
+  <h2><span class="n">7</span>禁入清单与提交前自查</h2>
+  <p class="h2sub">这些是新人最常犯、且后果最严重的错误</p>
+
+  <h3>.gitignore 第 1 天就要写好</h3>
+  <div class="codebox"><pre>.env
+*.env
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+node_modules/
+chroma_db/
+*.sqlite
+data/raw/
+datasets/raw/
+.DS_Store
+.idea/
+.vscode/</pre><button class="cp">复制</button></div>
+  <p style="font-size:13.5px; color:var(--ink2)">最后两行的思路要记住：<b>向量库和原始数据不入库，生成它们的脚本入库。</b></p>
+
+  <h3>永不提交的东西</h3>
+  <table>
+    <tr><th style="width:180px">东西</th><th>为什么</th></tr>
+    <tr><td><code class="inl">.env</code> / API Key</td><td>推上去就永久留在历史里，<code class="inl">git rm</code> 也删不掉。写 <code class="inl">.env.example</code> 代替</td></tr>
+    <tr><td>向量库目录、模型权重</td><td>体积大、可再生。别人 clone 后跑一遍脚本就该重建出来</td></tr>
+    <tr><td>超过 10MB 的数据集</td><td>GitHub 单文件超 100MB 直接拒收；大文件放 <code class="inl">raw/</code> 并 gitignore，用 README 写清来源</td></tr>
+    <tr><td>临时调试脚本、<code class="inl">check.js</code> 这类</td><td>删掉或放进 <code class="inl">scratch/</code> 并 gitignore，别污染主目录</td></tr>
+    <tr><td>别人的代码直接拷进来</td><td>教程源码照抄一定注明出处，否则面试问细节你答不上来，反而扣分</td></tr>
+  </table>
+
+  <h3>提交前自查 4 问</h3>
+  <ul class="check">
+    <li><b>这条 commit 能不能用一句话说清？</b>说不清就是做的事太多，拆成两条。</li>
+    <li><b>代码跑过一遍了吗？</b>提交跑不起来的代码，等于给自己的仓库埋雷。（<code class="inl">git commit --amend</code> 可以救，但别依赖它）</li>
+    <li><b>今天的结论写下来了吗？</b>没有结论的一天，等于没学——因为三天后就忘了。</li>
+    <li><b>有没有把 key 或大文件带进去？</b><code class="inl">git status</code> 看一眼再 add，这是唯一一次能反悔的机会。</li>
+  </ul>
+
+  <h3>分支与 tag 策略（保持极简，别给自己加负担）</h3>
+  <div class="card">
+    <p><b>分支：</b>日常就在 <code class="inl">main</code> 上一条线走，<b>不要每天开分支</b>。只有两种情况才开：① 第 5 周做项目的新功能，用 <code class="inl">feat/project-xxx</code>；② 做破坏性改造（D26 把 RAG 改成图结构）时，开一条 <code class="inl">experiment/</code> 分支试，成了再合。<b>目的只有一个：保住 D19 那个能跑的 RAG 基线不被搞坏。</b></p>
+    <p><b>tag：每个阶段的成品都打一个</b>，共 8 个。这样面试前你能一句话说清进度，也能随时回到任意一个可用版本演示——演示翻车时，回滚到上一个 tag 只需要一条命令。</p>
+  </div>
+
+  <table>
+    <tr><th style="width:110px">时间</th><th style="width:200px">tag</th><th>含义</th></tr>
+    <tr><td>D7</td><td><code class="inl">w1-cli-v0.1</code></td><td>第一个可交付物：流式对话 CLI</td></tr>
+    <tr><td>D14</td><td><code class="inl">w2-assistant-v0.2</code></td><td>带工具和记忆的助手</td></tr>
+    <tr><td>D19</td><td><code class="inl">w3-rag-baseline</code></td><td><b>RAG 基线，后面所有优化都对着它比</b></td></tr>
+    <tr><td>D21</td><td><code class="inl">w3-rag-v0.4</code></td><td>加完过滤 / MMR / 混合检索</td></tr>
+    <tr><td>D24</td><td><code class="inl">w4-web-v0.5</code></td><td>能给别人用的网页版</td></tr>
+    <tr><td>D28</td><td><code class="inl">w4-obs-v0.6</code></td><td>接上可观测，有 trace</td></tr>
+    <tr><td>D32</td><td><code class="inl">w5-project-alpha</code></td><td>项目界面完成，可给别人试用</td></tr>
+    <tr><td>D35</td><td><code class="inl">v1.0-demo</code></td><td>最终作品，面试演示用这个</td></tr>
+  </table>
+
+  <h3>最后：README 顶部放什么</h3>
+  <div class="card">
+    <p>面试官只会给你 3 分钟。所以 README 最上方不要写「本仓库用于学习 LangChain」，直接放三个链接：</p>
+    <p>① <b>效果数据</b> → <code class="inl">project/benchmarks/</code>（100 条人工 40 分钟 vs 工具 2 分钟）<br>
+    ② <b>我踩过的坑</b> → <code class="inl">errors/index.md</code><br>
+    ③ <b>演示视频</b> → 2–3 分钟链接</p>
+    <p>这三个链接点完，你已经比 90% 的候选人更能打了。剩下的源码，感兴趣的人自然会看。</p>
+  </div>
+</section>
+
+<div class="foot">配合《影石实习-35天学习计划表》使用 · 目录与每日任务一一对应</div>
+
+</div>
+
+<script>
+var WEEKS = [
+{w:1, title:"打通链路", dir:"week1-basics/", goal:"把模型、消息、管道、结构化输出摸熟，产出一个能跑的 CLI 工具。",
+ days:[
+ {d:1, t:"环境搭建 + LangChain 全景", dir:"week1-basics/day01-setup/",
+  c:[{s:"chore(day01): 初始化仓库与 Python 虚拟环境", b:["装好 langchain + langchain-openai","DeepSeek 的 base_url 与 key 走 .env，确认没被 git 跟踪"]},
+     {s:"feat(day01): 跑通首次模型调用", b:["最小可运行脚本，一行初始化模型即可返回结果"]},
+     {s:"docs(journal): D1 日志", b:["结论：环境一次配好，后面 34 天不再折腾配置"]}],
+  n:"今天 .gitignore 一定要写对。key 一旦推上去就永久留在历史里，删文件也救不回来。"},
+
+ {d:2, t:"模型的创建与调用", dir:"week1-basics/day02-switch-model/",
+  c:[{s:"feat(day02): 同一份代码切换 DeepSeek / 通义 / 智谱", b:["把模型名与 base_url 提到配置层，切换只改一个变量","三家模型对同一问题的回答各留 1 条"]}],
+  n:"这条 commit 是面试高频点的物证：「框架给你的第一个真实价值是什么」——换供应商只改一行。"},
+
+ {d:3, t:"调用方式与流式输出", dir:"week1-basics/day03-stream/",
+  c:[{s:"feat(day03): 增加流式输出", b:["stream 逐块打印","理解打字机效果的来源是模型分块返回，不是前端动画"]},
+     {s:"exp(params): temperature 与 max_tokens 参数影响对比", b:["现象：temperature=0 跑 5 次措辞几乎一致，=1 跑 5 次明显发散","现象：max_tokens 设小会中途截断，且截断处不一定是句子结尾","结论：确定性任务用 0，创意文案才调高"]}]},
+
+ {d:4, t:"Message 与提示词模板", dir:"week1-basics/day04-messages/",
+  c:[{s:"feat(day04): 手动维护 messages 数组实现 3 轮对话", b:["自己 append HumanMessage / AIMessage，全程不用任何记忆类","结论：所谓上下文，就是你自己维护的一个数组"]}],
+  n:"这句结论想明白，后面 Agent 的记忆和上下文裁剪都不用死记。"},
+
+ {d:5, t:"LCEL 管道", dir:"week1-basics/day05-lcel/",
+  c:[{s:"refactor(day05): 第 4 天对话改写为 LCEL 管道", b:["prompt | model | parser，invoke / stream / batch / ainvoke 四种各写一遍","一句话总结管道符：把上一个 Runnable 的输出接给下一个的输入"]}]},
+
+ {d:6, t:"结构化输出", dir:"week1-basics/day06-structured/",
+  c:[{s:"feat(day06): Pydantic 结构化抽取，输出直接驱动代码分支", b:["从一句话里抽「姓名 / 公司 / 需求 / 紧急度」","结果直接 if 分支，不再靠字符串匹配判断"]}],
+  n:"本仓库第一个「玩具 → 工程」的转折点，值得单独一条 commit 记下来。"},
+
+ {d:7, t:"周末产出：流式对话 CLI 工具", dir:"week1-basics/day07-cli/", tag:"w1-cli-v0.1",
+  c:[{s:"feat(cli): 流式对话 CLI v0.1", b:["串起 D1–D6：流式对话 + 一个结构化抽取命令"]},
+     {s:"docs: README 记录 3 个踩过的坑", b:["每条按 现象 / 我以为 / 实际 / 怎么定位 写","坑 1：","坑 2：","坑 3："]}],
+  n:"今天不学新内容。打 tag，这是你第一个可交付的东西。"}
+]},
+
+{w:2, title:"工具与 Agent", dir:"week2-tools-agent/", goal:"从「会调 API」跨到「会做 Agent」。D9 是整份计划最高价值的节点。",
+ days:[
+ {d:8, t:"工具（Tools）基础", dir:"week2-tools-agent/day08-tools/",
+  c:[{s:"feat(day08): 两个 @tool（查天气 / 算数）+ bind_tools", b:["关键：把模型返回的 tool_calls 原始 JSON 完整打印并存进日志","它是理解 Agent 的真正起点"]}],
+  n:"第一次亲眼看到「模型返回的是一个调函数请求」。这份 JSON 截图留着，面试讲 Tool Calling 时直接拿出来。"},
+
+ {d:9, t:"手写 Agent 循环（脱离框架）", dir:"week2-tools-agent/day09-handwritten-agent/", star:1,
+  c:[{s:"feat(day09): 手写 while 循环 Agent，脱离框架", b:["流程：调模型 → 有 tool_calls 就执行 → 结果包成 ToolMessage 回传 → 再调模型","直到模型不再返回 tool_calls 为止，全程不用 create_agent"]},
+     {s:"docs(decisions): 手写循环 vs create_agent 的职责边界", b:["模型只输出意图，没有任何执行权限","执行、消息组装、异常兜底，全是我的代码在做","这条边界就是面试时「框架帮你做了什么」的答案"]}],
+  n:"本仓库最重要的一条 commit。面试被问「框架替你做了什么」，你直接打开这个文件讲。"},
+
+ {d:10, t:"用 create_agent 重建", dir:"week2-tools-agent/day10-create-agent/",
+  c:[{s:"feat(day10): 用 create_agent 重建 D9 的 Agent", b:["接上 D8 的两个工具，输入输出与手写版对齐后再对比"]},
+     {s:"docs(decisions): 框架多做了什么 / 少做了什么", b:["多：循环控制、消息组装、异常兜底、流式事件","少：复杂分支的可控性变差，要下拉到 LangGraph 才拿得回来"]}],
+  n:"这份对比笔记本身就是面试素材，别只留在脑子里。"},
+
+ {d:11, t:"Agent 进阶用法", dir:"week2-tools-agent/day11-agent-advanced/",
+  c:[{s:"fix(day11): 单个工具抛异常导致 Agent 循环整体中断", b:["现象：工具报错直接冒到顶层，后续轮次全没了","原因：执行工具那一步没有 try/except","做法：把异常信息包成字符串，当 ToolMessage 回传即可","结论：工具失败不该中断循环，而应把错误当结果交给模型自己判断"]},
+     {s:"feat(day11): 工具扩到 4 个，错误作为结果回传", b:["故意让一个工具失败，验证 Agent 能绕过去继续完成任务"]}],
+  n:"「工具失败时把错误当结果回传」——这个设计点面试很爱问，答得出来就是工程思维。"},
+
+ {d:12, t:"上下文与记忆", dir:"week2-tools-agent/day12-memory/",
+  c:[{s:"feat(day12): 短期记忆，能记住 3 轮前提到的信息", b:["验证方式：第 1 轮说我叫 X，第 4 轮问我是谁"]},
+     {s:"docs(journal): D12 日志 —— 上下文工程的两难", b:["全量塞进去 → 又贵又慢；裁太狠 → 丢关键信息","记录我最终选的裁剪策略和理由"]}]},
+
+ {d:13, t:"记忆持久化", dir:"week2-tools-agent/day13-persist/",
+  c:[{s:"feat(day13): 对话历史落 SQLite，重启进程可续聊", b:["用 checkpointer 持久化","重启后用同一个 thread_id 验证上下文还在"]}],
+  n:"「重启不丢上下文」是内部工具的基本要求，不是加分项。"},
+
+ {d:14, t:"周末产出：多功能智能助手", dir:"week2-tools-agent/day14-assistant/", tag:"w2-assistant-v0.2",
+  c:[{s:"feat(assistant): 多功能助手 v0.2（工具 + 记忆 + 流式 + 界面）", b:["查 / 算 / 写 三类工具，接上 D13 的持久化记忆"]},
+     {s:"docs(journal): 第 2 周复盘", b:["搞懂了什么 / 还没懂什么 / 下周验证什么","附 1 张运行截图"]}]}
+]},
+
+{w:3, title:"RAG 核心链路", dir:"week3-rag/", goal:"从零搭出一个真正可用的文档问答系统，并用数据证明它有效。",
+ days:[
+ {d:15, t:"RAG 原理与三种架构", dir:"week3-rag/day15-corpus/",
+  c:[{s:"chore(datasets): 确定语料库", b:["课程资料 / 影石产品说明 / 你熟悉的技术文档","原始大文件放 datasets/raw 并 gitignore，只提交清单与来源说明"]},
+     {s:"docs(day15): RAG 要解决的 3 个具体问题", b:["写清「现在人工怎么查、慢在哪」","这段描述是 D34 提效度量的基准线，现在写下来后面才有对比"]}],
+  n:"从今天起所有练习都用你自己的语料。面试时这套语料就是你的项目。还要记得：2-Step / Agentic / Hybrid 三种架构的取舍也写进 decisions。"},
+
+ {d:16, t:"文档加载", dir:"week3-rag/day16-loaders/",
+  c:[{s:"feat(day16): 支持 PDF / Markdown / 网页三种加载", b:["打印 Document 的 page_content 与 metadata","看清元数据里哪些字段后面可用于过滤"]}]},
+
+ {d:17, t:"文本切分（关键实验）", dir:"experiments/chunking/", star:1,
+  c:[{s:"exp(chunking): 500 / 1000 / 2000 三种粒度切分对比", b:["同一份文档三种粒度各切一遍","记录：chunk 数量、内容完整性、有没有把一句话切断","三种粒度的样例各存一份，方便面试时现场展示"]},
+     {s:"docs(decisions): 选定 chunk_size=1000 + 15% 重叠", b:["理由：500 太碎丢上下文，2000 检索精度下降","附上对比数据支撑这个选择"]}],
+  n:"面试必问「你怎么切的、为什么」——这条 commit 就是答案。这也是四条铁律里唯一提前指定的实验。"},
+
+ {d:18, t:"向量与 Embedding", dir:"experiments/embedding/",
+  c:[{s:"feat(day18): 向量化并手算句间相似度", b:["验证「语义相近 = 向量相近」，存一组正例和反例"]},
+     {s:"exp(embedding): 中文 embedding 选型对比", b:["默认模型 / bge-large-zh / 通义 embedding 三家","同一组查询，看排序结果差异，记录结论"]}],
+  n:"中文 Embedding 选型是常被忽略、但效果差异很大的点，单独做成实验。"},
+
+ {d:19, t:"向量库 + 最小可用 RAG", dir:"week3-rag/day19-mvp/", tag:"w3-rag-baseline",
+  c:[{s:"feat(rag): 最小可用 RAG 基线 v0.3", b:["Chroma + top-4 检索 + 拼提示词 + 生成回答 + 打印引用来源","这是第一个真正意义上的 RAG，后续所有优化都对着它比"]}],
+  n:"基线必须打 tag。否则后面「优化了」无法证明——没有基线就没有对比。"},
+
+ {d:20, t:"检索优化", dir:"week3-rag/day20-retrieval/",
+  c:[{s:"feat(rag): 加 metadata 过滤与 MMR，对比基线", b:["按来源 / 日期过滤；MMR 减少重复片段","同一批 10 个问题，记录与基线的结果差异"]}]},
+
+ {d:21, t:"Rerank 与混合检索", dir:"experiments/retrieval/", tag:"w3-rag-v0.4",
+  c:[{s:"feat(rag): BM25 + 向量混合检索 + RRF 融合", b:["两路召回后用 RRF 融合排序"]},
+     {s:"exp(retrieval): 四组检索方案命中率汇总", b:["纯向量 / +metadata / +MMR / +混合检索","同一测试问题集，做成一张对比表"]}],
+  n:"到这里你已有 4 组对比实验（切分 / 过滤 / MMR / 混合检索）。它们是你真动手调过的物证，千万别散落在本地。"}
+]},
+
+{w:4, title:"RAG 进阶 + LangGraph + 可观测", dir:"week4-adv/", goal:"把 RAG 变成能给别人用的产品，加上流程控制和人工确认，再补上可观测。",
+ days:[
+ {d:22, t:"表格处理与长文摘要", dir:"week4-adv/day22-table-summary/",
+  c:[{s:"feat(day22): 带表格 PDF 解析 + 长文分段摘要汇总", b:["表格单独抽取后再入向量库，避免和正文混在同一个 chunk","长文走「分段摘要 → 再汇总」两段式"]}]},
+
+ {d:23, t:"RAG 评估（数据意识）", dir:"experiments/rag-eval/", star:1,
+  c:[{s:"exp(rag-eval): 20 题测试集四项指标", b:["检索命中率 / 答案正确率 / 平均耗时 / 平均 token 消耗","测试集含 3 个「资料里没有」的问题，专门测它会不会硬编答案"]},
+     {s:"docs(decisions): 评估结论与下一步优化方向", b:["哪类问题表现最差","是检索的问题还是生成的问题，下一步先改哪里"]}],
+  n:"这张表直接对应 JD 最后一条「有数据意识」。没有它，前面所有工作都只是「我感觉还行」。"},
+
+ {d:24, t:"包成能给别人用的产品", dir:"week4-adv/day24-webapp/", tag:"w4-web-v0.5",
+  c:[{s:"feat(webapp): Streamlit 网页版（上传 + 提问 + 引用来源）", b:["至少发给一个同学真的用一次"]},
+     {s:"docs(feedback): 3 条真实试用反馈", b:["谁试用的、卡在哪一步、我怎么改的","附试用界面截图"]}],
+  n:"对应 JD 的「有把工具交付给别人真正用起来的经验」。截图一定要存，这是唯一的证据。"},
+
+ {d:25, t:"LangGraph 入门：状态图", dir:"week4-adv/day25-langgraph/",
+  c:[{s:"feat(langgraph): 第一个 StateGraph（State + Node + Edge）", b:["State 用 TypedDict 定义，跑通最小图","一句话理解：Agent 就是一个被画出来的 while 循环"]}]},
+
+ {d:26, t:"状态、记忆与图化改造", dir:"week4-adv/day26-graph-rag/",
+  c:[{s:"refactor(day26): RAG 改写为检索节点 + 生成节点 + 条件边", b:["为加分支和人工确认做准备","行为与 v0.4 对齐后再删旧代码，先保留旧路径"]}],
+  n:"这是破坏性改造，建议开一条 experiment/ 分支做，保住 w3-rag-v0.4 那个能跑的版本。"},
+
+ {d:27, t:"人工介入（Human-in-the-Loop）", dir:"week4-adv/day27-hitl/",
+  c:[{s:"feat(langgraph): 加 interrupt，敏感操作前人工确认", b:["涉及写操作时暂停，用户确认后才继续","拒绝时的回退路径也要写清楚"]}],
+  n:"内部工具几乎都需要这一步。面试讲这个很加分——它体现你有工程风险意识，而不是只会跑通 demo。"},
+
+ {d:28, t:"可观测：trace 与成本", dir:"week4-adv/day28-observability/", tag:"w4-obs-v0.6",
+  c:[{s:"feat(day28): 接入 LangSmith（或自建 LangFuse）可观测", b:["跑一遍 D24 的网页版，导出完整 trace"]},
+     {s:"docs(traces): trace 截图与耗时分析", b:["每一步耗时与 token 消耗","定位最慢的一步，写清原因"]}],
+  n:"「我通过 trace 定位到检索为空导致回答跑偏」——这句话比任何理论都有说服力。"}
+]},
+
+{w:5, title:"项目冲刺", dir:"project/", goal:"把前面所有碎片变成一个能演示、有数据、能写进简历的完整作品。没有这一周，前 28 天在面试里几乎等于白学。",
+ days:[
+ {d:29, t:"选题与数据准备", dir:"project/",
+  c:[{s:"docs(project): 一页需求说明", b:["解决什么问题 / 谁用 / 现在怎么做 / 预计能省多少时间","这版做什么，以及不做什么"]},
+     {s:"chore(project): 真实数据入库", b:["不少于 50 条样本，清洗后提交","原始文件放 raw/ 并 gitignore"]}],
+  n:"先写「不做什么」。范围失控是学生项目最大的死因。"},
+
+ {d:30, t:"数据管线", dir:"project/data_pipeline/",
+  c:[{s:"feat(project): 可重复执行的数据管线", b:["加载 → 清洗 → 切分 → 向量化 → 入库，一条命令跑完","不要手动跑一遍就算完，别人要能复现"]},
+     {s:"feat(project): 为每条数据补 metadata", b:["来源 / 时间 / 类型，后面检索过滤要用"]}]},
+
+ {d:31, t:"Agent 主链路", dir:"project/src/",
+  c:[{s:"feat(project): Agent 主链路（2 个工具 + 检索）", b:["一个查内部数据，一个做实际动作"]},
+     {s:"feat(project): 结构化输出约束返回格式", b:["答案 + 依据 + 是否找到依据","没找到依据时不许硬编答案"]}]},
+
+ {d:32, t:"界面与可用性", dir:"project/src/", tag:"w5-project-alpha",
+  c:[{s:"feat(project): 界面完成", b:["输入 / 结果 / 引用来源 / 加载状态 / 错误提示"]},
+     {s:"docs(feedback): 试用记录", b:["找人试用，记录他们卡在哪一步","卡住的地方就是你要改的地方"]}],
+  n:"「第一次用的人会不会懵」是判断工具好坏的唯一标准。"},
+
+ {d:33, t:"健壮性补齐", dir:"project/src/",
+  c:[{s:"fix(project): 超时重试与空检索提示", b:["现象：网络抖动直接报错退出 / 检索为空时模型硬编答案","做法：指数退避重试；空结果给明确提示","结论：模型不确定时要让它承认不知道，这比答错强"]},
+     {s:"chore(project): 干净环境重装验证", b:["新建虚拟环境 + 严格按 README 重跑一遍","确认别人 clone 下来也能跑起来"]}],
+  n:"演示当天跑不起来的项目，不如不做。这一步不能省。"},
+
+ {d:34, t:"提效度量（最关键的一天）", dir:"project/benchmarks/", star:1,
+  c:[{s:"exp(project-benchmark): 人工 vs 工具 100 条对照数据", b:["人工做 100 条计时 vs 工具做同样 100 条计时","同时对比准确率与 token 花费，原始记录一并提交"]},
+     {s:"docs(project): 提效度量表与图", b:["单次省多少分钟、按每周用 5 次折算、一个月折合多少小时","做成一张表 + 一张图"]}],
+  n:"整个计划里最对应 JD 的一天。「100 条人工 40 分钟 → 工具 2 分钟，每周省 3 小时」——这句话就是你面试时最有力的输出。"},
+
+ {d:35, t:"演示、文档与包装", dir:"project/", tag:"v1.0-demo",
+  c:[{s:"docs(project): README 四段", b:["解决什么问题 / 怎么跑 / 效果数据 / 我踩的坑"]},
+     {s:"docs(project): 架构图", b:["凭记忆画，不要看代码","画不出来说明结构还没想清楚"]},
+     {s:"chore: 演示视频与仓库首页链接", b:["2–3 分钟演示视频链接","README 顶部放：效果数据 / 踩的坑 / 演示视频 三个链接"]}]}
+]}
+];
+
+var root = document.getElementById("daily-root");
+var html = [];
+for (var wi = 0; wi < WEEKS.length; wi++) {
+  var wk = WEEKS[wi];
+  html.push('<div class="week">');
+  html.push('<div class="weekhead"><span class="wn">WEEK ' + wk.w + '</span><h3>' + wk.title + '</h3><span class="wd">' + wk.dir + '</span></div>');
+  html.push('<div class="weekgo">' + wk.goal + '</div>');
+  for (var di = 0; di < wk.days.length; di++) {
+    var day = wk.days[di];
+    html.push('<div class="day' + (day.star ? ' star' : '') + '">');
+    html.push('<div class="dh"><span class="dno">D' + day.d + '</span><span class="dtt">' + day.t + '</span>' + (day.star ? '<span class="st">重点</span>' : '') + '<span class="ddir">' + day.dir + '</span></div>');
+    html.push('<div class="dbody">');
+    html.push('<div class="dlabel">今天要提交 ' + day.c.length + ' 条 · 在 PyCharm 里分 ' + day.c.length + ' 次提交</div>');
+    for (var ci = 0; ci < day.c.length; ci++) {
+      var cm = day.c[ci];
+      var msg = cm.s + '\n';
+      for (var bi = 0; bi < cm.b.length; bi++) { msg += '\n' + cm.b[bi]; }
+      var cmd = 'git add .\ngit commit -m "' + cm.s + '"';
+      for (var bj = 0; bj < cm.b.length; bj++) { cmd += ' \\\n  -m "' + cm.b[bj] + '"'; }
+      html.push('<div class="cblock">');
+      html.push('<span class="cno">第 ' + (ci + 1) + ' 条</span>');
+      html.push('<pre>' + esc(msg) + '</pre>');
+      html.push('<div class="cbtns">');
+      html.push('<button class="cb primary" data-t="' + encodeURIComponent(msg) + '" data-l="复制消息">复制消息</button>');
+      html.push('<button class="cb" data-t="' + encodeURIComponent(cmd) + '" data-l="复制命令行">复制命令行</button>');
+      html.push('</div></div>');
+    }
+    if (day.tag) { html.push('<div class="tagline"><span class="tg">Git 工具窗 → Log → 右键那条 commit → New Tag：' + day.tag + '</span></div>'); }
+    if (day.n) { html.push('<div class="note">' + day.n + '</div>'); }
+    html.push('</div></div>');
+  }
+  html.push('</div>');
+}
+root.innerHTML = html.join('');
+
+function esc(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function copyText(btn, txt, label) {
+  navigator.clipboard.writeText(txt).then(function() {
+    btn.innerText = '已复制';
+    btn.classList.add('done');
+    setTimeout(function() { btn.innerText = label; btn.classList.remove('done'); }, 1600);
+  }, function() {
+    btn.innerText = '复制失败';
+    setTimeout(function() { btn.innerText = label; }, 1600);
+  });
+}
+
+var cbs = root.querySelectorAll('.cb');
+for (var b = 0; b < cbs.length; b++) {
+  cbs[b].onclick = function() {
+    var btn = this;
+    copyText(btn, decodeURIComponent(btn.getAttribute('data-t') || ''), btn.getAttribute('data-l') || '复制');
+  };
+}
+
+var sbs = document.querySelectorAll('.codebox .cp');
+for (var k = 0; k < sbs.length; k++) {
+  sbs[k].onclick = function() {
+    var btn = this;
+    var pre = btn.parentNode.querySelector('pre');
+    copyText(btn, pre ? pre.innerText : '', '复制');
+  };
+}
+</script>
+</body>
+</html>
