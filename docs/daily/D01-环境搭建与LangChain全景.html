@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>D1 · 环境搭建 + LangChain 全景 ｜ 影石实习准备</title>
+<style>
+:root{
+  --bg:#f6f7f9; --card:#fff; --line:#e5e7eb; --line2:#eef0f3;
+  --tx:#1a1d21; --tx2:#586170; --tx3:#8b939e;
+  --must:#b4232a; --mustbg:#fdecec;
+  --accent:#0f766e; --accentbg:#e6f4f2;
+  --vidbg:#eef2ff; --vidtx:#3538cd;
+  --docbg:#e9f7ef; --doctx:#1a7f4b;
+  --labbg:#fdf3e3; --labtx:#8a5200;
+  --codbg:#f3f4f6;
+  --radius:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0e1014; --card:#161920; --line:#252a33; --line2:#1e222a;
+    --tx:#e7e9ec; --tx2:#a2aab6; --tx3:#767e8a;
+    --must:#f08b8b; --mustbg:#3a1e20;
+    --accent:#2dd4bf; --accentbg:#12312e;
+    --vidbg:#1d2440; --vidtx:#9aa8f5;
+    --docbg:#12281c; --doctx:#6fd39c;
+    --labbg:#3a2e18; --labtx:#e0b070;
+    --codbg:#1b1f27;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0; padding:0 20px 90px; background:var(--bg); color:var(--tx);
+  font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif;
+  font-size:15px; line-height:1.7; -webkit-font-smoothing:antialiased;}
+.wrap{max-width:900px; margin:0 auto}
+header{padding:44px 0 6px}
+.dtag{display:inline-block; font-size:12px; font-weight:600; color:#fff; background:var(--accent);
+  padding:2px 10px; border-radius:6px; margin-bottom:12px; letter-spacing:.02em}
+h1{font-size:25px; font-weight:600; margin:0 0 8px; letter-spacing:-.01em}
+.sub{color:var(--tx2); font-size:14px; margin:0 0 6px}
+.meta{color:var(--tx3); font-size:13px; margin:0 0 22px}
+.note{background:var(--accentbg); border-left:3px solid var(--accent); padding:14px 18px;
+  border-radius:0 var(--radius) var(--radius) 0; font-size:14.5px; margin:18px 0}
+.note b{color:var(--accent)}
+.warn{background:var(--mustbg); border-left:3px solid var(--must); padding:14px 18px;
+  border-radius:0 var(--radius) var(--radius) 0; font-size:14px; margin:18px 0}
+.warn b{color:var(--must)}
+h2{font-size:17px; font-weight:600; margin:40px 0 12px; padding-bottom:9px;
+  border-bottom:1px solid var(--line); display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+h2 .n{font-size:12px; font-weight:600; background:var(--accentbg); color:var(--accent);
+  padding:2px 9px; border-radius:99px}
+h3{font-size:14.5px; font-weight:600; margin:22px 0 8px; color:var(--tx)}
+.card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+  padding:16px 20px; margin:12px 0}
+table{width:100%; border-collapse:collapse; font-size:14px; margin:10px 0;
+  background:var(--card); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden}
+th{text-align:left; font-weight:600; font-size:12.5px; color:var(--tx3); background:var(--line2);
+  padding:9px 12px; white-space:nowrap}
+td{padding:9px 12px; border-top:1px solid var(--line2); vertical-align:top}
+td.num,th.num{font-variant-numeric:tabular-nums; white-space:nowrap; color:var(--tx2)}
+.tagline{display:inline-block; font-size:11.5px; font-weight:600; padding:1px 7px; border-radius:5px; white-space:nowrap}
+.t-vid{background:var(--vidbg); color:var(--vidtx)}
+.t-doc{background:var(--docbg); color:var(--doctx)}
+.t-lab{background:var(--labbg); color:var(--labtx)}
+.t-skip{background:var(--line2); color:var(--tx3)}
+a{color:var(--accent); text-decoration:none; border-bottom:1px solid var(--accentbg)}
+a:hover{border-bottom-color:var(--accent)}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,"Courier New",monospace; font-size:13px;
+  background:var(--codbg); padding:1px 5px; border-radius:5px}
+pre{background:var(--codbg); border:1px solid var(--line); border-radius:10px; padding:14px 16px;
+  overflow-x:auto; font-family:ui-monospace,SFMono-Regular,Consolas,"Courier New",monospace;
+  font-size:12.8px; line-height:1.6; white-space:pre-wrap; word-break:break-word; margin:8px 0}
+ol,ul{padding-left:22px; margin:8px 0}
+li{margin:5px 0}
+.check{list-style:none; padding-left:0}
+.check li{display:flex; gap:10px; align-items:flex-start; margin:9px 0}
+.check input{margin-top:6px; width:16px; height:16px; accent-color:var(--accent); flex:0 0 auto; cursor:pointer}
+.check label{cursor:pointer}
+.check input:checked + label{color:var(--tx3); text-decoration:line-through}
+.kv{font-size:14px; color:var(--tx2); margin:4px 0}
+.kv b{color:var(--tx)}
+.pill{display:inline-block; font-size:12px; color:var(--tx2); border:1px solid var(--line);
+  padding:1px 9px; border-radius:99px; margin:0 6px 6px 0; background:var(--card)}
+.bar{height:8px; background:var(--line); border-radius:99px; overflow:hidden; margin:0 0 8px}
+.bar i{display:block; height:100%; width:0; background:var(--accent); transition:width .25s}
+.foot{color:var(--tx3); font-size:12.5px; text-align:center; margin:44px 0 0; line-height:1.9}
+.strike{color:var(--tx3)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="dtag">D1 ／ 35</div>
+  <h1>环境搭建 + LangChain 全景</h1>
+  <p class="sub">2026-09-21（周一） ｜ 预计 2.5–3h ｜ 阶段：W1 打通链路</p>
+  <p class="meta">技术栈已定：<b>Python 轨</b> ｜ 目录 <code>week1-basics/day01-setup/</code></p>
+</header>
+
+<div class="note">
+  <b>结论先行：</b>今天的产出不是「学会 LangChain」，而是<b>把环境一次配死</b>——
+  Python 3.12.8 + PyCharm 项目内 venv + <code>langchain 1.4.2 / langchain-openai 1.6.2 /
+  langchain-deepseek 1.1.0</code> + <code>.env</code> 里的 DeepSeek key，最后跑出一个能打印 token 数的模型调用。
+  <br><b>后面 34 天不再碰配置。</b>
+  <br><br>一句话记住（面试可直接用）：<b>LangChain = Model + Harness</b>（模型 + 环绕模型的脚手架）。
+</div>
+
+<div class="card">
+  <div class="bar"><i id="bar"></i></div>
+  <p class="kv" id="bartext">今日进度 0 / 0</p>
+</div>
+
+<h2><span class="n">01</span> 今天的三小时怎么切</h2>
+<table>
+  <thead><tr><th class="num">时段</th><th class="num">时长</th><th>做什么</th><th>产出</th></tr></thead>
+  <tbody>
+    <tr><td class="num">0:00–0:40</td><td class="num">40 min</td><td><span class="tagline t-vid">视频</span> 尚硅谷第 01 章挑讲 7P（全景，不记 API）</td><td>能说出四支柱 + 4 个递进场景</td></tr>
+    <tr><td class="num">0:40–1:10</td><td class="num">30 min</td><td><span class="tagline t-vid">视频</span> 全模块拆解 第 1 讲 课程简介</td><td>脑海里有全局地图</td></tr>
+    <tr><td class="num">1:10–1:30</td><td class="num">20 min</td><td><span class="tagline t-doc">文档</span> Overview + Install 两页</td><td>抄下 <code>Agent = Model + Harness</code> 一句</td></tr>
+    <tr><td class="num">1:30–2:45</td><td class="num">65 min</td><td><span class="tagline t-lab">实操</span> venv → 装包 → 配 .env → 自检 → 首次调用</td><td>两个脚本跑通</td></tr>
+    <tr><td class="num">2:45–3:00</td><td class="num">15 min</td><td>写日志 + Ctrl+K 提交 3 条 + 打勾</td><td>D1 收尾干净</td></tr>
+  </tbody>
+</table>
+
+<h2><span class="n">02</span> 视频 · 精确到第几讲几分几秒</h2>
+
+<h3>① 尚硅谷《LangChain 从入门到实战 2026 版》第 01 章 —— 只挑 7P，共 39 分 35 秒</h3>
+<p class="kv">BV <code>BV1rv7A6oEeP</code> ｜ <a href="https://www.bilibili.com/video/BV1rv7A6oEeP/" target="_blank">打开视频</a> ｜ 该章共 10P，跳 3P（理由见下）</p>
+<table>
+  <thead><tr><th class="num">分 P</th><th>标题</th><th class="num">时长</th><th>看的时候只记这一件</th></tr></thead>
+  <tbody>
+    <tr><td class="num">P01</td><td>01-课程介绍</td><td class="num">04:09</td><td>—</td></tr>
+    <tr><td class="num">P02</td><td>02-为什么需要 LangChain</td><td class="num">10:50</td><td>「没有框架时的重复劳动是什么」</td></tr>
+    <tr><td class="num">P03</td><td>03-大模型相关岗位介绍</td><td class="num">04:17</td><td>对照自己的 JD：AI 应用开发在哪一格</td></tr>
+    <tr><td class="num">P04</td><td>04-LangChain 是什么</td><td class="num">07:15</td><td>定义 + 它替你做的那几件事</td></tr>
+    <tr><td class="num">P05</td><td>05-LangChain 的主要模块和 API 文档</td><td class="num">04:17</td><td>模块名对得上文档目录</td></tr>
+    <tr><td class="num">P06</td><td>06-LangChain 家族四大支柱</td><td class="num">04:43</td><td><b>四支柱分别叫什么</b></td></tr>
+    <tr><td class="num">P10</td><td>10-大模型开发的 4 个递进场景</td><td class="num">04:04</td><td><b>4 个场景的顺序</b>（后面 35 天就按这个走）</td></tr>
+    <tr><td class="num">P07</td><td class="strike">07-conda 的安装及虚拟环境的配置</td><td class="num strike">16:51</td><td><span class="tagline t-skip">跳过</span> 你用 PyCharm venv，不走 conda</td></tr>
+    <tr><td class="num">P08</td><td class="strike">08-大模型应用场景 1：Agent 开发</td><td class="num strike">09:48</td><td><span class="tagline t-skip">留给 D8</span> 当课前热身</td></tr>
+    <tr><td class="num">P09</td><td class="strike">09-大模型的应用场景 2：Agent 开发</td><td class="num strike">05:55</td><td><span class="tagline t-skip">留给 D8</span> 当课前热身</td></tr>
+  </tbody>
+</table>
+
+<h3>② B 站《LangChain 从基础到实战全模块拆解》第 1 讲 课程简介 —— 29 分 51 秒</h3>
+<p class="kv">BV <code>BV1WgcZzRE9E</code> ｜ <a href="https://www.bilibili.com/video/BV1WgcZzRE9E/" target="_blank">打开视频</a> ｜ 第 1 讲（第 1P）｜ 当纪录片看，不用记</p>
+<div class="card">
+  <p class="kv"><b>选看（不占今天预算）：</b>第 2 讲「langchain 基础——安装与 hello world」<b>47 分 19 秒</b>。
+  装包或 venv 卡住时直接跳这一讲看，<b>别自己硬扛</b>。</p>
+</div>
+
+<h2><span class="n">03</span> 文档 · 精确到哪个页面</h2>
+<table>
+  <thead><tr><th>页面</th><th class="num">时长</th><th>具体看哪一节</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><span class="tagline t-doc">文档</span> <a href="https://docs.langchain.com/oss/python/langchain/overview" target="_blank">LangChain overview</a></td>
+      <td class="num">15 min</td>
+      <td>① 首屏那句 <b>"Agent = Model + Harness"</b>；② 紧接着的 <b>LangChain vs. LangGraph vs. Deep Agents</b> 三方取舍（面试高频）；③ 下面的 <b>Create an agent</b> 代码块 —— 今晚只要看懂形状</td>
+    </tr>
+    <tr>
+      <td><span class="tagline t-doc">文档</span> <a href="https://docs.langchain.com/oss/python/langchain/install" target="_blank">Install LangChain</a></td>
+      <td class="num">5 min</td>
+      <td>官方 <code>pip install -U langchain</code> / <code>pip install -U langchain-openai</code> 写法，以及 <b>Python 3.10+</b> 这条硬门槛</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="warn">
+  <b>⚠️ 计划表里有一处已经过时，这里修正：</b>原计划 D1 写的是「看懂 Overview 页的
+  <i>Agent development lifecycle</i> 那张图」——新版官方文档已改版，<b>这张图没有了</b>。
+  现在这一页的核心是 <code>Agent = Model + Harness</code> + 三方框架取舍。
+  <br>以后凡遇到「某张图讲了什么」的旧笔记，<b>先确认图还在不在</b>。
+</div>
+
+<h2><span class="n">04</span> 实操 · PyCharm 里七步（约 65 分钟）</h2>
+<p class="kv">全程 GUI，不用命令行（只有 <code>pip install</code> 走 PyCharm 底部「终端」）。</p>
+<ul class="check">
+  <li><input type="checkbox" id="c1"><label for="c1"><b>① 配解释器</b>：PyCharm 打开 <code>D:\AI_learning_project\03-Internship preparation</code> →
+    菜单 <code>文件</code> → <code>设置</code>（<code>Ctrl+Alt+S</code> 被输入法/截图/网盘类软件占用，按了没反应是常事；
+    最快：点右下角状态栏的解释器名 → 「添加新解释器」；万能兜底 <code>Ctrl+Shift+A</code> 查找操作 → 输 <code>解释器</code>）→
+    左栏 <code>项目: 03-Internship preparation</code> → <code>Python 解释器</code> →
+    <code>添加解释器</code> → <code>添加本地解释器…</code> → 环境选 <code>生成新的</code>，类型选 <code>Virtualenv</code><br>
+    位置 = <code>D:\AI_learning_project\03-Internship preparation\.venv</code>；基础 Python = <code>C:\Users\Lenovo\AppData\Local\Programs\Python\Python312\python.exe</code>（3.12.8）；<b>不要</b>勾 <code>从基础解释器继承软件包</code>、<code>可用于所有项目</code> → 确定</label></li>
+  <li><input type="checkbox" id="c2"><label for="c2"><b>② 装包</b>：底部 <code>终端</code> 执行
+    <code>pip install -r week1-basics/day01-setup/requirements.txt</code>。
+    装完在底部 <code>Python 软件包</code> 面板能看到 <code>langchain 1.4.2</code></label></li>
+  <li><input type="checkbox" id="c3"><label for="c3"><b>③ 配 key</b>：仓库根目录选中 <code>.env.example</code> →
+    <code>Ctrl+C</code> <code>Ctrl+V</code> → 改名 <code>.env</code> → 填 <code>DEEPSEEK_API_KEY=sk-...</code>。
+    <b>不要加引号。</b>该文件已在 .gitignore 里，永不进库</label></li>
+  <li><input type="checkbox" id="c4"><label for="c4"><b>④ 自检</b>：右键 <code>env_check.py</code> → <code>运行</code>。
+    四项（Python 版本 / 依赖 / key / gitignore）全 OK 才算过</label></li>
+  <li><input type="checkbox" id="c5"><label for="c5"><b>⑤ 首次调用</b>：右键 <code>hello_model.py</code> → <code>运行</code>。
+    看到回复 + token 数就成了</label></li>
+  <li><input type="checkbox" id="c6"><label for="c6"><b>⑥ 顺手 5 分钟</b>：把 <code>hello_model.py</code> 里的
+    <code>MODEL</code> / <code>BASE_URL</code> 临时换成脚本底部注释里的通义那一行，再跑一次，
+    亲眼确认「换供应商只改两行」，然后改回来</label></li>
+  <li><input type="checkbox" id="c7"><label for="c7"><b>⑦ 收尾</b>：写 <code>docs/journal/2026-09-21.md</code> 的一句话结论 →
+    Ctrl+K 提交 3 条 → <code>docs/progress.md</code> 里给 D1 打勾</label></li>
+</ul>
+
+<h3>为什么用 3.12，不用 3.13 或 miniconda 的 3.14</h3>
+<table>
+  <thead><tr><th>版本</th><th>结论</th><th>原因</th></tr></thead>
+  <tbody>
+    <tr><td class="num">3.12.8</td><td><b>用它</b></td><td>LangChain 要求 <code>3.10 ≤ Python &lt; 4.0</code>；3.12 的第三方轮子（Chroma / pypdf / 各类 loader，D15 之后要装）最全</td></tr>
+    <tr><td class="num">3.13 / 3.14.7</td><td>不用</td><td>能跑，但后面装向量库和 loader 时更容易遇到没有预编译轮子的包</td></tr>
+    <tr><td class="num">conda</td><td>不用</td><td>PyCharm 项目内 venv 跟着项目走，重装只认 <code>.venv</code>；本项目只有一份环境，用不上 conda 的多环境管理</td></tr>
+  </tbody>
+</table>
+
+<h2><span class="n">05</span> 验收清单（做完自查）</h2>
+<ul class="check">
+  <li><input type="checkbox" id="v1"><label for="v1"><code>env_check.py</code> 四项全 OK</label></li>
+  <li><input type="checkbox" id="v2"><label for="v2"><code>hello_model.py</code> 打印出回复 + token 数 + 服务端返回的模型名</label></li>
+  <li><input type="checkbox" id="v3"><label for="v3">在 PyCharm 的提交文件列表（Ctrl+K）里，<b>看不到</b> <code>.env</code> 和 <code>.venv/</code> —— 看到了说明 .gitignore 没生效，先停下来修</label></li>
+  <li><input type="checkbox" id="v4"><label for="v4"><code>docs/journal/2026-09-21.md</code> 的一句话结论已写</label></li>
+  <li><input type="checkbox" id="v5"><label for="v5">今天踩的坑已抄进 <code>errors/index.md</code>（没踩坑就跳过）</label></li>
+</ul>
+
+<h2><span class="n">06</span> 提交 · 3 条，直接复制</h2>
+<p class="kv">Ctrl + K 打开提交窗口后，<b>记得取消勾选不属于本次提交的文件</b>（默认会勾上当天所有改动）。今天不打 tag，D7 才打 <code>w1-cli-v0.1</code>。</p>
+
+<p class="kv"><b>第 1 条</b> · 文件：<code>requirements.txt</code>、<code>.env.example</code></p>
+<pre>chore(day01): 初始化 Python 虚拟环境与依赖
+
+Python 3.12.8 + PyCharm venv(.venv)，装 langchain 1.4.2 /
+langchain-openai 1.6.2 / langchain-deepseek 1.1.0
+DEEPSEEK_API_KEY 走 .env，已确认被 .gitignore 忽略</pre>
+
+<p class="kv"><b>第 2 条</b> · 文件：<code>hello_model.py</code>、<code>env_check.py</code></p>
+<pre>feat(day01): 跑通首次模型调用与环境自检
+
+hello_model.py 走 OpenAI 兼容协议接入 DeepSeek，一行 init_chat_model
+即可返回结果；env_check.py 检查版本/依赖/key/gitignore 四项</pre>
+
+<p class="kv"><b>第 3 条</b> · 文件：<code>docs/journal/2026-09-21.md</code>、<code>docs/stack.md</code>、<code>docs/decisions.md</code></p>
+<pre>docs(journal): D1 日志
+
+结论：环境一次配好，后面 34 天不再折腾配置</pre>
+
+<h2><span class="n">07</span> 今天最可能踩的两个坑（提前给答案）</h2>
+<table>
+  <thead><tr><th>现象</th><th>真实原因</th><th>怎么修</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><code>AuthenticationError</code> / 401</td>
+      <td>key 填错、前后带空格、或 <code>.env</code> 里给值加了引号（引号被当成 key 的一部分）</td>
+      <td><code>.env</code> 里顶格写、<b>不加引号</b>：<code>DEEPSEEK_API_KEY=sk-xxx</code></td>
+    </tr>
+    <tr>
+      <td><code>APIConnectionError</code> / 404 <code>NotFoundError</code></td>
+      <td><code>base_url</code> 少了 <code>/v1</code>，或写全了 <code>/v1/chat/completions</code></td>
+      <td>只写到 <code>/v1</code> 为止，后面的路径框架自己拼</td>
+    </tr>
+  </tbody>
+</table>
+<div class="warn">
+  遇到了别急着改 —— <b>先把原始报错原样贴进 <code>errors/index.md</code></b>（按「现象 / 我以为 / 实际 / 怎么定位到」四段写），再动手。
+  那个文件是面试最值钱的素材，「我以为」那一段尤其值钱。
+</div>
+
+<h2><span class="n">08</span> 今天的产出记录（面试时念这句）</h2>
+<div class="card">
+  <p class="kv">今天用到的精确坐标，已同步写进 <code>docs/journal/2026-09-21.md</code>：</p>
+  <p>
+    <span class="pill">尚硅谷 BV1rv7A6oEeP · P01–P06 + P10 · 39 分 35 秒</span>
+    <span class="pill">全模块拆解 BV1WgcZzRE9E · 第 1 讲 29:51</span>
+    <span class="pill">docs.langchain.com/oss/python/langchain/overview</span>
+    <span class="pill">docs.langchain.com/oss/python/langchain/install</span>
+    <span class="pill">env_check.py（自检四项）</span>
+    <span class="pill">hello_model.py（首次调用）</span>
+  </p>
+</div>
+
+<p class="foot">
+  今天不求快。目标是环境一次配好，后面 34 天不用再折腾配置。<br>
+  明天 D2：同一份代码切 3 家模型（DeepSeek / 通义 / 智谱），只改模型名和 base_url，确认结果一致。
+</p>
+
+</div>
+
+<script>
+(function(){
+  var boxes = document.querySelectorAll('.check input[type=checkbox]');
+  var bar = document.getElementById('bar');
+  var txt = document.getElementById('bartext');
+  var KEY = 'insta360-d01-checks';
+  var saved = {};
+  try { saved = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch(e){ saved = {}; }
+
+  function render(){
+    var done = 0;
+    boxes.forEach(function(b){ if(b.checked) done++; });
+    var pct = boxes.length ? Math.round(done * 100 / boxes.length) : 0;
+    if (bar) bar.style.width = pct + '%';
+    if (txt) txt.textContent = '今日进度 ' + done + ' / ' + boxes.length
+      + '（' + pct + '%）' + (done === boxes.length && boxes.length ? ' · 收工，去提交' : '');
+  }
+
+  boxes.forEach(function(b){
+    if (saved[b.id]) b.checked = true;
+    b.addEventListener('change', function(){
+      saved[b.id] = b.checked;
+      try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch(e){}
+      render();
+    });
+  });
+  render();
+})();
+</script>
+</body>
+</html>

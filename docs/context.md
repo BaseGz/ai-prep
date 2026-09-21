@@ -2,7 +2,7 @@
 
 > **这个文件是给「新会话」读的。** 换了聊天窗口、换了工作区，只要把这份文件带上，就能无缝接着做，不需要重新解释一遍前因后果。
 >
-> 最后更新：2026-09-20 ｜ 状态：前期策划已完成，用户尚未开始 D1
+> 最后更新：2026-09-21 ｜ 状态：**技术栈已定为 Python 轨（3.12.8 + 项目内 venv）**，D1 进行中（代码已写，尚未提交）
 
 ---
 
@@ -10,7 +10,7 @@
 
 用户是大三学生，目标拿到**影石（Insta360）AI 应用开发实习**。本项目的唯一使命：把他从「已学完 RAG/LangChain 之前的全部基础」带到「有一个能演示、有提效数据的完整 AI 项目」。
 
-**当前进度：35 天路线已定、4 份交付物已出、用户侧仓库已建好，等用户从 D1 开始执行。**
+**当前进度：35 天路线已定、4 份规划文档已出、仓库已建好，D1（环境搭建 + 首次模型调用）已动手，代码在工作区待提交。**
 
 ---
 
@@ -109,10 +109,9 @@ MCP 只需知道它是什么、能说出它和「自己写 `@tool` 函数」的�
 
 ---
 
-## 4. 已交付的 4 份文件
+## 4. 已交付的 4 份规划文档
 
-**主力产出层**（策划工作区）：`C:\Users\Lenovo\WorkBuddy\2026-09-20-14-20-17\outputs\`
-**用户日常查看层**（同一批文件的副本）：`D:\insta360-ai-prep\docs\plan\`
+**唯一位置**：`D:\AI_learning_project\03-Internship preparation\docs\plan\`（在仓库内，随代码一起版本管理）
 
 | 文件 | 内容 |
 |---|---|
@@ -141,21 +140,22 @@ MCP 只需知道它是什么、能说出它和「自己写 `@tool` 函数」的�
 
 ## 5. 用户侧项目仓库（每天真正用的东西）
 
-**路径：`D:\insta360-ai-prep`** —— 已 `git init`，分支 `main`，首次提交 `d8235f3`，**52 个文件**，已配 `git config --local commit.template .gitmessage`。
+**路径：`D:\AI_learning_project\03-Internship preparation`**（上级 `D:\AI_learning_project` 是长期学习项目根，总控交接见其 `00-交接总览\交接文档-长期学习项目.md`）—— 已 `git init`，分支 `main`，3 次提交（`d8235f3` → `ecb167f`），已配 `git config --local commit.template .gitmessage`。
 
 ### 设计原则：仓库不是复习资料，是给面试官看的
 
 按「面试官能不能直接看懂」分成 **学 / 证 / 用** 三块：
 
 ```
-D:\insta360-ai-prep\
+D:\AI_learning_project\03-Internship preparation\
 ├── README.md                    总入口，顶部三行链接（效果数据 / 踩的坑 / 演示视频）
 ├── .gitignore                   已写好；原则：向量库和原始数据不入库，生成它们的脚本必须入库
 ├── .gitmessage                  四段式提交模板（已 local 配置）
 ├── docs/
 │   ├── context.md               ★ 本文件：上下文交接
 │   ├── plan/                    4 份 HTML 交付物 + 说明
-│   ├── journal/                 每日日志（模板已给，已有 D0 立项 2026-09-20.md）
+│   ├── daily/                   ★ 每日执行单（D01 起，一天一份 HTML，双击就能看）
+│   ├── journal/                 每日日志（模板已给，已有 D0 立项 2026-09-20.md / D1 2026-09-21.md）
 │   ├── progress.md              35 天进度表（含日期与打勾位）
 │   ├── decisions.md             技术选型记录，已填一条（选 DeepSeek 的理由/代价/何时换）
 │   ├── interview.md             25 题自答区，A1/B1/C1/D1/E1/F1 已给答案骨架
@@ -241,9 +241,10 @@ feat(day09): 手写 while 循环 Agent，脱离框架
 
 | 事项 | 说明 | 状态 |
 |---|---|---|
-| **技术栈 Python 还是 JS/TS** | 记录在 `docs/stack.md`。B 站中文教程 95% 是 Python；但影石 JD 提到浏览器插件、Figma 插件、Design Engineering，走前端则 JS/TS 更贴岗位。**定了之后要把 35 天任务细化到具体包和写法**（LangChain.js 核心包是 `@langchain/core` / `@langchain/openai` / `@langchain/langgraph` + Zod） | **待用户拍板** |
+| ~~技术栈 Python 还是 JS/TS~~ | **已定：Python 轨**。理由/代价/何时换见 `docs/stack.md`；包清单已写进该文件，后续每日任务按 Python 细化 | ✅ 已决（2026-09-20） |
 | 每日提醒自动化 | 用户说过「持续进行」，已问过是否要建每天固定时间的提醒（到点提醒今天是 D几、该看什么、该提交什么），**用户尚未答复** | 待确认 |
-| 用户是否已开始 D1 | 仓库骨架和计划都已就绪，起始日定为 2026-09-21 | 未开始 |
+| 用户是否已开始 D1 | D1 材料（执行单 `week1-basics/day01-setup/README.md` + `env_check.py` + `hello_model.py` + `docs/daily/D01` HTML）已全部就绪 | 材料就绪，待用户执行 |
+| **文档过时修正** | 计划表 D1 写的「看懂 Overview 页 *Agent development lifecycle* 图」**已失效**：新版官方文档改版，该图不存在，页面核心改为 `Agent = Model + Harness` + LangChain/LangGraph/Deep Agents 三方取舍。**后续凡引用「某张图」的旧笔记都要先验证** | 已在 D1 执行单修正，待回写进计划表 HTML |
 | 第 5 周项目选题 | D29 才定。推荐二选一：**多模态素材整理 Agent**（拖一批照片/视频进去 → 视觉模型打标签 + 生成文案 + 语义检索，踩中多模态 + 设计工程）或 **内部知识库 Agent**（说明书/FAQ/客服工单 RAG + 工具调用 + `interrupt` 人工确认）。**无论选哪个都要带提效度量**（如 100 张图人工 40 分钟 → 工具 2 分钟，做成表格 + 截图） | 未定 |
 
 ---
@@ -254,15 +255,15 @@ feat(day09): 手写 while 循环 Agent，脱离框架
 
 ```text
 我在准备影石（Insta360）AI 应用开发实习，这件事不是从零开始：完整的项目上下文我已经整理在
-D:\insta360-ai-prep\docs\context.md，请先完整读它，再读同目录下的 progress.md 和 journal/ 里最新
+D:\AI_learning_project\03-Internship preparation\docs\context.md，请先完整读它，再读同目录下的 progress.md 和 journal/ 里最新
 的那篇日志，然后严格按里面的约定往下推。
 
 背景一句话：我是大三学生，RAG / LangChain / MCP 之前的基础（编程语言、HTTP/API/JSON、后端接口、
 大模型 API、Coze/Dify、Cursor 等 AI 编程工具）都已经学完；目标岗位的硬条件是「每周实习 5 天、连续
 6 个月以上，能独立完成小型全栈原型，有能演示的 AI 小项目」，加分项里要求了解 RAG / LangChain /
 MCP 任意一项。目前已经定好 35 天路线（2026-09-21 起，每天 3 小时，四个重点日 D9 手写 Agent 循环 /
-D17 切分粒度实验 / D23 RAG 评估 / D34 提效度量），四份交付物放在 D:\insta360-ai-prep\docs\plan\，
-仓库骨架也已建好在 D:\insta360-ai-prep，接下来就是逐天执行。
+D17 切分粒度实验 / D23 RAG 评估 / D34 提效度量），四份交付物放在 D:\AI_learning_project\03-Internship preparation\docs\plan\，
+仓库骨架也已建好在 D:\AI_learning_project\03-Internship preparation，接下来就是逐天执行。
 
 有三条我的习惯必须遵守：一是我用 PyCharm 做 git 提交，不要给我命令行指令，按 GUI 描述操作（提交是
 Ctrl+K，打 tag 在 Alt+9 的 Git 工具窗里右键 New Tag）；二是内容要精确到章节，视频具体到第几讲几时
@@ -277,7 +278,7 @@ Ctrl+K，打 tag 在 Alt+9 的 Git 工具窗里右键 New Tag）；二是内容�
 **精简版**（只想快速接上时用）：
 
 ```text
-继续我的影石实习准备项目：先读 D:\insta360-ai-prep\docs\context.md，再读 docs\progress.md 和
+继续我的影石实习准备项目：先读 D:\AI_learning_project\03-Internship preparation\docs\context.md，再读 docs\progress.md 和
 journal/ 里最新的日志。我用 PyCharm 提交、要精确到章节、中文交付结论先行。今天做 D__。
 ```
 
@@ -287,10 +288,12 @@ journal/ 里最新的日志。我用 PyCharm 提交、要精确到章节、中�
 
 | 用途 | 路径 |
 |---|---|
-| 上下文交接（本文件） | `D:\insta360-ai-prep\docs\context.md` |
-| 新会话开场提示词（可复制） | `D:\insta360-ai-prep\docs\新会话提示词.md` |
-| 策划工作区 | `C:\Users\Lenovo\WorkBuddy\2026-09-20-14-20-17\` |
-| 4 份 HTML 交付物 | 同上 `outputs\` ｜ 副本在 `D:\insta360-ai-prep\docs\plan\` |
-| 日常执行入口 | `D:\insta360-ai-prep\docs\progress.md` |
-| 技术选型待办 | `D:\insta360-ai-prep\docs\stack.md` |
-| 报错档案（最值钱） | `D:\insta360-ai-prep\errors\index.md` |
+| 上下文交接（本文件） | `D:\AI_learning_project\03-Internship preparation\docs\context.md` |
+| 新会话开场提示词（可复制） | `D:\AI_learning_project\03-Internship preparation\docs\新会话提示词.md` |
+| 长期学习项目根（上级） | `D:\AI_learning_project\`（目录总览见其 `README.md`，总控交接见 `00-交接总览\交接文档-长期学习项目.md`） |
+| 本项目仓库根 | `D:\AI_learning_project\03-Internship preparation\` |
+| 4 份 HTML 规划文档 | `D:\AI_learning_project\03-Internship preparation\docs\plan\` |
+| 日常执行入口 | `D:\AI_learning_project\03-Internship preparation\docs\progress.md` |
+| 每日执行单（D01 起） | `D:\AI_learning_project\03-Internship preparation\docs\daily\D01-环境搭建与LangChain全景.html` |
+| 技术选型待办 | `D:\AI_learning_project\03-Internship preparation\docs\stack.md` |
+| 报错档案（最值钱） | `D:\AI_learning_project\03-Internship preparation\errors\index.md` |

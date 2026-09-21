@@ -1,13 +1,16 @@
 # 35 天进度
 
-起始日：2026-09-21 ｜ 每天 3 小时 ｜ 完成就在状态里打勾
+起始日：2026-09-21 ｜ 每天 3 小时 ｜ 完成就打勾（`[x]` 完成 ／ `[–]` 已学过、跳过实操）
+
+> **进度说明（09-21 更新）**：D2 / D3 的内容此前已自学过（旧教程工程里有对应练习），跳过实操直接进 D4。
+> 表格「日期」列是**原始排期**；D4 起实际执行提前 3 天（D4 实际 09-21）。W1 结束时再决定要不要把日期列改成实际日期。
 
 | 天 | 日期 | 阶段 | 主题 | 目录 | 状态 |
 |---|---|---|---|---|---|
-| D1 | 09-21 | W1 | 环境搭建 + LangChain 全景 | `week1-basics/day01-setup` | [ ] |
-| D2 | 09-22 | W1 | 模型的创建与调用 | `week1-basics/day02-switch-model` | [ ] |
-| D3 | 09-23 | W1 | 调用方式与流式输出 | `week1-basics/day03-stream` | [ ] |
-| D4 | 09-24 | W1 | Message 与提示词模板 | `week1-basics/day04-messages` | [ ] |
+| D1 | 09-21 | W1 | 环境搭建 + LangChain 全景 | `week1-basics/day01-setup` | [x] 09-21 完成 |
+| D2 | 09-22 | W1 | 模型的创建与调用 | `week1-basics/day02-switch-model` | [–] 内容已学过 |
+| D3 | 09-23 | W1 | 调用方式与流式输出 | `week1-basics/day03-stream` | [–] 内容已学过 |
+| D4 | 09-24 | W1 | Message 与提示词模板 | `week1-basics/day04-messages` | [ ] 09-21 开始 |
 | D5 | 09-25 | W1 | LCEL 管道 | `week1-basics/day05-lcel` | [ ] |
 | D6 | 09-26 | W1 | 结构化输出 | `week1-basics/day06-structured` | [ ] |
 | D7 | 09-27 | W1 | 周末产出：流式对话 CLI 工具 | `week1-basics/day07-cli` | [ ] |

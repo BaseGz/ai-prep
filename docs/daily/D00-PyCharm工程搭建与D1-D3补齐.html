@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PyCharm 新建工程 + D1–D3 补齐 ｜ 影石实习准备</title>
+<style>
+:root{
+  --bg:#f6f7f9; --card:#fff; --line:#e5e7eb; --line2:#eef0f3;
+  --tx:#1a1d21; --tx2:#586170; --tx3:#8b939e;
+  --must:#b4232a; --mustbg:#fdecec;
+  --accent:#0f766e; --accentbg:#e6f4f2;
+  --vidbg:#eef2ff; --vidtx:#3538cd;
+  --docbg:#e9f7ef; --doctx:#1a7f4b;
+  --labbg:#fdf3e3; --labtx:#8a5200;
+  --codbg:#f3f4f6;
+  --radius:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0e1014; --card:#161920; --line:#252a33; --line2:#1e222a;
+    --tx:#e7e9ec; --tx2:#a2aab6; --tx3:#767e8a;
+    --must:#f08b8b; --mustbg:#3a1e20;
+    --accent:#2dd4bf; --accentbg:#12312e;
+    --vidbg:#1d2440; --vidtx:#9aa8f5;
+    --docbg:#12281c; --doctx:#6fd39c;
+    --labbg:#3a2e18; --labtx:#e0b070;
+    --codbg:#1b1f27;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0; padding:0 20px 90px; background:var(--bg); color:var(--tx);
+  font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif;
+  font-size:15px; line-height:1.7; -webkit-font-smoothing:antialiased;}
+.wrap{max-width:900px; margin:0 auto}
+header{padding:44px 0 6px}
+.dtag{display:inline-block; font-size:12px; font-weight:600; color:#fff; background:var(--accent);
+  padding:2px 10px; border-radius:6px; margin-bottom:12px; letter-spacing:.02em}
+h1{font-size:25px; font-weight:600; margin:0 0 8px; letter-spacing:-.01em}
+.sub{color:var(--tx2); font-size:14px; margin:0 0 6px}
+.meta{color:var(--tx3); font-size:13px; margin:0 0 22px}
+.note{background:var(--accentbg); border-left:3px solid var(--accent); padding:14px 18px;
+  border-radius:0 var(--radius) var(--radius) 0; font-size:14.5px; margin:18px 0}
+.note b{color:var(--accent)}
+.warn{background:var(--mustbg); border-left:3px solid var(--must); padding:14px 18px;
+  border-radius:0 var(--radius) var(--radius) 0; font-size:14px; margin:18px 0}
+.warn b{color:var(--must)}
+h2{font-size:17px; font-weight:600; margin:40px 0 12px; padding-bottom:9px;
+  border-bottom:1px solid var(--line); display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+h2 .n{font-size:12px; font-weight:600; background:var(--accentbg); color:var(--accent);
+  padding:2px 9px; border-radius:99px}
+h3{font-size:14.5px; font-weight:600; margin:22px 0 8px; color:var(--tx)}
+.card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+  padding:16px 20px; margin:12px 0}
+table{width:100%; border-collapse:collapse; font-size:14px; margin:10px 0;
+  background:var(--card); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden}
+th{text-align:left; font-weight:600; font-size:12.5px; color:var(--tx3); background:var(--line2);
+  padding:9px 12px; white-space:nowrap}
+td{padding:9px 12px; border-top:1px solid var(--line2); vertical-align:top}
+td.num,th.num{font-variant-numeric:tabular-nums; white-space:nowrap; color:var(--tx2)}
+.tagline{display:inline-block; font-size:11.5px; font-weight:600; padding:1px 7px; border-radius:5px; white-space:nowrap}
+.t-ok{background:var(--docbg); color:var(--doctx)}
+.t-no{background:var(--mustbg); color:var(--must)}
+.t-new{background:var(--labbg); color:var(--labtx)}
+.t-keep{background:var(--vidbg); color:var(--vidtx)}
+a{color:var(--accent); text-decoration:none; border-bottom:1px solid var(--accentbg)}
+a:hover{border-bottom-color:var(--accent)}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,"Courier New",monospace; font-size:13px;
+  background:var(--codbg); padding:1px 5px; border-radius:5px}
+pre{background:var(--codbg); border:1px solid var(--line); border-radius:10px; padding:14px 16px;
+  overflow-x:auto; font-family:ui-monospace,SFMono-Regular,Consolas,"Courier New",monospace;
+  font-size:12.5px; line-height:1.6; margin:10px 0}
+pre code{background:none; padding:0; font-size:inherit}
+ol,ul{padding-left:22px; margin:10px 0}
+li{margin:5px 0}
+.steps{counter-reset:s; list-style:none; padding-left:0; margin:14px 0}
+.steps>li{counter-increment:s; position:relative; padding:0 0 0 42px; margin:0 0 20px}
+.steps>li::before{content:counter(s); position:absolute; left:0; top:1px; width:28px; height:28px;
+  border-radius:50%; background:var(--accent); color:#fff; font-size:13.5px; font-weight:600;
+  display:flex; align-items:center; justify-content:center}
+.steps>li>b{display:block; font-size:14.5px; margin-bottom:4px}
+.steps>li .path{display:block; color:var(--tx2); font-size:13px; margin:5px 0 0}
+.kbd{display:inline-block; font-family:ui-monospace,Consolas,monospace; font-size:12px;
+  background:var(--card); border:1px solid var(--line); border-bottom-width:2px;
+  border-radius:5px; padding:1px 6px; color:var(--tx); white-space:nowrap}
+.foot{margin-top:46px; padding-top:16px; border-top:1px solid var(--line); color:var(--tx3); font-size:12.5px}
+.chk{list-style:none; padding-left:0}
+.chk li{padding-left:26px; position:relative}
+.chk li::before{content:""; position:absolute; left:0; top:5px; width:15px; height:15px;
+  border:1.5px solid var(--tx3); border-radius:4px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <span class="dtag">方案 A ｜ 日期不动</span>
+  <h1>PyCharm 新建工程 + D1–D3 补齐</h1>
+  <p class="sub">你的仓库在 <code>D:\AI_learning_project\03-Internship preparation</code>，旧的 <code>langchain1.2_tutorial</code> 原样保留作参考。</p>
+  <p class="meta">对应 2026-09-21 ～ 09-23（D1–D3）｜ D4 仍按 09-24 起 ｜ 技术栈：Python 轨</p>
+</header>
+
+<div class="note">
+  <b>结论先行：</b>要"建"，但建的不是 <span class="kbd">New Project</span> —— 是 <b>File → Open</b>，打开你已有的仓库文件夹
+  <code>D:\AI_learning_project\03-Internship preparation</code>。PyCharm 会在这个文件夹里生成 <code>.idea/</code>，它就成了一个工程，
+  而工程根 = 你的 git 仓库根，<span class="kbd">Ctrl+K</span> 的提交列表才会干净。<br>
+  旧的 <code>D:\python_langchain\langchain1.2_tutorial</code>：<b>别动、别搬进来、别共用解释器</b>，只当参考书用。<br>
+  顺带一提：今天 09-21 就是 D1 的正日子，不是提前动手。
+</div>
+
+<h2><span class="n">0</span>我查到的你本机实况</h2>
+
+<table>
+  <thead><tr><th>位置</th><th>状态</th><th>含义</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><code>D:\AI_learning_project\03-Internship preparation</code></td>
+      <td><span class="tagline t-ok">59 文件 / 有 .git</span><br>无 <code>.idea</code>、无 <code>.venv</code></td>
+      <td>仓库骨架完整，但<b>从没被 PyCharm 打开过</b>。两步都要做：开工程 + 建环境。</td>
+    </tr>
+    <tr>
+      <td><code>D:\python_langchain\langchain1.2_tutorial</code></td>
+      <td><span class="tagline t-new">已是 PyCharm 工程</span><br>解释器 = <code>D:\minianaconda</code></td>
+      <td>是 conda base 解释器，<b>没有自己的 venv</b>；依赖 pin 在 <code>langchain 1.2.12</code>。<b>不能复用</b>。</td>
+    </tr>
+    <tr>
+      <td>本机 Python 3.12.8</td>
+      <td><span class="tagline t-ok">FOUND</span></td>
+      <td><code>C:\Users\Lenovo\AppData\Local\Programs\Python\Python312\python.exe</code> ← 就用它做 base</td>
+    </tr>
+    <tr>
+      <td>本机 miniconda</td>
+      <td><span class="tagline t-no">3.14.7 · 不用</span></td>
+      <td><code>D:\minianaconda\python.exe</code>。D15 之后要装 Chroma / pypdf / 各类 loader，3.14 轮子最险。</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2><span class="n">1</span>为什么必须另开一个工程</h2>
+
+<div class="card">
+  <ol>
+    <li><b>旧文件夹不是 git 仓库。</b>（我确认过：里面没有 <code>.git</code>）在它里面学的产出进不了版本库，面试官点开你 GitHub 什么都看不到 —— 那你 35 天白做。</li>
+    <li><b>旧工程解释器是 conda base。</b>在里面 <code>pip install</code> 会把包装进 miniconda 全局，以后任何项目都被牵连；而且它是 <b>3.14.7</b>。</li>
+    <li><b>版本会打架。</b>旧工程 pin 的是 <code>langchain==1.2.12</code>，新仓库要 <code>1.4.2</code>。同一个解释器里两边装着，一定互相覆盖，报错还很难查。</li>
+    <li><b>Ctrl+K 只看一个仓库。</b>PyCharm 工程根 = 仓库根，提交列表里就只出现这一个仓库的改动。两个仓库混在一个工程里，你每次提交都得手动取消勾选，早晚会误提交。</li>
+  </ol>
+</div>
+
+<h2><span class="n">2</span>七步操作（全程 PyCharm GUI）</h2>
+
+<ol class="steps">
+  <li>
+    <b>打开仓库文件夹</b>
+    菜单 <span class="kbd">File</span> → <span class="kbd">Open</span> → 选中 <code>D:\AI_learning_project\03-Internship preparation</code> → OK。<br>
+    弹出选择窗口时选 <b>New Window</b>（旧教程项目还能开着，方便你对照挑文件）。<br>
+    <span class="path">⚠️ 不要用 "Attach" —— Attach 是把文件夹挂到旧工程下，提交列表就混了。</span>
+  </li>
+  <li>
+    <b>建虚拟环境（这是最关键的一步）</b>
+    <div class="card" style="margin:8px 0">
+      <b>打开「设置」有三条路，任意一条都行 —— 别在快捷键上卡住：</b>
+      <ol style="margin:8px 0 0">
+        <li><b>首选：菜单栏 <span class="kbd">File</span> → <span class="kbd">Settings</span></b> —— 你的中文界面是 <b>文件 → 设置</b>（窗口左上角菜单栏）。</li>
+        <li><b>最快：点窗口右下角状态栏的解释器名</b> —— 显示 <code>无解释器</code> / <code>No interpreter</code> 或某个 Python 版本号，点它 → <b>添加新解释器</b> → <b>添加本地解释器…</b>。少点三层菜单。</li>
+        <li>兜底：<span class="kbd">Ctrl</span>+<span class="kbd">Shift</span>+<span class="kbd">A</span>（中文界面叫 <b>查找操作</b>）→ 输入 <code>解释器</code> → 选 <b>Python 解释器</b>。</li>
+      </ol>
+      <span class="path">⚠️ <span class="kbd">Ctrl</span>+<span class="kbd">Alt</span>+<span class="kbd">S</span> 默认也是 Settings，但输入法 / 截图工具 / 网盘 / 微信经常抢走这个组合键，按了没反应是常事 —— 换上面的路走即可，不是 PyCharm 坏了。</span>
+    </div>
+    进到「设置」后：左栏 <b>项目: 03-Internship preparation</b> → <b>Python 解释器</b> → <b>添加解释器</b> → <b>添加本地解释器…</b><br>
+    弹出的「添加 Python 解释器」里：<b>环境</b>选 <b>生成新的</b>，<b>类型</b>下拉选 <b>Virtualenv</b>，然后填下面四项（顺序就是界面里的自上而下）：
+    <table>
+      <tbody>
+        <tr><td><b>位置</b></td><td><code>D:\AI_learning_project\03-Internship preparation\.venv</code></td></tr>
+        <tr><td><b>基础 Python</b></td><td><code>C:\Users\Lenovo\AppData\Local\Programs\Python\Python312\python.exe</code></td></tr>
+        <tr><td><b>从基础解释器继承软件包</b></td><td><span class="tagline t-no">不勾</span>（勾了就等于没隔离）</td></tr>
+        <tr><td><b>可用于所有项目</b></td><td><span class="tagline t-no">不勾</span></td></tr>
+      </tbody>
+    </table>
+    → OK → 等右下角进度条跑完（建 venv 约 30 秒）。<br>
+    <span class="path">✅ 建好后右侧 Python Packages 面板是空的，这才对。</span>
+  </li>
+  <li>
+    <b>装依赖</b>
+    底部 <span class="kbd">终端</span> 标签（新终端会自动激活 <code>(.venv)</code>，提示符前能看到）：
+    <pre><code>pip install -r requirements.txt</code></pre>
+    <span class="path">根目录的 requirements.txt 是转发件，真正内容在 <code>week1-basics/day01-setup/requirements.txt</code>，装完应该有 langchain 1.4.2 / langchain-openai 1.6.2 / langchain-deepseek 1.1.0。装 2–4 分钟。</span>
+  </li>
+  <li>
+    <b>配 API key</b>
+    在左侧文件树选中 <code>.env.example</code>，<span class="kbd">Ctrl</span>+<span class="kbd">C</span> → <span class="kbd">Ctrl</span>+<span class="kbd">V</span> → 重命名为 <code>.env</code> → 双击打开填 <code>DEEPSEEK_API_KEY=sk-...</code>（<b>不加引号，顶格写</b>）。<br>
+    <span class="path">省事做法：你旧项目里那份 <code>D:\python_langchain\langchain1.2_tutorial\.env</code>（814B）大概率已经填好了 key，用资源管理器复制过来覆盖即可。<code>.env</code> 已被 .gitignore 挡住，永远不入库。</span>
+  </li>
+  <li>
+    <b>自检</b>
+    左侧文件树右键 <code>week1-basics/day01-setup/env_check.py</code> → <b>运行 'env_check'</b>。<b>四项全 OK 才算过</b>（版本 / 五个包 / key 打码显示 / .env 是否真被忽略）。
+  </li>
+  <li>
+    <b>首次真实调用</b>
+    右键 <code>hello_model.py</code> → <b>运行</b>。看到模型回复 + token 数 + 服务端返回的模型名，D1 就算过了。
+  </li>
+  <li>
+    <b>确认 .gitignore 真的生效（别跳）</b>
+    <span class="kbd">Ctrl</span>+<span class="kbd">K</span> 打开提交窗口，扫一眼文件列表：<br>
+    <span class="tagline t-ok">应该看到</span> <code>requirements.txt</code>、<code>.env.example</code>、两个 .py、<code>docs/</code> 下的文档<br>
+    <span class="tagline t-no">绝对不该看到</span> <code>.venv/</code>、<code>.env</code>、<code>.idea/</code>、<code>__pycache__/</code><br>
+    <span class="path">出现了就是 .gitignore 没生效，先停下修，别点提交。改完可以 <span class="kbd">Esc</span> 关掉窗口重开。</span>
+  </li>
+</ol>
+
+<h2><span class="n">附</span>中文界面术语对照（你的 PyCharm 装了中文语言包）</h2>
+
+<div class="note">
+  <b>先记一条万能技巧：</b>中文版「设置」窗口<b>左上角有搜索框</b>，直接输 <code>解释器</code> 就能一步跳到 Python 解释器页，
+  不用在左栏一级一级找。同理要改快捷键就搜 <code>按键映射</code>。
+</div>
+
+<div class="card">
+  <b>「添加 Python 解释器」对话框在你机器上的实测样子</b>（竖排四项，<b>没有</b>左侧解释器类型列表）：
+  <pre>环境：        ● 生成新的      ○ 选择现有
+类型：        [ Virtualenv                          ▾ ]
+基础 Python： [ Python 3.12 (…\Python312\python.exe) ▾ ]
+位置：        D:\AI_learning_project\03-Internship preparation\.venv
+              ▢ 从基础解释器继承软件包
+              ▢ 可用于所有项目
+                          [  确定  ]  [  取消  ]</pre>
+  <b>两个勾选框都留空</b>才是对的；位置框右边出现<b>绿色对勾</b> = 路径合法，可以点「确定」。
+</div>
+
+<table>
+  <thead><tr><th>本操作单里的英文写法</th><th>你界面上的中文</th></tr></thead>
+  <tbody>
+    <tr><td>File → Open</td><td><b>文件 → 打开</b></td></tr>
+    <tr><td>File → Settings</td><td><b>文件 → 设置</b></td></tr>
+    <tr><td>Project: &lt;工程名&gt;</td><td><b>项目: &lt;工程名&gt;</b></td></tr>
+    <tr><td>Python Interpreter</td><td><b>Python 解释器</b></td></tr>
+    <tr><td>Add Interpreter</td><td><b>添加解释器</b>（常是一个蓝色链接，或下拉框旁的齿轮）</td></tr>
+    <tr><td>Add Local Interpreter…</td><td><b>添加本地解释器…</b></td></tr>
+    <tr><td>New / Existing</td><td><b>生成新的 / 选择现有</b></td></tr>
+    <tr><td>Virtualenv Environment</td><td><b>Virtualenv</b>（在「类型」下拉里）</td></tr>
+    <tr><td>Location</td><td><b>位置</b></td></tr>
+    <tr><td>Base interpreter</td><td><b>基础 Python</b></td></tr>
+    <tr><td>Inherit global site-packages</td><td><b>从基础解释器继承软件包</b></td></tr>
+    <tr><td>Make available to all projects</td><td><b>可用于所有项目</b></td></tr>
+    <tr><td>OK / Cancel</td><td><b>确定 / 取消</b></td></tr>
+    <tr><td>Terminal（底部）</td><td><b>终端</b></td></tr>
+    <tr><td>Python Packages（底部面板）</td><td><b>Python 软件包</b></td></tr>
+    <tr><td>右键 → Run 'x.py'</td><td>右键 → <b>运行 'x.py'</b></td></tr>
+    <tr><td><span class="kbd">Ctrl</span>+<span class="kbd">Shift</span>+<span class="kbd">A</span>（Find Action）</td><td><b>查找操作</b>（这次你就是用它绕过的）</td></tr>
+    <tr><td><span class="kbd">Ctrl</span>+<span class="kbd">K</span>（Commit）</td><td><b>提交</b></td></tr>
+    <tr><td>Keymap</td><td><b>按键映射</b></td></tr>
+    <tr><td>Alt+9 → 右键 New Tag（D7 才用）</td><td>Git 工具窗 → <b>新建标记</b></td></tr>
+    <tr><td><span class="kbd">Alt</span>+<span class="kbd">Enter</span>（Show Context Actions）</td><td><b>显示上下文操作</b>（导包、修错、生成代码，写 Python 时最常用）</td></tr>
+    <tr><td><span class="kbd">Ctrl</span>+<span class="kbd">Alt</span>+<span class="kbd">O</span>（Optimize Imports）</td><td><b>优化导入</b>（删掉没用到的 import、把剩下的排好序）</td></tr>
+    <tr><td>Settings → Editor → General → Auto Import</td><td>设置 → <b>编辑器</b> → <b>常规</b> → <b>自动导入</b></td></tr>
+  </tbody>
+</table>
+
+<div class="warn">
+  <b>快捷键速查（按键映射 = Windows 方案，别切）：</b>
+  <table style="margin-top:8px">
+    <thead><tr><th>做什么</th><th>按键（Windows 方案）</th><th>动作名（在按键映射里搜这个）</th></tr></thead>
+    <tbody>
+      <tr><td><b>导包 / 快速修复</b></td><td><span class="kbd">Alt</span>+<span class="kbd">Enter</span></td><td><b>显示上下文操作</b>（Show Context Actions）</td></tr>
+      <tr><td>整理 import</td><td><span class="kbd">Ctrl</span>+<span class="kbd">Alt</span>+<span class="kbd">O</span></td><td>优化导入</td></tr>
+      <tr><td>运行当前文件</td><td><span class="kbd">Ctrl</span>+<span class="kbd">Shift</span>+<span class="kbd">F10</span></td><td>运行</td></tr>
+      <tr><td>提交 / 推送</td><td><span class="kbd">Ctrl</span>+<span class="kbd">K</span> ／ <span class="kbd">Ctrl</span>+<span class="kbd">Shift</span>+<span class="kbd">K</span></td><td>提交 / 推送</td></tr>
+      <tr><td>找任意功能（兜底万能）</td><td><span class="kbd">Ctrl</span>+<span class="kbd">Shift</span>+<span class="kbd">A</span></td><td>查找操作</td></tr>
+      <tr><td>跳到文件</td><td><span class="kbd">Ctrl</span>+<span class="kbd">Shift</span>+<span class="kbd">N</span></td><td>转到文件</td></tr>
+    </tbody>
+  </table>
+  <p style="margin:10px 0 0"><b>为什么必须留在 Windows 方案：</b>设置 → 按键映射 → 右上角下拉有
+  <b>Windows / Emacs / Sublime Text / VSCode</b> 四套。你截图上选的是 <b>Windows</b>，<b>保持它别动</b>。
+  一旦切成 VSCode 方案，<span class="kbd">Ctrl</span>+<span class="kbd">K</span> 会变成「和弦键前缀」（要先按 Ctrl+K 再按别的键），
+  我们后面 35 天所有 <b>Ctrl+K 提交</b>、<b>Alt+9 打 tag</b> 的指引会全部失效 —— 这不是坏了，是方案换了。</p>
+  <p style="margin:6px 0 0">那四套里 <b>Alt+Enter 导包只属于 Windows 方案</b>；Emacs / Sublime / VSCode 方案下这个组合键不是导包。
+  想确认某个动作在你的方案下绑了什么键：在「按键映射」页 <b>搜索框</b>里搜动作名（中文界面搜中文名，搜不到就搜英文），
+  再按 <b>位置</b>看它落在哪一组。</p>
+  <p style="margin:10px 0 0"><b>按了 Alt+Enter 却没看到「导入」项？</b>导包那一项的中文名是
+  <b>「导入此名称」</b>（英文 <i>Import this name</i>），通常排在列表<b>第一行</b>。三种情况下它不会出现：</p>
+  <ol style="margin:6px 0 0">
+    <li><b>这个类已经导入过了</b> —— 最常见。看文件顶部有没有 <code>from langchain_core.messages import ...</code>；
+        类名没有红色波浪线（紫色 = 已解析）就说明已经导好了，<b>没有东西需要导</b>。</li>
+    <li><b>当前有文字被选中</b> —— 这时列表给的是「选区意图」（如「从选区创建新的临时文件」「将 list 转换为 set」「注入语言或引用」），
+        导入项会被挤掉。<b>先按 <span class="kbd">Esc</span> 或点一下别处取消选区</b>，把光标单独放进那个类名里再按。</li>
+    <li><b>解释器没配好 / 包没装</b> —— 类名不报红也不报「未解析」，因为 IDE 根本没在检查。</li>
+  </ol>
+  <p style="margin:6px 0 0">另：<b>notebook（.ipynb）单元格里 Alt+Enter 的导入修复不如 .py 文件可靠</b>，
+  同一个类名前一个单元格导过、后一个单元格能用，是正常的（所有单元格共用一个内核）。</p>
+</div>
+
+
+<div class="warn">
+  <b>中文包的一个坑：</b>翻译并不覆盖所有字符串，有些版本更新后新加的界面元素仍是英文（比如对话框标题可能还是
+  <i>Add Python Interpreter</i>）。所以以上按<b>位置</b>找，别只认文字 —— 四个输入项的顺序永远是
+  <b>位置 → 基础解释器 → 两个勾选框</b>。
+</div>
+
+<h2><span class="n">3</span>D1–D3 补齐：从旧项目挑什么</h2>
+
+<div class="warn">
+  <b>先看这条：D1 不用从旧项目搬任何东西。</b>
+  旧的 <code>chapter01_summary/test.py</code> 只有 48 字节，没有保留价值；D1 该有的四个文件
+  （<code>env_check.py</code> / <code>hello_model.py</code> / <code>README.md</code> / <code>requirements.txt</code>）已经全在仓库里了。
+</div>
+
+<table>
+  <thead>
+    <tr><th>目标文件（新仓库）</th><th>旧项目对应</th><th>怎么处理</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>week1-basics/day02-switch-model/</code><br><code>switch_model.py</code> <span class="tagline t-new">待建</span></td>
+      <td><code>chapter02_model/</code><br><code>01-model-init-online.ipynb</code><br><code>07-profile-initparams-config.ipynb</code></td>
+      <td>把两个 notebook 的<b>代码提炼成一个 .py</b>：三家模型（DeepSeek / 通义 / 智谱）各建一次、各调一次。文件名必须是 <code>switch_model.py</code>，因为 <code>README.md</code> 里已经这么写了。</td>
+    </tr>
+    <tr>
+      <td><code>answers.md</code> <span class="tagline t-new">待建</span></td>
+      <td>上面两个 notebook 的输出</td>
+      <td>三家模型对<b>同一个问题</b>的回答各留 1 条。这是 D2 的"带数据产出"，别省。</td>
+    </tr>
+    <tr>
+      <td><code>week1-basics/day03-stream/</code><br><code>stream_demo.py</code> <span class="tagline t-new">待建</span></td>
+      <td><code>05-model-stream-batch.ipynb</code></td>
+      <td>提炼成 .py，保留 <code>invoke</code> vs <code>stream</code> vs <code>batch</code> 的对比。<b>重点看"首字延迟"这个体感</b>——面试问"为什么流式"你要能答。</td>
+    </tr>
+    <tr>
+      <td><code>params_experiment.py</code><br><code>params.md</code> <span class="tagline t-new">待建</span></td>
+      <td><code>02-model-init-params.ipynb</code><br><code>04-model-invoke.ipynb</code></td>
+      <td>同一问题跑 <code>temperature</code> 0 / 0.7 / 1.5，把结果落进 <code>params.md</code>。D3 第 2 条提交是 <code>exp(params)</code>，属"带数据的对比实验"，数据必须有落点，不能只写在 commit message 里。</td>
+    </tr>
+    <tr>
+      <td><code>docs/journal/2026-09-22.md</code><br><code>2026-09-23.md</code> <span class="tagline t-new">待建</span></td>
+      <td>—</td>
+      <td>新写。结论行要求：D2 写"换供应商只改两行"，D3 写"流式改变的是等待体感，不是总时长"。</td>
+    </tr>
+    <tr>
+      <td colspan="2" style="color:var(--tx2)">
+        <code>03-model-init-ollama.ipynb</code>（本地 Ollama）<br>
+        <code>06-ainvoke的使用.py</code> / <code>06-astream的使用.py</code>（异步）
+      </td>
+      <td><span class="tagline t-keep">参考，不搬</span><br>Ollama 要额外装模型，性价比低；异步写法留到 D25 前后（LangGraph 要 <code>astream</code>）再碰，那时你看得懂它在解决什么。</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>为什么不要直接搬 .ipynb</h3>
+<ol>
+  <li><b>新仓库没装 jupyter。</b>依赖清单只有 langchain 三件套，notebook 打不开也跑不了。</li>
+  <li><b>版本对不上。</b>旧代码是 <code>1.2.12</code> API，新环境 <code>1.4.2</code>，部分参数名和导入路径已经变了，直接搬会报错还让你怀疑是自己写错了。</li>
+  <li><b>面试官要读的是 <code>.py</code>。</b>notebook 的 JSON 里混着图像输出，diff 一行都读不出来。.py 才是一眼能看懂的。</li>
+</ol>
+
+<div class="note">
+  <b>所以"挑选"的正确姿势是：</b>打开旧 notebook 当参考 → 在新仓库里<b>重写</b>成 <code>.py</code> → 跑通。
+  重写一遍不到 20 分钟，但产出是"我写的代码"，不是"我抄的文件"。
+  D1–D3 都是轻内容（环境 / 换模型 / 流式），一天半足够全补完，09-23 还能留半天机动。
+</div>
+
+<h2><span class="n">4</span>补齐后怎么提交</h2>
+
+<p>按 D1 的节奏，三天的提交大概是这几条（<span class="kbd">Ctrl</span>+<span class="kbd">K</span>，提交前手动取消勾选不属于本条的文件）：</p>
+
+<table>
+  <thead><tr><th>天</th><th>提交类型</th><th>消息</th><th>文件</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>D1</td>
+      <td><code>chore(day01)</code></td>
+      <td>初始化 Python 虚拟环境与依赖</td>
+      <td><code>requirements.txt</code>、<code>.env.example</code></td>
+    </tr>
+    <tr>
+      <td>D1</td>
+      <td><code>feat(day01)</code></td>
+      <td>跑通首次模型调用与环境自检</td>
+      <td><code>hello_model.py</code>、<code>env_check.py</code></td>
+    </tr>
+    <tr>
+      <td>D1</td>
+      <td><code>docs(journal)</code></td>
+      <td>D1 日志</td>
+      <td><code>docs/journal/2026-09-21.md</code> 等</td>
+    </tr>
+    <tr>
+      <td>D2</td>
+      <td><code>feat(day02)</code></td>
+      <td>三家模型切换对比</td>
+      <td><code>switch_model.py</code>、<code>answers.md</code></td>
+    </tr>
+    <tr>
+      <td>D3</td>
+      <td><code>feat(day03)</code></td>
+      <td>流式输出与调用方式对比</td>
+      <td><code>stream_demo.py</code></td>
+    </tr>
+    <tr>
+      <td>D3</td>
+      <td><code>exp(params)</code></td>
+      <td>temperature 参数对比实验</td>
+      <td><code>params_experiment.py</code>、<code>params.md</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>本阶段<b>不打 tag</b> —— 第一个 tag 是 D7 的 <code>w1-cli-v0.1</code>。</p>
+
+<h2><span class="n">5</span>最可能卡住的三处</h2>
+
+<table>
+  <thead><tr><th>现象</th><th>真实原因</th><th>怎么修</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><span class="kbd">Ctrl</span>+<span class="kbd">Alt</span>+<span class="kbd">S</span> 按了没反应</td>
+      <td>这个组合键被别的软件抢了（输入法 / 截图 / 网盘 / 微信 / 显卡驱动），或 PyCharm 不在前台</td>
+      <td>改用菜单 <span class="kbd">文件</span> → <span class="kbd">设置</span>，或点窗口 <b>右下角状态栏的解释器名</b>。想根治：<span class="kbd">Ctrl</span>+<span class="kbd">Shift</span>+<span class="kbd">A</span> → 输入 <code>按键映射</code> → 设置 → 按键映射 → 搜 <code>设置</code>，看它现在绑到哪个键、被谁改了。先确认 PyCharm 窗口是当前焦点。</td>
+    </tr>
+    <tr>
+      <td>设置里找不到 <b>Python 解释器</b>，或工程名不叫 <code>03-Internship preparation</code></td>
+      <td>工程是挂到旧工程下的，不是独立打开的</td>
+      <td>回到第 1 步：<span class="kbd">File</span> → <span class="kbd">Open</span> 单独打开仓库文件夹，别用 Attach。</td>
+    </tr>
+    <tr>
+      <td>终端里 <code>pip install</code> 装进了 conda，或提示符前没有 <code>(.venv)</code></td>
+      <td>终端用的是系统解释器，不是刚建的 .venv</td>
+      <td>关掉再开一个「终端」；或在 设置 → 工具 → 终端 里把 <b>激活 virtualenv</b> 勾上。也可以先用 <code>where python</code> 看一眼指向谁。</td>
+    </tr>
+    <tr>
+      <td><code>AuthenticationError 401</code> / <code>NotFoundError 404</code></td>
+      <td>.env 里 key 带引号或空格 / base_url 少了 <code>/v1</code></td>
+      <td>key 顶格不加引号；<code>DEEPSEEK_BASE_URL=https://api.deepseek.com/v1</code> 只写到 <code>/v1</code>。</td>
+    </tr>
+    <tr>
+      <td><code>ModuleNotFoundError: No module named 'langchain'</code></td>
+      <td>运行时选的解释器不是 .venv</td>
+      <td>右上角运行配置下拉 → <b>Edit Configurations</b> → <b>Python interpreter</b> 选 <code>.venv</code>。</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="warn">
+  <b>踩到坑别急着改 —— 先把原始报错贴进 <code>errors/index.md</code>。</b>
+  那个文件是面试最值钱的素材：能说清"我遇到过什么、怎么定位的"的人，比只报结果的人可信得多。
+</div>
+
+<h2><span class="n">6</span>完成清单</h2>
+
+<ul class="chk">
+  <li>仓库已作为独立工程在 PyCharm 打开（能看到 Git 工具窗识别出仓库）</li>
+  <li><code>.venv</code> 建在仓库内，base = Python 3.12.8</li>
+  <li><code>pip install -r requirements.txt</code> 成功，三个 langchain 包版本对得上</li>
+  <li><code>.env</code> 已填 key，<b>且提交列表里看不到它</b></li>
+  <li><code>env_check.py</code> 四项全 OK</li>
+  <li><code>hello_model.py</code> 打印出回复 + token 数</li>
+  <li>D2 <code>switch_model.py</code> + <code>answers.md</code> 已跑通</li>
+  <li>D3 <code>stream_demo.py</code> + <code>params_experiment.py</code> + <code>params.md</code> 已跑通</li>
+  <li><code>docs/journal/</code> 补上 09-22、09-23 两篇</li>
+  <li><code>docs/progress.md</code> 里 D1–D3 打勾</li>
+</ul>
+
+<div class="foot">
+  生成于 2026-09-21 ｜ 配套文件：<code>docs/daily/D01-环境搭建与LangChain全景.html</code>（D1 逐时执行单）、
+  <code>week1-basics/day01-setup/README.md</code>、<code>docs/progress.md</code>（进度表）
+</div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>D4 · Message 与提示词模板 ｜ 影石实习准备</title>
+<style>
+:root{
+  --bg:#f6f7f9; --card:#fff; --line:#e5e7eb; --line2:#eef0f3;
+  --tx:#1a1d21; --tx2:#586170; --tx3:#8b939e;
+  --must:#b4232a; --mustbg:#fdecec;
+  --accent:#0f766e; --accentbg:#e6f4f2;
+  --vidbg:#eef2ff; --vidtx:#3538cd;
+  --docbg:#e9f7ef; --doctx:#1a7f4b;
+  --labbg:#fdf3e3; --labtx:#8a5200;
+  --codbg:#f3f4f6;
+  --radius:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0e1014; --card:#161920; --line:#252a33; --line2:#1e222a;
+    --tx:#e7e9ec; --tx2:#a2aab6; --tx3:#767e8a;
+    --must:#f08b8b; --mustbg:#3a1e20;
+    --accent:#2dd4bf; --accentbg:#12312e;
+    --vidbg:#1d2440; --vidtx:#9aa8f5;
+    --docbg:#12281c; --doctx:#6fd39c;
+    --labbg:#3a2e18; --labtx:#e0b070;
+    --codbg:#1b1f27;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0; padding:0 20px 90px; background:var(--bg); color:var(--tx);
+  font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif;
+  font-size:15px; line-height:1.7; -webkit-font-smoothing:antialiased;}
+.wrap{max-width:900px; margin:0 auto}
+header{padding:44px 0 6px}
+.dtag{display:inline-block; font-size:12px; font-weight:600; color:#fff; background:var(--accent);
+  padding:2px 10px; border-radius:6px; margin-bottom:12px; letter-spacing:.02em}
+h1{font-size:25px; font-weight:600; margin:0 0 8px; letter-spacing:-.01em}
+.sub{color:var(--tx2); font-size:14px; margin:0 0 6px}
+.meta{color:var(--tx3); font-size:13px; margin:0 0 22px}
+.note{background:var(--accentbg); border-left:3px solid var(--accent); padding:14px 18px;
+  border-radius:0 var(--radius) var(--radius) 0; font-size:14.5px; margin:18px 0}
+.note b{color:var(--accent)}
+.warn{background:var(--mustbg); border-left:3px solid var(--must); padding:14px 18px;
+  border-radius:0 var(--radius) var(--radius) 0; font-size:14px; margin:18px 0}
+.warn b{color:var(--must)}
+h2{font-size:17px; font-weight:600; margin:40px 0 12px; padding-bottom:9px;
+  border-bottom:1px solid var(--line); display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+h2 .n{font-size:12px; font-weight:600; background:var(--accentbg); color:var(--accent);
+  padding:2px 9px; border-radius:99px}
+h3{font-size:14.5px; font-weight:600; margin:22px 0 8px; color:var(--tx)}
+.card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+  padding:16px 20px; margin:12px 0}
+table{width:100%; border-collapse:collapse; font-size:14px; margin:10px 0;
+  background:var(--card); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden}
+th{text-align:left; font-weight:600; font-size:12.5px; color:var(--tx3); background:var(--line2);
+  padding:9px 12px; white-space:nowrap}
+td{padding:9px 12px; border-top:1px solid var(--line2); vertical-align:top}
+td.num,th.num{font-variant-numeric:tabular-nums; white-space:nowrap; color:var(--tx2)}
+.tagline{display:inline-block; font-size:11.5px; font-weight:600; padding:1px 7px; border-radius:5px; white-space:nowrap}
+.t-vid{background:var(--vidbg); color:var(--vidtx)}
+.t-doc{background:var(--docbg); color:var(--doctx)}
+.t-lab{background:var(--labbg); color:var(--labtx)}
+.t-skip{background:var(--line2); color:var(--tx3)}
+a{color:var(--accent); text-decoration:none; border-bottom:1px solid var(--accentbg)}
+a:hover{border-bottom-color:var(--accent)}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,"Courier New",monospace; font-size:13px;
+  background:var(--codbg); padding:1px 5px; border-radius:5px}
+pre{background:var(--codbg); border:1px solid var(--line); border-radius:10px; padding:14px 16px;
+  overflow-x:auto; font-family:ui-monospace,SFMono-Regular,Consolas,"Courier New",monospace;
+  font-size:12.8px; line-height:1.6; white-space:pre-wrap; word-break:break-word; margin:8px 0}
+ol,ul{padding-left:22px; margin:8px 0}
+li{margin:5px 0}
+.check{list-style:none; padding-left:0}
+.check li{display:flex; gap:10px; align-items:flex-start; margin:9px 0}
+.check input{margin-top:6px; width:16px; height:16px; accent-color:var(--accent); flex:0 0 auto; cursor:pointer}
+.check label{cursor:pointer}
+.check input:checked + label{color:var(--tx3); text-decoration:line-through}
+.kv{font-size:14px; color:var(--tx2); margin:4px 0}
+.kv b{color:var(--tx)}
+.foot{color:var(--tx3); font-size:12.5px; text-align:center; margin:44px 0 0; line-height:1.9}
+.strike{color:var(--tx3)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="dtag">D4 ／ 35</div>
+  <h1>Message 与提示词模板</h1>
+  <p class="sub">2026-09-21（周一）实际执行 ｜ 预计 3h ｜ 阶段：W1 打通链路</p>
+  <p class="meta">目录 <code>week1-basics/day04-messages/</code> ｜ 计划日 09-24，因 D2 / D3 内容此前已学过而提前</p>
+</header>
+
+<div class="note">
+  <b>今天只干一件事：把「上下文」这个词，从抽象变成看得见的东西。</b><br>
+  全程不许用任何记忆类（不用 <code>InMemorySaver</code>、不用 <code>RunnableWithMessageHistory</code>、不用 <code>create_agent</code>）。
+  消息历史就是一个普通的 Python list，你自己 append。跑完你会得到一句可以直接在面试里说的话 ——
+  <b>「上下文不是模型的能力，是调用方每次把历史重新发一遍。」</b>
+</div>
+
+<h2><span class="n">1</span>三小时怎么切</h2>
+
+<table>
+  <tr><th class="num">时段</th><th>做什么</th></tr>
+  <tr><td class="num">0:00–1:10</td><td><span class="tagline t-vid">视频</span> 必看 5 讲，合计 <b>67 分 35 秒</b>（开 1.25 倍速可压到约 55 分钟）</td></tr>
+  <tr><td class="num">1:10–1:35</td><td><span class="tagline t-doc">文档</span> Messages 页 <b>Basic usage</b> + <b>Message types</b> 两大节</td></tr>
+  <tr><td class="num">1:35–2:35</td><td><span class="tagline t-lab">动手</span> 填 <code>messages_demo.py</code> 的三处 TODO 并跑通</td></tr>
+  <tr><td class="num">2:35–2:50</td><td><span class="tagline t-lab">验收</span> 跑「清空历史」对照组 + 观察 token 增长</td></tr>
+  <tr><td class="num">2:50–3:00</td><td>填日志结论行 + <code>Ctrl + K</code> 提交</td></tr>
+</table>
+
+<p class="kv"><b>时间富余的话：</b>接着看加看的 3 讲（44 分 28 秒），或提前翻一眼 D5 要用的 <code>ChatPromptTemplate</code>。</p>
+
+<h2><span class="n">2</span>视频 · 尚硅谷 第 04 章</h2>
+
+<p class="kv">合集：<a href="https://www.bilibili.com/video/BV1rv7A6oEeP/" target="_blank">BV1rv7A6oEeP《2026 版 LangChain 教程》</a> ｜ 直接点下面的分 P 链接跳转。时长已逐条核对。</p>
+
+<h3>必看 5 讲 ｜ 合计 67 分 35 秒</h3>
+
+<table>
+  <tr><th class="num">分 P</th><th>标题</th><th class="num">时长</th><th>看完要带走的一句话</th></tr>
+  <tr>
+    <td class="num"><a href="https://www.bilibili.com/video/BV1rv7A6oEeP/?p=25" target="_blank">P25</a></td>
+    <td>认识消息与消息的两种格式</td>
+    <td class="num">11:28</td>
+    <td>模型要的是<b>消息列表</b>，不是字符串；消息有两种写法（消息对象 / 元组）</td>
+  </tr>
+  <tr>
+    <td class="num"><a href="https://www.bilibili.com/video/BV1rv7A6oEeP/?p=26" target="_blank">P26</a></td>
+    <td>4 种消息对象中字段的说明</td>
+    <td class="num">13:29</td>
+    <td>System / Human / AI / Tool 四种消息，各自装什么</td>
+  </tr>
+  <tr>
+    <td class="num"><a href="https://www.bilibili.com/video/BV1rv7A6oEeP/?p=27" target="_blank">P27</a></td>
+    <td>对话历史的管理和优化</td>
+    <td class="num">11:36</td>
+    <td>所谓「记忆」，就是有人替你维护了一个列表</td>
+  </tr>
+  <tr>
+    <td class="num"><a href="https://www.bilibili.com/video/BV1rv7A6oEeP/?p=28" target="_blank">P28</a></td>
+    <td>案例：多轮对话聊天机器人</td>
+    <td class="num">11:46</td>
+    <td>把历史 append 回去，模型才「记得」</td>
+  </tr>
+  <tr>
+    <td class="num"><a href="https://www.bilibili.com/video/BV1rv7A6oEeP/?p=30" target="_blank">P30</a></td>
+    <td>ChatPromptTemplate 的两种实例化方式和三种调用方式</td>
+    <td class="num">19:16</td>
+    <td>模板 = 带变量的消息列表，仅此而已</td>
+  </tr>
+</table>
+
+<h3>加看 ｜ 合计 44 分 28 秒</h3>
+
+<table>
+  <tr><th class="num">分 P</th><th>标题</th><th class="num">时长</th><th>为什么值得看</th></tr>
+  <tr>
+    <td class="num"><a href="https://www.bilibili.com/video/BV1rv7A6oEeP/?p=29" target="_blank">P29</a></td>
+    <td>content 和 content_blocks 的使用</td>
+    <td class="num">13:47</td>
+    <td>解释为什么 <code>message.content</code> 有时不是字符串</td>
+  </tr>
+  <tr>
+    <td class="num"><a href="https://www.bilibili.com/video/BV1rv7A6oEeP/?p=31" target="_blank">P31</a></td>
+    <td>ChatPromptTemplate 初始化的 6 种参数类型</td>
+    <td class="num">14:20</td>
+    <td>元组 / 消息对象 / 模板对象都能传，D5 要用</td>
+  </tr>
+  <tr>
+    <td class="num"><a href="https://www.bilibili.com/video/BV1rv7A6oEeP/?p=32" target="_blank">P32</a></td>
+    <td>部分变量预填充、消息占位符</td>
+    <td class="num">16:21</td>
+    <td><code>partial</code> 与 <code>MessagesPlaceholder</code>，接记忆时会回来找它</td>
+  </tr>
+</table>
+
+<h3>今天刻意不看</h3>
+<p class="kv">
+  <span class="tagline t-skip">P23 / P24</span> LangSmith 介绍 → 留给 D28 做可观测时看<br>
+  <span class="tagline t-skip">P33 及以后</span> 工具与 Agent → W2 的内容，今天看了会乱
+</p>
+
+<h2><span class="n">3</span>文档 · 官方 Messages 页面（精确到小节）</h2>
+
+<p class="kv">页面：<a href="https://docs.langchain.com/oss/python/langchain/messages" target="_blank">docs.langchain.com/oss/python/langchain/messages</a></p>
+
+<table>
+  <tr><th>小节</th><th>读什么</th></tr>
+  <tr>
+    <td><b>Basic usage</b><br><span class="kv">Text prompts ／ <b>Message prompts</b> ／ Dictionary format</span></td>
+    <td>同一个 prompt 的三种写法。中间那个 <b>Message prompts 就是「提示词模板」</b> —— 今天视频里 P30 讲的东西，官方文档的落点在这里</td>
+  </tr>
+  <tr>
+    <td><b>Message types</b><br><span class="kv">System ／ Human ／ AI ／ Tool message</span></td>
+    <td>四种消息各自的字段。重点是 AI message 下的 <b>Token usage</b> 小节 —— D28 算成本靠的就是 <code>usage_metadata</code> 里那几个数</td>
+  </tr>
+  <tr>
+    <td><b>Message content</b><br><span class="kv">Standard content blocks（选看）</span></td>
+    <td><code>content_blocks</code> 是什么，为什么 P29 要专门讲一节</td>
+  </tr>
+</table>
+
+<div class="warn">
+  <b>一处已修正的过时信息：</b>官方文档<b>已经没有独立的「Prompt templates」页面</b>了 ——
+  1.x 改版后并进了 Messages 页的 <b>Message prompts</b> 小节。
+  你如果在站内搜 <code>Prompt templates</code> 搜不到，不是找错了，是它真没了。计划表里那条已同步改掉。
+</div>
+
+<h2><span class="n">4</span>动手 · 写 messages_demo.py</h2>
+
+<p class="kv">骨架已经放在 <code>week1-basics/day04-messages/messages_demo.py</code>，语法已校验通过。
+文件里挖了 <b>三处 TODO</b>，其余部分（模型初始化、<code>to_text</code>、<code>ask</code> 函数）都已经写好。</p>
+
+<div class="card">
+  <p class="kv" style="margin-top:0"><b>今天真正的核心，是 <code>ask()</code> 里那三行：</b></p>
+<pre>history.append(HumanMessage(question))      # ① 用户这句话进历史
+reply = llm.invoke(history)                 # ② 把「到目前为止的全部历史」发出去
+history.append(AIMessage(to_text(reply)))   # ③ 模型的回答也进历史，下一轮才「记得」</pre>
+  <p class="kv" style="margin-bottom:0">没有任何魔法。所谓「记忆」，就是调用方每次都把整段历史重新发一遍。</p>
+</div>
+
+<h3>三处 TODO</h3>
+<ol>
+  <li><b>设计 3 个有依赖关系的问题</b> —— 第 1 轮给模型一个信息（比如你的名字），第 2 轮问它记不记得，第 3 轮基于前两轮追问。三个问题要互相依赖，否则测不出上下文有没有传对。</li>
+  <li><b>打印 history 的条数和累计 token</b> —— 观察它怎么随轮数涨。这是「上下文有成本」的第一手证据。</li>
+  <li><b>跑一个对照组</b> —— 新开一个只留 system 的空历史，把同一句「我叫什么？」再问一遍。这一步是整个 D4 最有价值的地方：<b>模型自己并不记得任何东西，拿掉 history 它就失忆。</b></li>
+</ol>
+
+<h3>验收标准（做不到就是没懂）</h3>
+<ul class="check">
+  <li><input type="checkbox" id="v1"><label for="v1">第 1 轮告诉模型的信息，<b>第 2 轮它能答出来</b></label></li>
+  <li><input type="checkbox" id="v2"><label for="v2">清空历史再问同一个问题，<b>它答不出来</b> —— 这条是关键，证明上下文确实来自那个数组</label></li>
+  <li><input type="checkbox" id="v3"><label for="v3">token 数逐轮递增（说明历史确实越传越长）</label></li>
+</ul>
+
+<h2><span class="n">5</span>今天提交什么 · 4 条（含 D1 欠账）</h2>
+
+<p class="kv">仓库里已有 <b>3 条历史提交</b>（当初的骨架），但 <b>D1 的代码和 D4 的代码都还没入库</b> —— 所以今天一次把两天的欠账补完，之后回到每天 1–2 条。</p>
+
+<p class="kv"><b>提交前扫一眼列表：绝对不要带上 <code>.env</code>、<code>.venv/</code>、<code>.idea/</code>、<code>__pycache__/</code>。</b>
+PyCharm 里 <code>Ctrl + K</code> 打开提交窗口，每个文件前面有勾选框 —— <b>用勾选框挑本次要提交的文件</b>，取消勾选的不进这条提交。</p>
+
+<h3>「全部文件一起提交」行不行？</h3>
+<table>
+  <tr><th style="width:210px">问题</th><th>答案</th></tr>
+  <tr>
+    <td>仓库里<b>所有文件</b>都能传上去吗</td>
+    <td><b>不是。</b>三类永远不进库：<code>.env</code>（真 API key）、<code>.venv/</code>（换机器就作废的几百 MB）、
+        <code>.idea/</code>（本机 IDE 配置）。它们已被 <code>.gitignore</code> 挡住，
+        <b>你在提交窗口里看不到它们才是对的</b>；一旦在列表里看到 <code>.env</code>，停下来先修 gitignore。</td>
+  </tr>
+  <tr>
+    <td>剩下的<b>一次全勾上、写成一条</b>行不行</td>
+    <td><b>技术上能，别这么干。</b>规范里写的是「一个 commit 只做一件事、每天 2–6 条」。D1 和 D4 是两天的内容，
+        混成一条以后想单独回滚 D4 就做不到，<code>git log</code> 也失去「逐日证据」的意义 —— 那正是面试官会看的东西。</td>
+  </tr>
+</table>
+<p class="kv">实在嫌 4 条麻烦，<b>最低也分成 2 条</b>（代码 / 文档）。但这 4 条的划分是有意的：<b>①②= D1、③= D4、④= 文档</b>，与进度表一一对应。</p>
+
+<h3>要传上去的文件 · 一共 25 个</h3>
+<p class="kv">PyCharm 提交窗口里能看到的全部变更就是这 25 个。<code>.env</code> / <code>.venv/</code> / <code>.idea/</code> 不在此列 ——
+正因它们被 gitignore 挡住了。<b>按下面四组勾选，一组一条提交。</b></p>
+<table>
+  <tr><th style="width:46px">条</th><th style="width:150px">提交类型</th><th>要勾选的文件</th></tr>
+  <tr>
+    <td><b>①</b></td><td><code>chore(day01)</code><br>环境配置</td>
+    <td><code>requirements.txt</code>（根）<br><code>week1-basics/day01-setup/requirements.txt</code><br>
+        <code>week1-basics/day01-setup/README.md</code><br><code>.gitignore</code>　<code>.env.example</code>
+        <br><b>共 5 个</b></td>
+  </tr>
+  <tr>
+    <td><b>②</b></td><td><code>feat(day01)</code><br>首次调用</td>
+    <td><code>week1-basics/day01-setup/env_check.py</code><br><code>week1-basics/day01-setup/hello_model.py</code>
+        <br><b>共 2 个</b></td>
+  </tr>
+  <tr>
+    <td><b>③</b></td><td><code>feat(day04)</code><br>messages 数组</td>
+    <td><code>week1-basics/day04-messages/messages_demo.py</code><br><code>week1-basics/day04-messages/README.md</code><br>
+        <code>…/01-message的使用.ipynb</code><br><code>…/ChatPromptTemplate的使用.ipynb</code>
+        <br><b>共 4 个</b>（两份 notebook 提交前可先清空输出）</td>
+  </tr>
+  <tr>
+    <td><b>④</b></td><td><code>docs</code><br>日志与文档</td>
+    <td><b>剩下全部 14 个</b>：<code>README.md</code>、<code>docs/context.md</code>、<code>docs/decisions.md</code>、
+        <code>docs/progress.md</code>、<code>docs/stack.md</code>、<code>docs/新会话提示词.md</code>、
+        <code>docs/plan/</code> 下 2 份 HTML、<code>errors/index.md</code>、
+        <code>docs/journal/2026-09-21.md</code>、<code>docs/journal/2026-09-24.md</code>、
+        <code>docs/daily/</code> 下 3 份 HTML</td>
+  </tr>
+</table>
+<p class="kv"><b>核对方法：四条做完后，提交窗口应该是空的</b> —— 一个文件都不剩。还剩着就是漏勾了；反过来，
+某条提交里混进了不该有的文件（比如 <code>.env</code>），<code>git log</code> 里能查出来，但那时已经晚了。</p>
+
+<p class="kv"><b>① chore(day01)：把环境配好</b></p>
+<pre>chore(day01): 补上依赖清单与环境配置
+
+根 requirements.txt 只做转发，真实清单留在 day01-setup/ 单点维护
+.env.example 补 QWEN/ZHIPU 的 base_url，LANGSMITH_TRACING 默认关
+.gitignore 补 .ipynb_checkpoints/</pre>
+<p class="kv">勾选：<code>requirements.txt</code>、<code>day01-setup/requirements.txt</code>、<code>day01-setup/README.md</code>、<code>.gitignore</code>、<code>.env.example</code></p>
+
+<p class="kv"><b>② feat(day01)：跑通首次调用</b></p>
+<pre>feat(day01): 跑通首次模型调用
+
+env_check.py 自检四项：Python 版本 / 依赖 / key / .env 是否真被忽略
+hello_model.py 走 OpenAI 兼容协议，打印回复与服务端返回的模型名
+现象：运行时刷 LangSmith 401
+实际：追踪开关开着但没给 key，与 DeepSeek 无关（域名是 smith.langchain.com）
+结论：看到 401 先看域名属于谁 —— 追踪凭据和模型凭据是两套</pre>
+<p class="kv">勾选：<code>day01-setup/env_check.py</code>、<code>day01-setup/hello_model.py</code></p>
+
+<p class="kv"><b>③ feat(day04)：今天的正题</b></p>
+
+<p class="kv"><b>版本 A · 推荐</b>［今天没踩坑，四段式不必写满 ——「现象 / 我以为」是踩坑的日子才用的槽位］</p>
+<pre>feat(day04): 手动维护 messages 数组实现 3 轮对话
+
+自己 append HumanMessage / AIMessage，全程不用任何记忆类
+对照组：新开只有 system 的空历史再问一次 → 「我不知道你的名字。」
+结论：所谓上下文，就是你自己维护的一个数组</pre>
+
+<p class="kv"><b>版本 B · 想把「现象」用上</b>［D4 其实有个反直觉的观察：它看起来「记住了」，其实没有。
+这句写进 commit，面试讲「上下文哪来的」时最好用］</p>
+<pre>feat(day04): 手动维护 messages 数组实现 3 轮对话
+
+现象：第 2 轮它能答出「你叫 Base」，看起来像模型自己记住了
+做法：新开一个只有 system 的空历史，把同一个问题再问一遍
+结论：它答「我不知道你的名字。」—— 模型从来没记得过，
+      是我每轮把整份历史重发了一遍
+自己 append HumanMessage / AIMessage，全程不用任何记忆类</pre>
+
+<p class="kv"><b>「现象」不一定是报错。</b>判断只有一条：<b>有没有「结果和预期不一致」的地方</b> ——
+有报错、有意外结果、有效果差就写；平平顺顺就直接省掉。
+同理 <b>「我以为」只在真有错误判断时才写</b>：今天你事先就知道要手动维护数组（README 里写了不许用记忆类），
+<b>别为了凑满四段编一个假的「以为」</b> —— 档案和提交记录的价值全在真实。</p>
+<p class="kv">勾选：<code>day04-messages/messages_demo.py</code>、<code>day04-messages/README.md</code>、两份 <code>.ipynb</code>（学习草稿，提交前可先清空输出）</p>
+
+<p class="kv"><b>④ docs：日志与文档同步</b></p>
+<pre>docs: 补齐日志、报错档案并同步仓库文档
+
+README 改为 GitHub 首页版（效果数据 / 技术栈 / 快速开始 / AI 提效）
+新增 docs/daily/ 每日执行单；修正计划表 D1、D4 两处过时内容
+路径统一为 03-Internship preparation</pre>
+<p class="kv">勾选：剩下的全部 —— <code>README.md</code>、<code>docs/</code> 下所有改动、<code>errors/index.md</code></p>
+
+<h3>提交消息模板（以后每天照这个填）</h3>
+<p class="kv">仓库里已配好模板文件 <code>.gitmessage</code>（<code>commit.template</code> 已指向它）。命令行 <code>git commit</code> 会自动带出；
+<b>PyCharm 的提交框不一定会自动带</b>，最稳的办法是每次从下面复制一份来填。</p>
+<pre>&lt;type&gt;(&lt;scope&gt;): 一句话标题（动词开头，50 字以内）
+
+现象：
+我以为：
+做法：
+结论：</pre>
+<table>
+  <tr><th style="width:130px">槽位</th><th>填什么</th></tr>
+  <tr><td><code>type</code></td><td>feat 新功能 ／ exp 对比实验 ／ fix 修 bug ／ refactor 重构 ／ docs 文档 ／ chore 环境 ／ test 测试</td></tr>
+  <tr><td><code>scope</code></td><td>day 编号（<code>day04</code>）或模块名（<code>rag</code> / <code>langgraph</code> / <code>project</code> / <code>journal</code>）</td></tr>
+  <tr><td><b>那个空行</b></td><td><b>必须有。</b>PyCharm 的提交框是一整个大文本框，Git 靠「第一行 + 一个空行」切标题和正文；
+      少了空行，整段会变成一条超长标题，<code>git log --oneline</code> 里糊成一团</td></tr>
+  <tr><td>现象</td><td>发生了什么（报错 / 结果不对 / 效果差）。没踩坑就写「无」，别硬编</td></tr>
+  <tr><td><b>我以为</b></td><td><b>这段最值钱</b> —— 你当时的错误判断，面试官能从中看出你是想过的</td></tr>
+  <tr><td>做法 / 结论</td><td>最后怎么改的 ／ 一句话可复用经验（面试时直接说这句）</td></tr>
+</table>
+<p class="kv"><b>不是每天都要写满四段</b>：踩坑的日子写全，顺利的日子两行也够（像今天 ③ 就只有三段：做了什么 / 对照组结果 / 结论）。</p>
+
+<p class="kv"><b>推送到 GitHub（首次）</b></p>
+<ol>
+  <li>GitHub 右上角 <b>+ → New repository</b>：名字 <code>insta360-ai-prep</code>、选 <b>Public</b>、
+      <b>Initialize 那三个勾全部不勾</b>（不加 README / .gitignore / license）
+      <br><span style="color:var(--ink2);font-size:13px">为什么不能勾 README：<b>你本地已经有一份 <code>README.md</code> 了</b>（那份 GitHub 首页版）。
+      勾了的话 GitHub 会在远程先造一条初始提交，和你本地历史<b>没有共同祖先</b>，push 会被拒（non-fast-forward），
+      得先合并再推，白折腾一轮。<b>不是「不要 README」，是「不要在网页上新建一份」</b> —— 你本地那份要盖上去。
+      同理由：<code>.gitignore</code> 本地也有；license 要用 GitHub 模板的话，那是单独一条提交。</span></li>
+  <li>PyCharm 菜单 <b>Git → 管理远程…</b> → <b>+</b> → Name 填 <code>origin</code>，URL 填 GitHub 给的 <code>.git</code> 地址</li>
+  <li><b>Ctrl + Shift + K</b> 推送 —— 首次会要求 GitHub 授权，授权一次即可</li>
+  <li>刷新 GitHub：README 应自动渲染成首页；再搜一次仓库里没有 <code>sk-</code> 开头的串</li>
+</ol>
+
+<h2><span class="n">6</span>坑预警</h2>
+
+<table>
+  <tr><th>症状</th><th>真实原因</th></tr>
+  <tr>
+    <td>第 2 轮模型答不出第 1 轮的信息</td>
+    <td>99% 是<b>忘了把模型回复 append 回 history</b>。只 append 了用户提问，模型看到的永远是一次性问答。</td>
+  </tr>
+  <tr>
+    <td>另一种「记不住」</td>
+    <td>每轮循环里<b>新建了 history 变量</b>，或者把 <code>invoke</code> 的返回值直接覆盖了 history。history 必须是循环外创建、全程同一个对象。</td>
+  </tr>
+  <tr>
+    <td>打印出来是一串奇怪的 list，不是文字</td>
+    <td>LangChain 1.x 的 <code>content</code> 可能是内容块列表而不是字符串。用骨架里的 <code>to_text()</code>，别直接 <code>print(reply.content)</code>。</td>
+  </tr>
+  <tr>
+    <td>又出现 LangSmith 401 刷屏</td>
+    <td>`.env` 里 <code>LANGSMITH_TRACING</code> 必须是 <code>false</code>。今天已经修过了，别改回去。</td>
+  </tr>
+  <tr>
+    <td>想用 <code>create_agent</code> 或 <code>InMemorySaver</code> 省事</td>
+    <td><b>今天禁止。</b>框架帮你做了这件事，你就看不见它到底做了什么。D10 / D12 才轮到它们出场。</td>
+  </tr>
+</table>
+
+<h2><span class="n">7</span>完成清单</h2>
+
+<ul class="check">
+  <li><input type="checkbox" id="c1"><label for="c1">必看 5 讲看完（P25 / P26 / P27 / P28 / P30）</label></li>
+  <li><input type="checkbox" id="c2"><label for="c2">文档 Messages 页的 <b>Basic usage</b> + <b>Message types</b> 读完</label></li>
+  <li><input type="checkbox" id="c3"><label for="c3"><code>messages_demo.py</code> 三处 TODO 填完，跑通</label></li>
+  <li><input type="checkbox" id="c4"><label for="c4">验收：第 2 轮能答出第 1 轮的信息</label></li>
+  <li><input type="checkbox" id="c5"><label for="c5">验收：清空历史的对照组跑过，答不出来</label></li>
+  <li><input type="checkbox" id="c6"><label for="c6">观察到 token 逐轮递增</label></li>
+  <li><input type="checkbox" id="c7"><label for="c7">日志 <code>docs/journal/2026-09-24.md</code> 结论行填完</label></li>
+  <li><input type="checkbox" id="c8"><label for="c8"><code>Ctrl + K</code> 提交 4 条（含 D1 欠账），且没带上 <code>.env</code> / <code>.venv</code> / <code>.idea</code> / <code>__pycache__</code></label></li>
+  <li><input type="checkbox" id="c9"><label for="c9">GitHub 建空仓库 + <code>Ctrl + Shift + K</code> 首次推送，页面能看到 README</label></li>
+</ul>
+
+<div class="foot">
+  D4 ／ 35 ｜ 阶段 W1 打通链路 ｜ 下一个里程碑：D7 <code>w1-cli-v0.1</code><br>
+  勾选状态存在浏览器本地，关掉再打开还在
+</div>
+
+</div>
+
+<script>
+document.querySelectorAll('.check input').forEach(function (box) {
+  var key = 'd04-' + box.id;
+  try { box.checked = localStorage.getItem(key) === '1'; } catch (e) {}
+  box.addEventListener('change', function () {
+    try { localStorage.setItem(key, box.checked ? '1' : '0'); } catch (e) {}
+  });
+});
+</script>
+
+</body>
+</html>
