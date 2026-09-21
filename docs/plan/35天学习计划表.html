@@ -115,6 +115,7 @@ var S = {
   acad: "https://academy.langchain.com/courses/intro-to-langgraph",
   dOverview: "https://docs.langchain.com/oss/python/langchain/overview",
   dModels: "https://docs.langchain.com/oss/python/langchain/models",
+  dMessages: "https://docs.langchain.com/oss/python/langchain/messages",
   dTools: "https://docs.langchain.com/oss/python/langchain/tools",
   dAgents: "https://docs.langchain.com/oss/python/langchain/agents",
   dGraph: "https://docs.langchain.com/oss/python/langgraph/overview",
@@ -130,7 +131,7 @@ var PLAN = [
    { t:"环境搭建 + LangChain 全景", h:"2.5h", tasks:[
      {k:"vid", x:"尚硅谷《LangChain 从入门到实战 2026 版》<b>第 01 章 LangChain 概述</b>（家族 4 大支柱、大模型 4 大开发场景）", l:S.sl, tm:"约 40 分钟"},
      {k:"vid", x:"B 站《LangChain 从基础到实战全模块拆解》<b>第 1 讲 课程简介</b> 29:51", l:S.frag, tm:"30 分钟"},
-     {k:"doc", x:"官方文档 <b>Overview</b> 页面（看懂 Agent development lifecycle 那张图即可）", l:S.dOverview, tm:"20 分钟"},
+     {k:"doc", x:"官方文档 <b>Overview</b> 页面（看懂 <b>Agent = Model + Harness</b> 与 LangChain/LangGraph/Deep Agents 三方取舍即可；<s>原写的 Agent development lifecycle 图已随文档改版下线</s>）", l:S.dOverview, tm:"20 分钟"},
      {k:"lab", x:"<b>实操：</b>建 Python 虚拟环境，装 langchain + langchain-openai，配好 DeepSeek 或通义的 base_url 与 key，跑通第一次模型调用", tm:"50 分钟"},
      {k:"key", x:"今天不求快。<b>目标是环境一次配好，后面 34 天不用再折腾配置。</b>"}
    ]},
@@ -148,8 +149,9 @@ var PLAN = [
      {k:"key", x:"亲手感受过参数影响，面试被问 temperature 时你才有话讲。"}
    ]},
    { t:"Message 与提示词模板", h:"3h", tasks:[
-     {k:"vid", x:"尚硅谷 <b>第 04 章 Message 与提示词模板</b>（多 Message 类型、多参数、ChatPromptTemplate）", l:S.sl, tm:"约 60 分钟"},
-     {k:"doc", x:"官方文档消息与提示词模板页面（站内搜 Messages / Prompt templates）", l:S.dOverview, tm:"25 分钟"},
+     {k:"vid", x:"尚硅谷 <b>第 04 章</b>必看 5 讲：<b>P25 认识消息与消息的两种格式</b> 11:28 ｜ <b>P26 4 种消息对象中字段的说明</b> 13:29 ｜ <b>P27 对话历史的管理和优化</b> 11:36 ｜ <b>P28 案例：多轮对话聊天机器人</b> 11:46 ｜ <b>P30 ChatPromptTemplate 的两种实例化方式和三种调用方式</b> 19:16（合计 67 分 35 秒）", l:S.sl, tm:"约 70 分钟"},
+     {k:"vid", x:"加看（时间够再看）：<b>P29 content 和 content_blocks 的使用</b> 13:47 ｜ <b>P31 ChatPromptTemplate 初始化的 6 种参数类型</b> 14:20 ｜ <b>P32 部分变量预填充 / 消息占位符</b> 16:21（合计 44 分 28 秒）", l:S.sl, tm:"约 45 分钟"},
+     {k:"doc", x:"官方 <b>Messages</b> 页面：<b>Basic usage</b> 整节（Text prompts / Message prompts / Dictionary format）+ <b>Message types</b> 整节（System / Human / AI / Tool 四种消息及字段）（<s>原写的「提示词模板页面」在新版文档已下线，模板内容并入 Messages 页的 Message prompts 小节</s>）", l:S.dMessages, tm:"25 分钟"},
      {k:"lab", x:"<b>实操：</b>手动拼 messages 列表做 3 轮对话（自己 append 历史，不用任何记忆类），体会「上下文就是你自己维护的数组」", tm:"60 分钟"},
      {k:"key", x:"这一步想明白，后面理解 Agent 记忆和上下文裁剪会轻松很多。"}
    ]},

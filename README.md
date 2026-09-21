@@ -103,6 +103,6 @@ python week1-basics/day01-setup/hello_model.py      # 首次调用，会打印 t
 
 - 本地路径：`D:\AI_learning_project\03-Internship preparation\`（独立 Git 仓库）
 - 上下文交接：[`docs/context.md`](docs/context.md) ｜ 新会话开场词：[`docs/新会话提示词.md`](docs/新会话提示词.md)
-- 提交规范：[`docs/plan/影石实习-Git记录规范与每日Commit安排.html`](docs/plan/)（4 份规划 HTML 都在 `docs/plan/`）
+- 提交规范：[`docs/plan/Git记录规范与每日Commit安排.html`](docs/plan/)（4 份规划 HTML 都在 `docs/plan/`）
 - 提交模板已配置：`git config --local commit.template .gitmessage`
 - commit 类型只用 7 种：`feat` / `exp` / `fix` / `refactor` / `docs` / `chore` / `test`（`exp` 专给带数据的对比实验）
