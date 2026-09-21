@@ -1,0 +1,15 @@
+# D1 · 第 1 周基础环境（Python 轨）
+# 装法：PyCharm 底部 Terminal →  pip install -r week1-basics/day01-setup/requirements.txt
+# 版本为 2026-09-20 在 PyPI 上核对到的最新版；LangChain 1.x 要求 Python >= 3.10,<4.0
+
+# 主框架：create_agent / init_chat_model / LCEL / 工具调用都在这里
+langchain==1.4.2
+
+# OpenAI 兼容协议接入。DeepSeek / 通义 / 智谱都能用它，只改 base_url 和模型名
+langchain-openai==1.6.2
+
+# DeepSeek 官方集成包（等价写法，D2 对比「兼容协议 vs 官方包」两种接入方式）
+langchain-deepseek==1.1.0
+
+# 读 .env，让 API key 不进代码、不进 git
+python-dotenv>=1.0.1

@@ -1,0 +1,13 @@
+# 依赖总入口（访客第一眼能看到的清单）
+#
+# 真正维护的地方只有一处：week1-basics/day01-setup/requirements.txt
+# 这份文件只做转发，避免两边版本号不一致。
+#
+# 装法：
+#   python -m venv .venv
+#   .venv/Scripts/activate            (Windows)
+#   pip install -r requirements.txt
+
+-r week1-basics/day01-setup/requirements.txt
+
+rich
