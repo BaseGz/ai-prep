@@ -9,16 +9,13 @@ from __future__ import annotations
 
 import asyncio
 import os
+import time
 from pathlib import Path
 
 from dotenv import load_dotenv
 from langchain.chat_models import init_chat_model
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
-import time
-for i in range(10):
-    print(i, end=" ", flush=True)
-    time.sleep(0.5)
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 load_dotenv(REPO_ROOT / ".env")
@@ -91,6 +88,20 @@ def main() -> None:
     # ④ ainvoke —— 异步版本，顶层不能 await，要包一层
     # TODO 7 · 用 asyncio.run(...) 包住
     print("④ ainvoke：", asyncio.run(chain.ainvoke({"question": "你好"})))
+
+
+def check_console_buffer() -> None:
+    """控制台缓冲自测（D5 实验痕迹，默认不调用）。
+
+    数字一个接一个跳出来 → 控制台没有缓冲；
+    卡 5 秒后 10 个数字一起出现 → PyCharm 有缓冲
+    （去「设置 → 构建、执行、部署 → 控制台」勾上「模拟终端中的输出」）。
+
+    要测时手动跑一次 check_console_buffer() 即可。
+    """
+    for i in range(10):
+        print(i, end=" ", flush=True)
+        time.sleep(0.5)
 
 
 if __name__ == "__main__":

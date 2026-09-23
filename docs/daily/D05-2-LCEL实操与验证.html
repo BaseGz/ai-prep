@@ -385,7 +385,6 @@ from __future__ import annotations
 
 import asyncio
 import os
-import time
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -443,32 +442,18 @@ def main() -&gt; None:
     # ④ ainvoke —— 异步版本，顶层不能 await，用 asyncio.run 包
     print("④ ainvoke：", asyncio.run(chain.ainvoke({"question": "用一句话介绍你自己"})))
 
-    # ⑤ 附赠：batch 和 for 循环的耗时对比（今天的实验数据）
-    questions = [{"question": f"{n} 的三次方是多少"} for n in range(1, 6)]
-
-    t0 = time.perf_counter()
-    for q in questions:
-        chain.invoke(q)
-    t_for = time.perf_counter() - t0
-
-    t0 = time.perf_counter()
-    chain.batch(questions)
-    t_batch = time.perf_counter() - t0
-
-    print(f"⑤ 5 个问题：for+invoke {t_for:.2f}s ／ batch {t_batch:.2f}s")
-
 
 if __name__ == "__main__":
     main()</pre>
 
-<h3>三处要你自己动脑子改的地方</h3>
+<h3>两处要你自己动脑子改的地方</h3>
 <ol>
   <li><b>把 <code>| StrOutputParser()</code> 去掉再跑一遍</b>，看 <code>print</code> 出来是什么。
       你会拿到一个 <code>AIMessage</code> 对象而不是文字 —— 这是理解「管道两端形状要匹配」的最快方式。</li>
-  <li><b>故意传错输入</b>：写一次 <code>chain.invoke("你好")</code>（字符串，不是字典），记下报错长什么样。
-      以后看到类似报错，就知道是第一个环节在要变量。</li>
-  <li><b>给 <code>for + invoke</code> 和 <code>batch</code> 各记一个数</b>，不要预设结论。
-      谁快谁慢取决于网络和并发限制，<b>你测出来的数才是数据</b>。</li>
+  <li><b>故意传错输入</b>：写一次 <code>chain.invoke("你好")</code>（字符串，不是字典）——
+      <b>它不会报错</b>：模板只有 1 个变量，字符串被自动塞进了那个变量位（「单变量特例」）。
+      再给模板加一个变量（改成 <code>"{question}，用{style}的语气说"</code>），同样写法才 <code>TypeError</code>。
+      完整过程见第 5 节实验③。</li>
 </ol>
 
 <h3>验收标准（做不到就是没懂）</h3>
@@ -478,7 +463,6 @@ if __name__ == "__main__":
   <li><input type="checkbox" id="v3"><label for="v3"><code>stream</code> 在终端里是<b>逐字往外冒</b>的，不是一次性出来</label></li>
   <li><input type="checkbox" id="v4"><label for="v4">去掉 <code>StrOutputParser</code> 后，你能说清「不接它拿到的是什么类型」</label></li>
   <li><input type="checkbox" id="v5"><label for="v5">能不看稿说出：<b>管道符就是前者输出接后者输入</b></label></li>
-  <li><input type="checkbox" id="v6"><label for="v6">手上有一组 for 循环 vs batch 的实测耗时数值</label></li>
 </ul>
 
 <h2><span class="n">5</span>验证 · 三个实验 + 七道自测题</h2>
@@ -489,7 +473,8 @@ if __name__ == "__main__":
   <tr>
     <td class="num">①</td>
     <td>完整跑 <code>lcel_demo.py</code></td>
-    <td>四种调用的实际输出，包括 ⑤ 的耗时数字</td>
+    <td>四种调用的实际输出：invoke 是 <code>str</code>、stream 是一块块 <code>str</code>、
+        batch 是 <code>list[str]</code>、ainvoke 是 <code>str</code></td>
   </tr>
   <tr>
     <td class="num">②</td>
@@ -534,7 +519,7 @@ if __name__ == "__main__":
   <tr><td class="num">7</td><td>「<b>上一个的输出，接给下一个当输入</b>」—— 只要能说出这句就算过</td></tr>
 </table>
 
-<h2><span class="n">6</span>今天提交什么 · 3 条</h2>
+<h2><span class="n">6</span>今天提交什么 · 2 条</h2>
 
 <p class="kv">PyCharm 里 <code>Ctrl + K</code> 打开提交窗口，<b>用文件前面的勾选框挑本次要提交的文件</b>。
 提交前扫一眼：<b>不要出现 <code>.env</code>、<code>.venv/</code>、<code>.idea/</code>、<code>__pycache__/</code>、<code>.ipynb_checkpoints/</code></b>
@@ -552,16 +537,7 @@ if __name__ == "__main__":
 结论：管道符就是「上一个的输出成为下一个的输入」；invoke 传什么由链的入口决定
       —— 入口是 ChatPromptTemplate，所以要传变量字典，不是字符串</pre>
 
-<h3>第 2 条 · 实验数据</h3>
-<p class="kv">这一条对应 <code>exp</code> 类型 —— 专收「有数据」的提交。面试官
-<code>git log --grep="exp"</code> 能一次看到你所有动手调过的痕迹，所以从 W1 就开始攒。</p>
-<pre>exp(day05): batch 与 for + invoke 的耗时对比
-
-5 个相同问题，同一台机器、同一模型，各跑一次
-数据：for+invoke ___s ／ batch ___s
-结论：___（把实测数字和你的解释填上，比如 batch 内部并发、for 是串行等网络往返）</pre>
-
-<h3>第 3 条 · 文档欠账（一次把挂着的都清掉）</h3>
+<h3>第 2 条 · 文档欠账（一次把挂着的都清掉）</h3>
 <p class="kv">勾选：<code>docs/journal/2026-09-24.md</code>（D4 结论行）、<code>docs/journal/2026-09-25.md</code>（今天新建）、
 <code>docs/progress.md</code>、<code>docs/context.md</code></p>
 <pre>docs: 补 D4/D5 日志结论，同步进度与文档过时清单
@@ -629,7 +605,6 @@ docs/context.md §8「文档过时修正」从 1 条扩成 4 条（新增 LCEL �
   <li><input type="checkbox" id="c2"><label for="c2">官方 Models 页 <b>Invocation</b> 大节读完（Invoke / Stream / Batch）</label></li>
   <li><input type="checkbox" id="c3"><label for="c3"><code>lcel_demo.py</code> 跑通，四种调用都出结果</label></li>
   <li><input type="checkbox" id="c4"><label for="c4">做过「去掉 parser 看类型」和「传错输入看报错」两个实验，输出记下来了</label></li>
-  <li><input type="checkbox" id="c5"><label for="c5">记下了 batch vs for 循环的耗时数字</label></li>
   <li><input type="checkbox" id="c6"><label for="c6">七道自测题答对 ≥ 5 题（<b>第 7 题必须对</b>）</label></li>
   <li><input type="checkbox" id="c7"><label for="c7">日志 <code>docs/journal/2026-09-25.md</code> 建成，一句话结论填完</label></li>
   <li><input type="checkbox" id="c8"><label for="c8"><code>docs/progress.md</code> D4 打勾、D5 标完成</label></li>

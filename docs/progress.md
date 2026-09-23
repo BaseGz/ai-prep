@@ -12,7 +12,7 @@
 | D2 | 09-22 | W1 | 模型的创建与调用 | `week1-basics/day02-switch-model` | [–] 内容已学过 |
 | D3 | 09-23 | W1 | 调用方式与流式输出 | `week1-basics/day03-stream` | [–] 内容已学过 |
 | D4 | 09-24 | W1 | Message 与提示词模板 | `week1-basics/day04-messages` | [x] 09-21 完成 |
-| D5 | 09-25 | W1 | LCEL 管道 | `week1-basics/day05-lcel` | [ ] 09-22 视频完，实操延至 09-23 |
+| D5 | 09-25 | W1 | LCEL 管道 | `week1-basics/day05-lcel` | [x] 09-23 完成 |
 | D6 | 09-26 | W1 | 结构化输出 | `week1-basics/day06-structured` | [ ] |
 | D7 | 09-27 | W1 | 周末产出：流式对话 CLI 工具 | `week1-basics/day07-cli` | [ ] |
 | D8 | 09-28 | W2 | 工具（Tools）基础 | `week2-tools-agent/day08-tools` | [ ] |
