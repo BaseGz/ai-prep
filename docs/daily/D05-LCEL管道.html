@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>D5 · LCEL 管道 ｜ 影石实习准备</title>
+<style>
+:root{
+  --bg:#f6f7f9; --card:#fff; --line:#e5e7eb; --line2:#eef0f3;
+  --tx:#1a1d21; --tx2:#586170; --tx3:#8b939e;
+  --must:#b4232a; --mustbg:#fdecec;
+  --accent:#0f766e; --accentbg:#e6f4f2;
+  --vidbg:#eef2ff; --vidtx:#3538cd;
+  --docbg:#e9f7ef; --doctx:#1a7f4b;
+  --labbg:#fdf3e3; --labtx:#8a5200;
+  --codbg:#f3f4f6;
+  --radius:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0e1014; --card:#161920; --line:#252a33; --line2:#1e222a;
+    --tx:#e7e9ec; --tx2:#a2aab6; --tx3:#767e8a;
+    --must:#f08b8b; --mustbg:#3a1e20;
+    --accent:#2dd4bf; --accentbg:#12312e;
+    --vidbg:#1d2440; --vidtx:#9aa8f5;
+    --docbg:#12281c; --doctx:#6fd39c;
+    --labbg:#3a2e18; --labtx:#e0b070;
+    --codbg:#1b1f27;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0; padding:0 20px 90px; background:var(--bg); color:var(--tx);
+  font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif;
+  font-size:15px; line-height:1.7; -webkit-font-smoothing:antialiased;}
+.wrap{max-width:900px; margin:0 auto}
+header{padding:44px 0 6px}
+.dtag{display:inline-block; font-size:12px; font-weight:600; color:#fff; background:var(--accent);
+  padding:2px 10px; border-radius:6px; margin-bottom:12px; letter-spacing:.02em}
+h1{font-size:25px; font-weight:600; margin:0 0 8px; letter-spacing:-.01em}
+.sub{color:var(--tx2); font-size:14px; margin:0 0 6px}
+.meta{color:var(--tx3); font-size:13px; margin:0 0 22px}
+.note{background:var(--accentbg); border-left:3px solid var(--accent); padding:14px 18px;
+  border-radius:0 var(--radius) var(--radius) 0; font-size:14.5px; margin:18px 0}
+.note b{color:var(--accent)}
+.warn{background:var(--mustbg); border-left:3px solid var(--must); padding:14px 18px;
+  border-radius:0 var(--radius) var(--radius) 0; font-size:14px; margin:18px 0}
+.warn b{color:var(--must)}
+h2{font-size:17px; font-weight:600; margin:40px 0 12px; padding-bottom:9px;
+  border-bottom:1px solid var(--line); display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+h2 .n{font-size:12px; font-weight:600; background:var(--accentbg); color:var(--accent);
+  padding:2px 9px; border-radius:99px}
+h3{font-size:14.5px; font-weight:600; margin:22px 0 8px; color:var(--tx)}
+.card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+  padding:16px 20px; margin:12px 0}
+table{width:100%; border-collapse:collapse; font-size:14px; margin:10px 0;
+  background:var(--card); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden}
+th{text-align:left; font-weight:600; font-size:12.5px; color:var(--tx3); background:var(--line2);
+  padding:9px 12px; white-space:nowrap}
+td{padding:9px 12px; border-top:1px solid var(--line2); vertical-align:top}
+td.num,th.num{font-variant-numeric:tabular-nums; white-space:nowrap; color:var(--tx2)}
+.tagline{display:inline-block; font-size:11.5px; font-weight:600; padding:1px 7px; border-radius:5px; white-space:nowrap}
+.t-vid{background:var(--vidbg); color:var(--vidtx)}
+.t-doc{background:var(--docbg); color:var(--doctx)}
+.t-lab{background:var(--labbg); color:var(--labtx)}
+.t-skip{background:var(--line2); color:var(--tx3)}
+a{color:var(--accent); text-decoration:none; border-bottom:1px solid var(--accentbg)}
+a:hover{border-bottom-color:var(--accent)}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,"Courier New",monospace; font-size:13px;
+  background:var(--codbg); padding:1px 5px; border-radius:5px}
+pre{background:var(--codbg); border:1px solid var(--line); border-radius:10px; padding:14px 16px;
+  overflow-x:auto; font-family:ui-monospace,SFMono-Regular,Consolas,"Courier New",monospace;
+  font-size:12.8px; line-height:1.6; white-space:pre-wrap; word-break:break-word; margin:8px 0}
+ol,ul{padding-left:22px; margin:8px 0}
+li{margin:5px 0}
+.check{list-style:none; padding-left:0}
+.check li{display:flex; gap:10px; align-items:flex-start; margin:9px 0}
+.check input{margin-top:6px; width:16px; height:16px; accent-color:var(--accent); flex:0 0 auto; cursor:pointer}
+.check label{cursor:pointer}
+.check input:checked + label{color:var(--tx3); text-decoration:line-through}
+.kv{font-size:14px; color:var(--tx2); margin:4px 0}
+.kv b{color:var(--tx)}
+.foot{color:var(--tx3); font-size:12.5px; text-align:center; margin:44px 0 0; line-height:1.9}
+.strike{color:var(--tx3)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="dtag">D5 ／ 35</div>
+  <h1>LCEL 管道</h1>
+  <p class="sub">2026-09-22（周二）实际执行 ｜ 预计 3h ｜ 阶段：W1 打通链路</p>
+  <p class="meta">目录 <code>week1-basics/day05-lcel/</code> ｜ 计划日 09-25，因 D2 / D3 已学过，实际提前 3 天</p>
+</header>
+
+<div class="note">
+  <b>今天只干一件事：把昨天的对话，改成 <code>prompt | model | parser</code> 一行串起来，并用四种方式调用它。</b><br>
+  跑完你要能不看稿说出这句话 ——
+  <b>「管道符就是把上一个 Runnable 的输出接给下一个的输入；<code>|</code> 只是一个被重载的运算符。」</b>
+</div>
+
+<h2><span class="n">1</span>三小时怎么切</h2>
+
+<table>
+  <tr><th class="num">时段</th><th>做什么</th></tr>
+  <tr><td class="num">0:00–0:10</td><td><span class="tagline t-lab">收尾</span> 补完 D4 的两件事：<code>docs/journal/2026-09-24.md</code> 的结论行 + <code>docs/progress.md</code> 里 D4 打勾</td></tr>
+  <tr><td class="num">0:10–0:40</td><td><span class="tagline t-vid">视频</span> 全模块拆解 <b>第五讲 链结构</b> 25:00（今天唯一的 LCEL 正课）</td></tr>
+  <tr><td class="num">0:40–1:00</td><td><span class="tagline t-doc">文档</span> 官方 Models 页 <b>Invocation</b> 大节下的 Invoke / Stream / Batch</td></tr>
+  <tr><td class="num">1:00–2:30</td><td><span class="tagline t-lab">动手</span> 写 <code>lcel_demo.py</code>：管道 + 四种调用各跑一遍</td></tr>
+  <tr><td class="num">2:30–2:50</td><td><span class="tagline t-lab">加测</span> <code>batch</code> vs <code>for + invoke</code> 计时对比（这条能变成 <code>exp</code> 提交）</td></tr>
+  <tr><td class="num">2:50–3:00</td><td>填日志结论行 + <code>Ctrl + K</code> 提交</td></tr>
+</table>
+
+<p class="kv"><b>今天不追求信息量</b>：LCEL 在 LangChain 1.x 里已经不是文档主线（见第 3 节），
+但它仍是底层机制 —— 后面 LangGraph 的节点、RAG 的检索链，底层都是 Runnable。
+今天花 30 分钟把它弄清楚，是为了以后看到 <code>|</code> 不心慌。</p>
+
+<h2><span class="n">2</span>视频 · 今天要看的两处（含一处计划表错误）</h2>
+
+<h3>主课：全模块拆解 第五讲 链结构 25:00</h3>
+
+<p class="kv">合集：<a href="https://www.bilibili.com/video/BV1WgcZzRE9E/?p=5" target="_blank">BV1WgcZzRE9E 第五讲 链结构（点此直接跳到第 5 讲）</a> ｜ 时长 25:00 ｜ <b>这就是今天唯一讲 LCEL 的课</b></p>
+
+<p class="kv">这个系列一共 10 讲，是按 LangChain 的模块切分的，第五讲正好是链结构。看完要带走三句话：</p>
+
+<table>
+  <tr><th style="width:120px">要带走</th><th>内容</th></tr>
+  <tr><td><b>管道符做了什么</b></td><td>上一个组件的输出，自动成为下一个组件的输入 —— 没有别的魔法</td></tr>
+  <tr><td><b>为什么能这样写</b></td><td>prompt / model / parser 都是 <code>Runnable</code>，<code>|</code> 是它重载的 <code>__or__</code></td></tr>
+  <tr><td><b>好处是什么</b></td><td>四种调用方式（invoke / stream / batch / 异步）<b>对整条链自动成立</b>，不用自己写循环</td></tr>
+</table>
+
+<h3>补看：尚硅谷的「四种调用方式」</h3>
+
+<table>
+  <tr><th class="num">分 P</th><th>标题</th><th class="num">时长</th><th>今天为什么看它</th></tr>
+  <tr>
+    <td class="num"><a href="https://www.bilibili.com/video/BV1rv7A6oEeP/?p=21" target="_blank">P21</a></td>
+    <td>流式调用、批量调用与异步调用</td>
+    <td class="num">18:41</td>
+    <td>四种调用的写法样板。<b>这是 D3 的内容</b>（你已学过 D3，所以只当查漏：哪一种是你不熟的，就只看那一段）</td>
+  </tr>
+</table>
+
+<div class="warn">
+  <b>计划表里 D5 那条是错的，别照着找：</b>计划表写「尚硅谷中 LCEL 相关小节（管道与 Runnable 接口）」，
+  但<b>尚硅谷这门课 120 个分 P 里没有任何一讲讲 LCEL</b>。我逐条核对过，章节是这样切的：
+  <br><br>
+  <table style="margin:6px 0">
+    <tr><th class="num">分 P</th><th>内容</th><th>对应我们的进度</th></tr>
+    <tr><td class="num">P01–P10</td><td>课程介绍 / 环境 / 应用场景</td><td>D1 已看</td></tr>
+    <tr><td class="num">P11–P22</td><td>模型调用（P19–P22 是 invoke / 流式 / 批量 / 异步）</td><td>D2–D3</td></tr>
+    <tr><td class="num">P23–P24</td><td>LangSmith 介绍</td><td>留给 D28</td></tr>
+    <tr><td class="num">P25–P32</td><td>消息与提示词模板</td><td>D4 已学</td></tr>
+    <tr><td class="num">P33–P40</td><td><b>直接进「工具」</b></td><td>D8–D10</td></tr>
+    <tr><td class="num">P41–P50</td><td>结构化输出（Pydantic 等）</td><td>D6</td></tr>
+    <tr><td class="num">P51–P63</td><td>Agent（create_agent / 流式 / 实战）</td><td>D10–D11</td></tr>
+    <tr><td class="num">P64–P101</td><td>中间件与记忆（含 PostgreSQL 持久化）</td><td>D12–D13</td></tr>
+    <tr><td class="num">P102–P120</td><td>RAG 全流程（加载 / 切分 / 向量 / Milvus / 客服知识库项目）</td><td>W3，D15–D21</td></tr>
+  </table>
+  <br>
+  也就是说：<b>消息讲完直接跳工具，中间没有 LCEL 这一章。</b>这不是漏看，是这门课按 1.x 的写法组织的
+  —— 1.x 官方主线是 <code>create_agent</code>，LCEL 被降级成底层能力。<br>
+  今天就用全模块拆解第五讲补这一块。<b>计划表我已记下要改，你提交时不用管它。</b>
+</div>
+
+<h2><span class="n">3</span>文档 · 官方现在还剩什么</h2>
+
+<p class="kv">页面：<a href="https://docs.langchain.com/oss/python/langchain/models" target="_blank">docs.langchain.com/oss/python/langchain/models</a> ｜ 只看一个二级大节</p>
+
+<table>
+  <tr><th>小节</th><th>读什么</th></tr>
+  <tr>
+    <td><b>Invocation</b><br><span class="kv">Invoke ／ Stream ／ Batch 三个子节</span></td>
+    <td>三种调用方式都在这里。重点看两件事：<b>① 输入形状</b>（模型收消息列表）；
+        <b>② Batch 小节里的 <code>max_concurrency</code></b> —— 它解释了为什么 batch 比 for 循环快，是你下午计时实验的理论依据</td>
+  </tr>
+</table>
+
+<div class="warn">
+  <b>两点和计划表不一样，先说清楚，免得你白找：</b>
+  <br><br>
+  <b>① 官方已经没有 LCEL 页面了。</b><code>docs.langchain.com/oss/python/langchain/lcel</code> 是 404。
+  1.x 改版后文档主线变成「Agent = Model + Harness」，LCEL 不再有独立章节，
+  老的中文速查表（那些 <code>lcel_cheatsheet</code> 页面）全是 v0.2 时代的存档，别当现行文档用。<br>
+  <b>想知道 LCEL 在现行文档里的样子</b>，可以看这一页 —— 它里面就有
+  <code>prompt | model | StrOutputParser()</code> 的真实用例：<br>
+  <a href="https://docs.langchain.com/langsmith/langchain-runnable" target="_blank">docs.langchain.com/langsmith/langchain-runnable</a>
+  <br><br>
+  <b>② 官方没讲 <code>ainvoke</code>。</b>Models 页只有 invoke / stream / batch 三个子节，异步只提了 <code>astream_events</code>。
+  <code>ainvoke</code> 属于 Runnable 接口的通用能力，不在这一页 —— 今天的第三种调用自己写一遍就会了。
+</div>
+
+<h2><span class="n">4</span>动手 · 写 lcel_demo.py</h2>
+
+<p class="kv">新建 <code>week1-basics/day05-lcel/lcel_demo.py</code>。
+<b>骨架在下面，可以直接粘</b>；模型初始化那段和你 D1 的 <code>hello_model.py</code> 完全一致（同样读仓库根的 <code>.env</code>、同样走 OpenAI 兼容协议）。</p>
+
+<div class="card">
+  <p class="kv" style="margin-top:0"><b>今天的所有内容，就是这一行：</b></p>
+<pre>chain = prompt | model | StrOutputParser()</pre>
+  <p class="kv" style="margin-bottom:0">三个东西都是 Runnable，所以能串。<code>prompt</code> 的输出是消息列表，
+  <code>model</code> 正好收消息列表；<code>model</code> 输出 <code>AIMessage</code>，
+  <code>StrOutputParser</code> 把它变成字符串。<b>环节之间的输入输出对得上，管道就通。</b></p>
+</div>
+
+<pre>"""D5 · LCEL 管道（最小可运行）
+
+今天验证三件事：
+① 管道符 | 到底做了什么 —— 上一个 Runnable 的输出 = 下一个的输入
+② 同一条 chain，四种调用方式都成立：invoke / stream / batch / ainvoke
+③ 形状对不上时怎么排查 —— 先看「第一个环节要什么输入」
+"""
+from __future__ import annotations
+
+import asyncio
+import os
+import time
+from pathlib import Path
+
+from dotenv import load_dotenv
+from langchain.chat_models import init_chat_model
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import ChatPromptTemplate
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+load_dotenv(REPO_ROOT / ".env")
+
+MODEL = os.getenv("DEEPSEEK_MODEL", "deepseek-chat")
+BASE_URL = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1")
+API_KEY = os.getenv("DEEPSEEK_API_KEY")
+
+
+def build_chain():
+    """把三个 Runnable 串成一条链。今天要理解的就是这一行。"""
+    if not API_KEY:
+        raise SystemExit("没读到 DEEPSEEK_API_KEY，先检查仓库根的 .env。")
+
+    prompt = ChatPromptTemplate.from_messages([
+        ("system", "你是一个说话极简的中文助手，回答不超过 30 个字。"),
+        ("user", "{question}"),          # ← 这个占位符，决定了 invoke 要传字典
+    ])
+    model = init_chat_model(
+        MODEL,
+        model_provider="openai",
+        base_url=BASE_URL,
+        api_key=API_KEY,
+        temperature=0,
+    )
+    return prompt | model | StrOutputParser()
+
+
+def main() -> None:
+    chain = build_chain()
+
+    # ① invoke —— 同步，一次一个问题
+    print("① invoke：", chain.invoke({"question": "用一句话解释什么是管道符"}))
+
+    # ② stream —— 逐块拿，打字机效果的来源
+    print("② stream：", end="", flush=True)     # flush 必须有，否则看不到逐字效果
+    for chunk in chain.stream({"question": "写一句关于管道符的顺口溜"}):
+        print(chunk, end="", flush=True)
+    print()
+
+    # ③ batch —— 一次给多个输入，内部并发
+    answers = chain.batch([
+        {"question": "1 的三次方是多少"},
+        {"question": "2 的三次方是多少"},
+        {"question": "3 的三次方是多少"},
+    ])
+    print("③ batch：", answers)
+
+    # ④ ainvoke —— 异步版本，顶层不能 await，用 asyncio.run 包
+    print("④ ainvoke：", asyncio.run(chain.ainvoke({"question": "用一句话介绍你自己"})))
+
+    # ⑤ 附赠：batch 和 for 循环的耗时对比（今天的实验数据）
+    questions = [{"question": f"{n} 的三次方是多少"} for n in range(1, 6)]
+
+    t0 = time.perf_counter()
+    for q in questions:
+        chain.invoke(q)
+    t_for = time.perf_counter() - t0
+
+    t0 = time.perf_counter()
+    chain.batch(questions)
+    t_batch = time.perf_counter() - t0
+
+    print(f"⑤ 5 个问题：for+invoke {t_for:.2f}s ／ batch {t_batch:.2f}s")
+
+
+if __name__ == "__main__":
+    main()</pre>
+
+<h3>三处要你自己动脑子改的地方</h3>
+<ol>
+  <li><b>把 <code>| StrOutputParser()</code> 去掉再跑一遍</b>，看 <code>print</code> 出来是什么。
+      你会拿到一个 <code>AIMessage</code> 对象而不是文字 —— <b>这一步是理解「管道两端形状要匹配」的最快方式</b>，
+      也是今天最值得写进 commit 的一句话。</li>
+  <li><b>故意传错输入</b>：写一次 <code>chain.invoke("你好")</code>（字符串，不是字典）。
+      记下报错信息长什么样 —— 以后看到类似报错，你就知道是第一个环节在要变量。</li>
+  <li><b>给 <code>for + invoke</code> 和 <code>batch</code> 各记一个数</b>，不要预设结论。
+      谁快谁慢取决于网络和并发限制，<b>你测出来的数才是数据</b>。</li>
+</ol>
+
+<h3>验收标准（做不到就是没懂）</h3>
+<ul class="check">
+  <li><input type="checkbox" id="v1"><label for="v1">四种调用全部跑通：invoke / stream / batch / ainvoke</label></li>
+  <li><input type="checkbox" id="v2"><label for="v2"><code>stream</code> 在终端里是<b>逐字往外冒</b>的，不是一次性出来</label></li>
+  <li><input type="checkbox" id="v3"><label for="v3">去掉 <code>StrOutputParser</code> 后，你能说清「不接它拿到的是什么类型」</label></li>
+  <li><input type="checkbox" id="v4"><label for="v4">能不看稿说出：<b>管道符就是前者输出接后者输入</b></label></li>
+  <li><input type="checkbox" id="v5"><label for="v5">手上有一组 for 循环 vs batch 的实测耗时数值</label></li>
+</ul>
+
+<h2><span class="n">5</span>今天提交什么 · 2 条</h2>
+
+<p class="kv">仓库现在是干净的（D1、D4 都已入库）。今天<b>先补 D4 的两处欠账</b>（结论行 + 进度打勾），
+再提交 D5 的代码。PyCharm 里 <code>Ctrl + K</code> 打开提交窗口，<b>用文件前面的勾选框挑本次要提交的文件</b>。</p>
+
+<p class="kv"><b>提交前扫一眼：不要出现 <code>.env</code>、<code>.venv/</code>、<code>.idea/</code>、<code>__pycache__/</code>、<code>.ipynb_checkpoints/</code>。</b>
+它们应该被 <code>.gitignore</code> 挡住 —— 在列表里看不到才是对的。</p>
+
+<h3>第 1 条 · 今天的正题</h3>
+
+<p class="kv">勾选：<code>week1-basics/day05-lcel/lcel_demo.py</code>、<code>week1-basics/day05-lcel/README.md</code></p>
+
+<pre>refactor(day05): 第 4 天对话改写为 LCEL 管道
+
+prompt | model | StrOutputParser，invoke / stream / batch / ainvoke 四种各写一遍
+现象：去掉 StrOutputParser 后 print 出来的是一坨 AIMessage，不是文字
+做法：接上 StrOutputParser 再跑，输出变成字符串
+结论：管道两端形状必须对得上 —— prompt 吐消息列表、model 收消息列表，
+      所以 chain.invoke 收的是字典（给 prompt 填变量），不是字符串</pre>
+
+<p class="kv">如果今天真踩了别的坑，就按四段式照实写；<b>没踩坑就把「现象 / 做法」换成「做了什么 / 结论」，别硬编。</b></p>
+
+<h3>第 2 条 · 实验数据（今天顺手就能拿到）</h3>
+
+<p class="kv">这一条对应 <code>exp</code> 类型 —— 专收「有数据」的提交。面试官 <code>git log --grep="exp"</code> 能一次看到你所有动手调过的痕迹，
+所以<b>从 W1 就开始攒</b>，别有数据不写。</p>
+
+<pre>exp(day05): batch 与 for + invoke 的耗时对比
+
+5 个相同问题，同一台机器、同一模型，各跑一次
+数据：for+invoke ___s ／ batch ___s
+结论：___（把实测数字和你的解释填上，比如 batch 内部并发、for 循环是串行）</pre>
+
+<p class="kv">勾选：如果你把数据记进了 <code>docs/journal/2026-09-25.md</code> 或 <code>experiments/</code> 下的笔记，就和日志一起提交。</p>
+
+<h3>第 3 条 · D4 的欠账（可并入第 1 条，也可单独一条 <code>docs</code>）</h3>
+
+<pre>docs: 补齐 D4 日志结论与进度打勾
+
+docs/journal/2026-09-24.md 填「一句话结论」
+docs/progress.md 把 D4 标为完成</pre>
+
+<p class="kv">勾选：<code>docs/journal/2026-09-24.md</code>、<code>docs/progress.md</code>、<code>docs/journal/2026-09-25.md</code></p>
+
+<div class="note">
+  <b>今天的日志文件名是 <code>docs/journal/2026-09-25.md</code></b>（按计划日命名，和 D4 的
+  <code>2026-09-24.md</code> 保持一致）。虽然你实际是 09-22 做的 —— 文件名跟计划日走，
+  正文第一行写清「实际执行日期」，这样以后回看不会乱。W1 结束时再统一决定要不要改成实际日期。
+</div>
+
+<h2><span class="n">6</span>坑预警</h2>
+
+<table>
+  <tr><th>症状</th><th>真实原因</th></tr>
+  <tr>
+    <td><code>chain.invoke("你好")</code> 报错，或输出里把整个字符串当成了变量</td>
+    <td><b>链的第一个环节是 prompt，它要的是变量字典。</b>正确写法是 <code>chain.invoke({"question": "你好"})</code>。
+        记住对比：<code>model.invoke()</code> 收消息列表，<code>chain.invoke()</code> 收字典 —— 看链的入口是谁</td>
+  </tr>
+  <tr>
+    <td>print 出来是 <code>AIMessage(content=...)</code> 一大坨</td>
+    <td>忘了接 <code>| StrOutputParser()</code>。<b>这不是报错，是类型没转换</b> —— 今天正好拿它当实验</td>
+  </tr>
+  <tr>
+    <td>stream 看不出逐字效果，还是一次性全出来</td>
+    <td>两个原因：<b>① 忘了 <code>flush=True</code></b>（PyCharm 控制台会缓冲）；
+        <b>② 在 <code>end=""</code> 上写成了 <code>print(chunk)</code></b>，每块都换行，看着像挤在一起</td>
+  </tr>
+  <tr>
+    <td>把类型注解里的 <code>|</code> 和管道符搞混</td>
+    <td><code>str | None</code> 里的 <code>|</code> 是 Python 3.10+ 的联合类型；LCEL 的 <code>|</code> 是 <code>Runnable</code> 重载的
+        <code>__or__</code>。<b>两者毫无关系</b> —— 但这是个好面试谈资：「<code>|</code> 能被重载，所以类可以自定义它的语义」</td>
+  </tr>
+  <tr>
+    <td><code>await chain.ainvoke(...)</code> 报 <code>SyntaxError</code></td>
+    <td>顶层代码不能 <code>await</code>，要用 <code>asyncio.run(...)</code> 包起来</td>
+  </tr>
+  <tr>
+    <td>想去翻老教程找 LCEL 章节，越看越乱</td>
+    <td>搜到的基本都是 v0.2 时代的 <code>LLMChain</code> / <code>SequentialChain</code> 写法。
+        <b>看到这些词直接关掉</b>，1.x 不用它们，别把你的代码写成过时样子</td>
+  </tr>
+</table>
+
+<h2><span class="n">7</span>完成清单</h2>
+
+<ul class="check">
+  <li><input type="checkbox" id="c1"><label for="c1">D4 收尾：<code>docs/journal/2026-09-24.md</code> 结论行填完、<code>progress.md</code> D4 打勾</label></li>
+  <li><input type="checkbox" id="c2"><label for="c2">全模块拆解 <b>第五讲 链结构</b> 25:00 看完</label></li>
+  <li><input type="checkbox" id="c3"><label for="c3">官方 Models 页 <b>Invocation</b> 大节读完（Invoke / Stream / Batch）</label></li>
+  <li><input type="checkbox" id="c4"><label for="c4"><code>lcel_demo.py</code> 跑通，四种调用都出结果</label></li>
+  <li><input type="checkbox" id="c5"><label for="c5">做过「去掉 parser 看类型」和「传错输入看报错」两个小实验</label></li>
+  <li><input type="checkbox" id="c6"><label for="c6">记下了 batch vs for 循环的耗时数字</label></li>
+  <li><input type="checkbox" id="c7"><label for="c7">日志 <code>docs/journal/2026-09-25.md</code> 一句话结论填完</label></li>
+  <li><input type="checkbox" id="c8"><label for="c8"><code>Ctrl + K</code> 提交，且没带上 <code>.env</code> / <code>.venv</code> / <code>.idea</code> / <code>__pycache__</code></label></li>
+  <li><input type="checkbox" id="c9"><label for="c9">能不看稿说出「管道符到底做了什么」</label></li>
+</ul>
+
+<div class="foot">
+  D5 ／ 35 ｜ 阶段 W1 打通链路 ｜ 下一个里程碑：D7 <code>w1-cli-v0.1</code><br>
+  勾选状态存在浏览器本地，关掉再打开还在
+</div>
+
+</div>
+
+<script>
+document.querySelectorAll('.check input').forEach(function (box) {
+  var key = 'd05-' + box.id;
+  try { box.checked = localStorage.getItem(key) === '1'; } catch (e) {}
+  box.addEventListener('change', function () {
+    try { localStorage.setItem(key, box.checked ? '1' : '0'); } catch (e) {}
+  });
+});
+</script>
+
+</body>
+</html>

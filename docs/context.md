@@ -2,7 +2,7 @@
 
 > **这个文件是给「新会话」读的。** 换了聊天窗口、换了工作区，只要把这份文件带上，就能无缝接着做，不需要重新解释一遍前因后果。
 >
-> 最后更新：2026-09-21 ｜ 状态：**技术栈已定为 Python 轨（3.12.8 + 项目内 venv）**，D1 进行中（代码已写，尚未提交）
+> 最后更新：2026-09-23 ｜ 状态：**D1 / D4 已完成并提交**，D5（LCEL 管道）实操与验证进行中；D2 / D3 因内容此前已自学过而跳过
 
 ---
 
@@ -10,7 +10,9 @@
 
 用户是大三学生，目标拿到**影石（Insta360）AI 应用开发实习**。本项目的唯一使命：把他从「已学完 RAG/LangChain 之前的全部基础」带到「有一个能演示、有提效数据的完整 AI 项目」。
 
-**当前进度：35 天路线已定、4 份规划文档已出、仓库已建好，D1（环境搭建 + 首次模型调用）已动手，代码在工作区待提交。**
+**当前进度：35 天路线已定、4 份规划文档已出、仓库已建好，已执行到第 5 天。**
+D1（环境搭建 + 首次模型调用）、D4（Message 与提示词模板）已完成并提交；D2 / D3 内容此前已自学过，跳过实操；
+实际执行比计划日期**提前 3 天**。逐日状态一律以 `docs/progress.md` 为准。
 
 ---
 
@@ -140,7 +142,7 @@ MCP 只需知道它是什么、能说出它和「自己写 `@tool` 函数」的�
 
 ## 5. 用户侧项目仓库（每天真正用的东西）
 
-**路径：`D:\AI_learning_project\03-Internship preparation`**（上级 `D:\AI_learning_project` 是长期学习项目根，总控交接见其 `00-交接总览\交接文档-长期学习项目.md`）—— 已 `git init`，分支 `main`，3 次提交（`d8235f3` → `ecb167f`），已配 `git config --local commit.template .gitmessage`。
+**路径：`D:\AI_learning_project\03-Internship preparation`**（上级 `D:\AI_learning_project` 是长期学习项目根，总控交接见其 `00-交接总览\交接文档-长期学习项目.md`）—— 已 `git init`，分支 `main`，已配 `git config --local commit.template .gitmessage`；目录名 2026-09-21 由 `03-影石实习准备` 改为英文。
 
 ### 设计原则：仓库不是复习资料，是给面试官看的
 
@@ -244,7 +246,7 @@ feat(day09): 手写 while 循环 Agent，脱离框架
 | ~~技术栈 Python 还是 JS/TS~~ | **已定：Python 轨**。理由/代价/何时换见 `docs/stack.md`；包清单已写进该文件，后续每日任务按 Python 细化 | ✅ 已决（2026-09-20） |
 | 每日提醒自动化 | 用户说过「持续进行」，已问过是否要建每天固定时间的提醒（到点提醒今天是 D几、该看什么、该提交什么），**用户尚未答复** | 待确认 |
 | 用户是否已开始 D1 | D1 材料（执行单 `week1-basics/day01-setup/README.md` + `env_check.py` + `hello_model.py` + `docs/daily/D01` HTML）已全部就绪 | 材料就绪，待用户执行 |
-| **文档过时修正** | 计划表 D1 写的「看懂 Overview 页 *Agent development lifecycle* 图」**已失效**：新版官方文档改版，该图不存在，页面核心改为 `Agent = Model + Harness` + LangChain/LangGraph/Deep Agents 三方取舍。**后续凡引用「某张图」的旧笔记都要先验证** | 已在 D1 执行单修正，待回写进计划表 HTML |
+| **文档过时修正**（累计 7 条） | 官方 1.x 改版频繁，计划表与旧笔记里的引用会**静默失效**。已核实并修正的 7 条：<br>① **D1** Overview 页的 *Agent development lifecycle* 图已下线，页面核心改为 `Agent = Model + Harness` + LangChain/LangGraph/Deep Agents 三方取舍；<br>② **D4** 独立的 *Prompt templates* 页已下线，内容并入 Messages 页的 `Message prompts` 小节；<br>③ **D5** `/oss/python/langchain/lcel` 返回 **404**，官方已无 LCEL 专页（`ainvoke` 也不在该页）；<br>④ **D5** `langchain.chains` 模块**整体移除** —— `RouterChain` / `MultiPromptChain` / `LLMRouterChain` / `RouterOutputParser` 在 1.4.2 环境**全部不存在**；<br>⑤ **D5** 计划表写的「尚硅谷中 LCEL 相关小节」**不存在** —— 该课 `BV1rv7A6oEeP` 全 120 P 逐条核过，**没有任何一讲**含 LCEL / 管道 / Runnable；已改用对症的 **P19 / P20 / P21**；<br>⑥ **D5** 计划表写的「官方 Models 页面中 LCEL / Runnable 部分」**不存在** —— 该页只有 `Invocation` 大节下的 Invoke / Stream / Batch，无 Runnable、无管道符说明，`ainvoke` 也不在该页。<br>⑦ **D5 执行单自身**：实验③与「坑预警」都写着「`chain.invoke("你好")` 会报错」—— **实测不报错**。真实规则是**「单变量模板特例」**（模板恰好 1 个变量时，非 dict 输入会被自动塞进那个变量；≥2 个变量才 `TypeError`），源码 `langchain_core/prompts/base.py:163`。**⚠️ 必须与 `model.invoke("你好")` 区分开**：后者是 `ChatModel` **定义内的合法输入**（str / 消息列表 / PromptValue 三选一），走 `_convert_input()`，**不是特例、与变量数无关、永远成立**；D4 notebook 里的 `model.invoke("...")` 属于这类。已修正执行单三处、补进 `NOTES-管道符与类型链.md` §15 与 `errors/index.md`。<br>**规矩一：凡引用旧教程代码或具体文档页面，先在本机/线上验证再写进执行单。**<br>**规矩二（2026-09-23 新增）：还有一类更隐蔽的「内容断言不实」** —— 引用是活的、页面打得开，但「这门课/这页会讲 X」这个断言本身是错的（例：D5 计划表承诺「第 5 讲会讲管道符语义」，实际那 25 分钟没讲）。**链接能验证，内容断言只能看完才知道** —— 已单独记入生成执行单的 skill。 | ①②③ 已回写进计划表 HTML；④ 记在 `week1-basics/day05-lcel/NOTES-路由与多链.md` §3；⑤⑥ 已回写进 `week1-basics/day05-lcel/README.md`；⑦ 已回写进 `docs/daily/D05-2-LCEL实操与验证.html`、`NOTES-管道符与类型链.md` §15 与 `errors/index.md`。持续维护 |
 | 第 5 周项目选题 | D29 才定。推荐二选一：**多模态素材整理 Agent**（拖一批照片/视频进去 → 视觉模型打标签 + 生成文案 + 语义检索，踩中多模态 + 设计工程）或 **内部知识库 Agent**（说明书/FAQ/客服工单 RAG + 工具调用 + `interrupt` 人工确认）。**无论选哪个都要带提效度量**（如 100 张图人工 40 分钟 → 工具 2 分钟，做成表格 + 截图） | 未定 |
 
 ---
