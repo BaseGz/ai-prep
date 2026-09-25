@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>D6 · 结构化输出 ｜ 影石实习准备</title>
+<style>
+:root{
+  --bg:#f6f7f9; --card:#fff; --line:#e5e7eb; --line2:#eef0f3;
+  --tx:#1a1d21; --tx2:#586170; --tx3:#8b939e;
+  --must:#b4232a; --mustbg:#fdecec;
+  --accent:#0f766e; --accentbg:#e6f4f2;
+  --vidbg:#eef2ff; --vidtx:#3538cd;
+  --docbg:#e9f7ef; --doctx:#1a7f4b;
+  --labbg:#fdf3e3; --labtx:#8a5200;
+  --codbg:#f3f4f6;
+  --radius:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0e1014; --card:#161920; --line:#252a33; --line2:#1e222a;
+    --tx:#e7e9ec; --tx2:#a2aab6; --tx3:#767e8a;
+    --must:#f08b8b; --mustbg:#3a1e20;
+    --accent:#2dd4bf; --accentbg:#12312e;
+    --vidbg:#1d2440; --vidtx:#9aa8f5;
+    --docbg:#12281c; --doctx:#6fd39c;
+    --labbg:#3a2e18; --labtx:#e0b070;
+    --codbg:#1b1f27;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0; padding:0 20px 90px; background:var(--bg); color:var(--tx);
+  font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif;
+  font-size:15px; line-height:1.7; -webkit-font-smoothing:antialiased;}
+.wrap{max-width:900px; margin:0 auto}
+header{padding:44px 0 6px}
+.dtag{display:inline-block; font-size:12px; font-weight:600; color:#fff; background:var(--accent);
+  padding:2px 10px; border-radius:6px; margin-bottom:12px; letter-spacing:.02em}
+h1{font-size:25px; font-weight:600; margin:0 0 8px; letter-spacing:-.01em}
+.sub{color:var(--tx2); font-size:14px; margin:0 0 6px}
+.meta{color:var(--tx3); font-size:13px; margin:0 0 22px}
+.note{background:var(--accentbg); border-left:3px solid var(--accent); padding:14px 18px;
+  border-radius:0 var(--radius) var(--radius) 0; font-size:14.5px; margin:18px 0}
+.note b{color:var(--accent)}
+.warn{background:var(--mustbg); border-left:3px solid var(--must); padding:14px 18px;
+  border-radius:0 var(--radius) var(--radius) 0; font-size:14px; margin:18px 0}
+.warn b{color:var(--must)}
+h2{font-size:17px; font-weight:600; margin:40px 0 12px; padding-bottom:9px;
+  border-bottom:1px solid var(--line); display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+h2 .n{font-size:12px; font-weight:600; background:var(--accentbg); color:var(--accent);
+  padding:2px 9px; border-radius:99px}
+h3{font-size:14.5px; font-weight:600; margin:22px 0 8px; color:var(--tx)}
+.card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+  padding:16px 20px; margin:12px 0}
+table{width:100%; border-collapse:collapse; font-size:14px; margin:10px 0;
+  background:var(--card); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden}
+th{text-align:left; font-weight:600; font-size:12.5px; color:var(--tx3); background:var(--line2);
+  padding:9px 12px; white-space:nowrap}
+td{padding:9px 12px; border-top:1px solid var(--line2); vertical-align:top}
+td.num,th.num{font-variant-numeric:tabular-nums; white-space:nowrap; color:var(--tx2)}
+.tagline{display:inline-block; font-size:11.5px; font-weight:600; padding:1px 7px; border-radius:5px; white-space:nowrap}
+.t-vid{background:var(--vidbg); color:var(--vidtx)}
+.t-doc{background:var(--docbg); color:var(--doctx)}
+.t-lab{background:var(--labbg); color:var(--labtx)}
+.t-skip{background:var(--line2); color:var(--tx3)}
+a{color:var(--accent); text-decoration:none; border-bottom:1px solid var(--accentbg)}
+a:hover{border-bottom-color:var(--accent)}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,"Courier New",monospace; font-size:13px;
+  background:var(--codbg); padding:1px 5px; border-radius:5px}
+pre{background:var(--codbg); border:1px solid var(--line); border-radius:10px; padding:14px 16px;
+  overflow-x:auto; font-family:ui-monospace,SFMono-Regular,Consolas,"Courier New",monospace;
+  font-size:12.8px; line-height:1.6; white-space:pre-wrap; word-break:break-word; margin:8px 0}
+ol,ul{padding-left:22px; margin:8px 0}
+li{margin:5px 0}
+.check{list-style:none; padding-left:0}
+.check li{display:flex; gap:10px; align-items:flex-start; margin:9px 0}
+.check input{margin-top:6px; width:16px; height:16px; accent-color:var(--accent); flex:0 0 auto; cursor:pointer}
+.check label{cursor:pointer}
+.check input:checked + label{color:var(--tx3); text-decoration:line-through}
+.kv{font-size:14px; color:var(--tx2); margin:4px 0}
+.kv b{color:var(--tx)}
+.foot{color:var(--tx3); font-size:12.5px; text-align:center; margin:44px 0 0; line-height:1.9}
+.strike{color:var(--tx3)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="dtag">D6 ／ 35</div>
+  <h1>结构化输出</h1>
+  <p class="sub">2026-09-24（周四）实际执行 ｜ 预计 3h ｜ 阶段：W1 打通链路</p>
+  <p class="meta">目录 <code>week1-basics/day06-structured/</code> ｜ 计划日 09-26 ｜ 进度提前 2 天</p>
+</header>
+
+<div class="note">
+  <b>今天只干一件事：让模型的输出从「一段话」变成「一个能点的对象」，然后直接拿它做代码分支。</b><br>
+  跑完你要能不看稿说出这句话 ——
+  <b>「<code>schema</code> 是给模型的说明书（字段名 + <code>description</code>）；
+  <code>with_structured_output()</code> 返回的是一个 <code>Runnable</code>，
+  吐出来的是 Pydantic 实例，字段可以直接点、直接 <code>if</code>。」</b>
+</div>
+
+<div class="warn">
+  <b>先报两个核实结果（一个好消息、一个坑）。</b><br><br>
+  <b>✅ 好消息：计划表这次写对了。</b>「尚硅谷第 06 章 结构化输出」在 B 站<b>确实存在</b>，就是
+  <b>P41–P50</b> 这 10 P；括号里那三个说法（4 种输出模式 / 类型校验 / 获取结构化结果）
+  也能逐条对上（P42–P48 是四种写法，P49 是校验对比，P50 是获取结果）。
+  这是 D4、D5 连续两处引用翻车之后，第一条<b>逐条核过为真</b>的引用。<br><br>
+  <b>⚠️ 坑：文档那一条会把你带偏。</b>计划表写「官方文档结构化输出页面（站内搜 Structured output）」——
+  按这个搜出来的 <code>…/langchain/structured-output</code> 页<b>已经改成 agent 视角</b>了：
+  讲的是 <code>create_agent(response_format=...)</code> + <code>ProviderStrategy</code> / <code>ToolStrategy</code>，
+  <b>整页没有 <code>with_structured_output</code></b>（我已抓页面逐节核过）。<br>
+  和视频对得上的是<b>另一页</b>：<b>Models 页的 <code>## Structured output</code> 小节</b>。第 3 节按后者给。
+</div>
+
+<h2><span class="n">1</span>三个小时怎么切</h2>
+
+<table>
+  <tr><th class="num">时段</th><th>做什么</th></tr>
+  <tr><td class="num">0:00–1:15</td><td><span class="tagline t-vid">视频</span> <b>P41–P45 必看</b>（约 55 分钟）—— 理解 + Pydantic，今天的地基</td></tr>
+  <tr><td class="num">1:15–1:40</td><td><span class="tagline t-vid">视频</span> P46–P48 快看 + P49 / P50 必看（约 41 分钟）—— 另外三种写法 + 校验 + 获取结果</td></tr>
+  <tr><td class="num">1:40–2:00</td><td><span class="tagline t-doc">文档</span> 官方 <b>Models 页 → <code>Structured output</code> 小节</b>（核对 <code>method</code> 与 <code>include_raw</code>）</td></tr>
+  <tr><td class="num">2:00–2:45</td><td><span class="tagline t-lab">动手</span> 写 <code>struct_demo.py</code>：Pydantic 抽取 → 结果直接走 <code>if</code> 分支</td></tr>
+  <tr><td class="num">2:45–3:00</td><td><span class="tagline t-lab">实验</span> 三个小实验（换 flash / 换 json_mode / 去掉 description）+ 建日志</td></tr>
+</table>
+
+<p class="kv">时间紧的话：<b>P46–P48 可以先跳过</b>（那三种写法今天用不到），省下 23 分钟。</p>
+
+<h2><span class="n">2</span>视频 · 尚硅谷第 06 章 结构化输出</h2>
+
+<p class="kv">
+  合集：<a href="https://www.bilibili.com/video/BV1rv7A6oEeP/" target="_blank">BV1rv7A6oEeP《2026 版 LangChain 教程》</a>
+  ｜ 10 P 共 <b>1 小时 36 分</b>（计划表写的「约 60 分钟」偏短，实际多出半个多小时）
+  ｜ 时长已逐条核对
+</p>
+
+<table>
+  <tr><th class="num">P</th><th>标题</th><th class="num">时长</th><th>看完该能回答</th></tr>
+  <tr>
+    <td class="num"><a href="https://www.bilibili.com/video/BV1rv7A6oEeP/?p=41" target="_blank">P41</a></td>
+    <td>结构化输出的理解 <span class="tagline t-vid">必看</span></td>
+    <td class="num">4:20</td>
+    <td>结构化输出到底解决什么问题？为什么不能靠字符串切割 <code>split()</code> 硬抠？</td>
+  </tr>
+  <tr>
+    <td class="num"><a href="https://www.bilibili.com/video/BV1rv7A6oEeP/?p=42" target="_blank">P42</a></td>
+    <td>Pydantic 的基本使用 <span class="tagline t-vid">必看</span></td>
+    <td class="num">11:11</td>
+    <td>字段怎么写？<code>Field(description=...)</code> 到底是写给谁看的？</td>
+  </tr>
+  <tr>
+    <td class="num"><a href="https://www.bilibili.com/video/BV1rv7A6oEeP/?p=43" target="_blank">P43</a></td>
+    <td>Pydantic 高级特性：可选字段、默认值、枚举类型 <span class="tagline t-vid">必看</span></td>
+    <td class="num">15:50</td>
+    <td>「没提到就填未知」这种要求怎么表达？<code>Literal</code> 为什么比 <code>str</code> 靠谱？</td>
+  </tr>
+  <tr>
+    <td class="num"><a href="https://www.bilibili.com/video/BV1rv7A6oEeP/?p=44" target="_blank">P44</a></td>
+    <td>Pydantic 高级特性：列表提取、嵌套、限制条件 <span class="tagline t-vid">必看</span></td>
+    <td class="num">20:52</td>
+    <td>字段是个列表怎么写？两个 model 怎么嵌套？<code>ge</code> / <code>le</code> 约束是谁在执行？</td>
+  </tr>
+  <tr>
+    <td class="num"><a href="https://www.bilibili.com/video/BV1rv7A6oEeP/?p=45" target="_blank">P45</a></td>
+    <td>Pydantic 模式的工作流程图解 <span class="tagline t-vid">必看</span></td>
+    <td class="num">3:04</td>
+    <td>从「一段文本」到「一个对象」，中间经过了哪几步？</td>
+  </tr>
+  <tr>
+    <td class="num"><a href="https://www.bilibili.com/video/BV1rv7A6oEeP/?p=46" target="_blank">P46</a></td>
+    <td>TypedDict 格式的使用 <span class="tagline t-skip">快看</span></td>
+    <td class="num">13:55</td>
+    <td>TypedDict 和 Pydantic 差在哪？返回的是对象还是字典？</td>
+  </tr>
+  <tr>
+    <td class="num"><a href="https://www.bilibili.com/video/BV1rv7A6oEeP/?p=47" target="_blank">P47</a></td>
+    <td>JSON Schema 格式的使用 <span class="tagline t-skip">快看</span></td>
+    <td class="num">6:10</td>
+    <td>手写 JSON Schema 至少要哪几个键？</td>
+  </tr>
+  <tr>
+    <td class="num"><a href="https://www.bilibili.com/video/BV1rv7A6oEeP/?p=48" target="_blank">P48</a></td>
+    <td>@dataclass 格式的使用 <span class="tagline t-skip">快看</span></td>
+    <td class="num">2:28</td>
+    <td>dataclass 也能当 schema？返回什么？</td>
+  </tr>
+  <tr>
+    <td class="num"><a href="https://www.bilibili.com/video/BV1rv7A6oEeP/?p=49" target="_blank">P49</a></td>
+    <td>四种不同模式的类型校验情况 <span class="tagline t-vid">必看</span></td>
+    <td class="num">8:13</td>
+    <td>四种写法里，哪些会真做类型校验、哪些只是「约定」？</td>
+  </tr>
+  <tr>
+    <td class="num"><a href="https://www.bilibili.com/video/BV1rv7A6oEeP/?p=50" target="_blank">P50</a></td>
+    <td>两种获取结构化结果的方式 <span class="tagline t-vid">必看</span></td>
+    <td class="num">9:57</td>
+    <td>「两种方式」分别是哪两种？什么场景用哪个？（今天第 4 节用的是其中一种）</td>
+  </tr>
+</table>
+
+<p class="kv"><b>必看 7 P ≈ 73 分钟</b>（P41–P45、P49、P50）｜ 快看 3 P ≈ 23 分钟（P46–P48）｜ 全章 96 分钟</p>
+
+<h2><span class="n">3</span>文档 · 读哪一节、为什么读</h2>
+
+<h3>主读：Models 页 → <code>## Structured output</code> 小节</h3>
+<p class="kv">
+  <a href="https://docs.langchain.com/oss/python/langchain/models" target="_blank">docs.langchain.com/oss/python/langchain/models</a>
+  ｜ 页面内 <code>Ctrl+F</code> 搜 <code>Structured output</code> 跳到那一节 ｜ 20 分钟
+</p>
+<ul>
+  <li><b>Pydantic 示例</b> —— 和视频 P42–P44 对照，看官方字段写法和你写的一样不一样</li>
+  <li><b><code>method</code> 参数</b> —— 页面示例里出现过 <code>method="json_schema"</code>，这是今天要搞清的开关</li>
+  <li><b><code>include_raw=True</code></b> —— 返回 <code>{raw / parsed / parsing_error}</code> 三个键；
+      <code>raw</code> 是原始 <code>AIMessage</code>。<b>想知道「结构化输出底层是拿什么实现的」，看这个键里有什么</b></li>
+  <li><b>嵌套示例</b>（<code>MovieDetails</code> 里套 <code>list[Actor]</code>）—— 和 P44 对上</li>
+</ul>
+
+<h3>次读（只扫一眼，别陷进去）：<code>…/langchain/structured-output</code></h3>
+<p class="kv">
+  <a href="https://docs.langchain.com/oss/python/langchain/structured-output" target="_blank">docs.langchain.com/oss/python/langchain/structured-output</a>
+</p>
+<p class="kv">
+  这一页现在是 <b>agent 视角</b>：<code>create_agent(model, response_format=...)</code>，配
+  <code>ProviderStrategy</code>（走供应商原生能力）与 <code>ToolStrategy</code>（走工具调用）两套策略。
+  <b>它和视频讲的 <code>with_structured_output</code> 是两个层次的东西</b> ——
+  前者是「给 Agent 定输出格式」，后者是「给一次模型调用定输出格式」。
+  今天只需要知道它存在、叫这个名字；<b>D10 学 <code>create_agent</code> 时再回来精读</b>。
+</p>
+
+<h2><span class="n">4</span>动手 · 写 <code>struct_demo.py</code></h2>
+
+<p class="kv">
+  新建 <code>week1-basics/day06-structured/struct_demo.py</code>。
+  骨架可以直接粘（<b>下面这段我在你的 venv 里整段跑过了，输出见 4.2</b>）；4.3 那三处要你自己改。
+</p>
+
+<pre>"""D6 · 结构化输出：从一句话里抽出结构化线索
+
+要验证三件事：
+① Pydantic schema 怎么定义（字段名 + description 就是给模型的说明书）
+② with_structured_output() 返回什么、拿到的东西怎么用
+③ 抽出来的结果怎么直接驱动代码分支 —— 不再靠字符串匹配
+"""
+from __future__ import annotations
+
+import os
+from pathlib import Path
+from typing import Literal
+
+from dotenv import load_dotenv
+from langchain.chat_models import init_chat_model
+from pydantic import BaseModel, Field
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+load_dotenv(REPO_ROOT / ".env")
+
+MODEL = os.getenv("DEEPSEEK_MODEL", "deepseek-chat")
+BASE_URL = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com")
+API_KEY = os.getenv("DEEPSEEK_API_KEY")
+
+
+class Lead(BaseModel):
+    """从一句话里抽取出的客户线索。"""
+
+    name: str = Field(description="客户姓名")
+    company: str = Field(description="公司名称；原文没提到就填「未知」")
+    need: str = Field(description="客户需求，用不超过 10 个字概括")
+    urgency: Literal["高", "中", "低"] = Field(description="紧急程度")
+
+
+def build_extractor():
+    """建模型 → 把 schema 挂上去 → 返回一个能 invoke 的对象。"""
+    model = init_chat_model(
+        MODEL,
+        model_provider="deepseek",
+        base_url=BASE_URL,
+        api_key=API_KEY,
+        temperature=0,
+    )
+    return model.with_structured_output(Lead)
+
+
+def route(lead: Lead) -&gt; str:
+    """拿到结构化结果之后，代码直接分支 —— 这就是今天要带走的东西。"""
+    if lead.urgency == "高":
+        return f"【立即跟进】{lead.name}（{lead.company}）→ 转销售主管"
+    if lead.urgency == "低":
+        return f"【进池子】{lead.name}（{lead.company}）→ 排进周报"
+    return f"【今日回复】{lead.name}（{lead.company}）"
+
+
+def main() -&gt; None:
+    extractor = build_extractor()
+    print("① 返回对象类型：", type(extractor).__name__)
+
+    text = "你好，我是远景科技的王磊，我们下个月要上线智能客服，想聊聊你们的方案，越快越好。"
+    lead = extractor.invoke(text)
+
+    print("② 抽取结果：", lead)
+    print("   类型：", type(lead).__name__)
+    print("③ 逐个字段点出来：")
+    for k, v in lead.model_dump().items():
+        print(f"   {k:&lt;10} = {v}")
+    print("④ 代码直接分支（没有一句字符串匹配）：", route(lead))
+
+
+if __name__ == "__main__":
+    main()
+</pre>
+
+<h3>4.2 预期输出（我已在你 venv 里实跑，逐行核对）</h3>
+
+<pre>① 返回对象类型： RunnableSequence
+② 抽取结果： name='王磊' company='远景科技' need='智能客服方案' urgency='高'
+   类型： Lead
+③ 逐个字段点出来：
+   name       = 王磊
+   company    = 远景科技
+   need       = 智能客服方案
+   urgency    = 高
+④ 代码直接分支（没有一句字符串匹配）： 【立即跟进】王磊（远景科技）→ 转销售主管</pre>
+
+<p class="kv">
+  <b>第 ① 行是今天的隐藏彩蛋</b>：<code>with_structured_output()</code> 返回的<b>不是</b>「一次调用」，
+  而是一个 <code>RunnableSequence</code> —— 和你 D5 拼的 <code>prompt | model | parser</code> 是同一个类。
+  所以它也能 <code>.invoke()</code> / <code>.stream()</code> / <code>.batch()</code>，
+  <b>还能直接接在 <code>prompt |</code> 后面</b>（第 4.3 条会让你亲手试一次）。
+</p>
+
+<h3>4.3 三处要你自己动脑子改的地方</h3>
+<ol>
+  <li>
+    <b>故意换错模型</b>：把 <code>build_extractor()</code> 里的 <code>MODEL</code> 临时改成
+    <code>"deepseek-flash"</code> 再跑一次，<b>把报错原文抄下来</b>。
+    （结果先剧透一半：不是 <code>ValidationError</code>，是 400。为什么？第 6 节有。）
+  </li>
+  <li>
+    <b>删掉一个字段的 <code>description</code></b>：把 <code>need</code> 那行改成 <code>need: str</code>，
+    再跑一次看抽出来什么。<b>注意：它不会报错</b> —— 这就是「静默失败」，和你 D5 遇到的那两次是一类。
+  </li>
+  <li>
+    <b>把抽取器接在提示词后面</b>（D5 的管道符在这里复现）：
+<pre>from langchain_core.prompts import ChatPromptTemplate
+
+prompt = ChatPromptTemplate.from_messages([
+    ("system", "从用户的话里抽取线索。"),
+    ("user", "{text}"),
+])
+chain = prompt | model.with_structured_output(Lead)
+print(chain.invoke({"text": text}))</pre>
+    这段我也跑通了，返回的还是 <code>Lead</code> 实例。
+    <b>要带走的一句话：<code>with_structured_output()</code> 产出的东西能当普通 <code>Runnable</code> 用，</b>
+    所以它既能当链尾、也能当链中的一环。
+  </li>
+</ol>
+
+<h3>4.4 验收标准</h3>
+<ul class="check">
+  <li><input type="checkbox" id="v1"><label for="v1">代码当天跑通，<code>print</code> 出来的是 <code>Lead(...)</code> 对象而不是一段字符串</label></li>
+  <li><input type="checkbox" id="v2"><label for="v2">能用一句话说清 <code>Field(description=...)</code> 是写给谁看的</label></li>
+  <li><input type="checkbox" id="v3"><label for="v3">知道 <code>with_structured_output()</code> 返回的是 <code>RunnableSequence</code></label></li>
+  <li><input type="checkbox" id="v4"><label for="v4">三个实验都做了，报错原文和「静默失败」的输出都记下来了</label></li>
+  <li><input type="checkbox" id="v5"><label for="v5">能不看稿说出：<b>输出从「一段话」变成「一个对象」之后，代码少做了哪一步判断</b></label></li>
+</ul>
+
+<h2><span class="n">5</span>今天提交什么</h2>
+
+<p class="kv">在 PyCharm 里提交，<code>Ctrl + K</code> 打开窗口后<b>先取消勾选不属于本次的文件</b>。建议分 2 条（和 D4 / D5 的「代码 / 文档」分层一致）。</p>
+
+<h3>第 1 条 · 代码</h3>
+<p class="kv">勾选：<code>week1-basics/day06-structured/struct_demo.py</code>（新建）</p>
+<pre>feat(day06): Pydantic 结构化抽取，输出直接驱动代码分支
+
+从一句话里抽「姓名 / 公司 / 需求 / 紧急度」，结果直接 if 分支，
+不再靠字符串匹配判断。
+
+现象：换成 deepseek-flash 跑结构化输出，一上来就 400：
+  Thinking mode does not support this tool_choice
+换回 deepseek-chat 就正常。
+
+我以为：模型是通用的，换哪个都能跑。
+
+实际：deepseek-flash 走的是 thinking（推理）模式，而这个模式不支持
+tool_choice 参数 —— 而 with_structured_output 底层正是靠工具调用
+实现的（include_raw=True 里能看见 tool_calls），所以必然撞。
+和 D4 那个 reasoning_content 400 是同源的：都在 thinking 模式上撞的。
+
+结论：结构化输出固定用 deepseek-chat。报错里出现 thinking mode，
+先看模型名，别先怀疑库。
+
+另外两个实测：method="json_mode" 要求提示词里含「json」字样；
+字段不写 description 不报错，但模型会瞎猜。</pre>
+
+<h3>第 2 条 · 文档</h3>
+<p class="kv">勾选：<code>docs/journal/2026-09-26.md</code>（新建）、<code>docs/progress.md</code>（D6 打勾）、<code>README.md</code>（日期）</p>
+<pre>docs(day06): D6 日志与进度；结构化输出引用核实
+
+- docs/journal/2026-09-26.md：当日日志（一句话结论 + 踩的坑）
+- docs/progress.md：D6 打勾
+- README.md：进度与「最近更新」日期
+- 核实：计划表 D6 视频引用为真（P41-P50，10P / 96 分钟）；
+  文档引用需改指 Models 页 Structured output 小节</pre>
+
+<p class="kv"><b>提交前扫一眼文件列表</b>：<b>不要出现</b> <code>.env</code>、<code>.venv/</code>、<code>.idea/</code>、<code>__pycache__/</code>。</p>
+
+<h2><span class="n">6</span>坑预警</h2>
+
+<p class="kv">下面 4 条<b>是我今天在你 venv 里实测出来的</b>（不是猜的），输入输出都留了痕。</p>
+
+<table>
+  <tr><th>症状</th><th>真实原因</th></tr>
+  <tr>
+    <td>结构化输出直接 400：<br><code>Thinking mode does not support this tool_choice</code></td>
+    <td><b>用了 <code>deepseek-flash</code>。</b>它是 thinking（推理）模式，不支持 <code>tool_choice</code>，
+        而结构化输出底层就是工具调用。<b>换 <code>deepseek-chat</code> 即可</b> —— 这也和 D4 那条
+        <code>reasoning_content</code> 400 同源</td>
+  </tr>
+  <tr>
+    <td><code>method="json_mode"</code> 报 400：<br><code>Prompt must contain the word 'json' in some form…</code></td>
+    <td><code>json_mode</code> 走的是 <code>response_format={"type":"json_object"}</code>，
+        DeepSeek 要求提示词里出现「json」字样。<b>今天不传 <code>method</code>（默认）就行</b>；
+        默认实测走的是 tool calling</td>
+  </tr>
+  <tr>
+    <td>字段忘了写 <code>description</code>，<b>不报错</b>，但抽出来一塌糊涂</td>
+    <td><b>字段名 + <code>description</code> 就是给模型的说明书。</b>实测把两个字段命名成 <code>a</code> / <code>b</code>：
+        <code>a</code> 直接拿到整句原文，<code>b</code> 拿到一段它自己编的回复 —— 模型在瞎猜。
+        <b>名字起得准，比写长描述更重要</b></td>
+  </tr>
+  <tr>
+    <td>以为 <code>Field(ge=0, le=10)</code> 只是本地兜底校验</td>
+    <td>约束会<b>一起作为 JSON Schema 发给模型</b>，所以模型会主动往范围里压：
+        实测让它给「100 分」，它回了 <code>score=10</code>。
+        <b>是双保险，不是兜底</b> —— 别指望靠它挡住模型的胡说</td>
+  </tr>
+  <tr>
+    <td><code>ValidationError</code>：模型没守 schema</td>
+    <td>少见但会发生（尤其字段多、嵌套深时）。看报错里是哪个字段，<b>去改那个字段的
+        <code>description</code>，或把它收窄成 <code>Literal</code></b>。别加 <code>try/except</code> 糊过去</td>
+  </tr>
+  <tr>
+    <td>结果里少了某个字段 / 值写成了「未知」以外的东西</td>
+    <td>没在 <code>description</code> 里说明「抽不到怎么办」。要它填「未知」，
+        就得在 <code>description</code> 里明说 —— <b>模型的默认行为不是你以为的那样</b></td>
+  </tr>
+  <tr>
+    <td>又去翻到了 <code>LLMChain</code> / <code>MultiPromptChain</code> 之类的写法</td>
+    <td>0.2 时代的老教程。1.x 里这些类已经删了（你 D5 就记过一条）。<b>看到直接关掉</b></td>
+  </tr>
+</table>
+
+<h2><span class="n">7</span>完成清单</h2>
+
+<ul class="check">
+  <li><input type="checkbox" id="c1"><label for="c1">P41–P45 看完（P46–P48 可只快看），本章时长与分 P 已核对</label></li>
+  <li><input type="checkbox" id="c2"><label for="c2">官方 <b>Models 页</b> <code>Structured output</code> 小节读完（含 <code>method</code> 与 <code>include_raw</code>）</label></li>
+  <li><input type="checkbox" id="c3"><label for="c3"><code>struct_demo.py</code> 写完跑通，输出是 <code>Lead</code> 对象、且打印了分支结果</label></li>
+  <li><input type="checkbox" id="c4"><label for="c4">三个实验做过：换 flash 看报错 / 换 json_mode 看报错 / 去掉 description 看静默失败</label></li>
+  <li><input type="checkbox" id="c5"><label for="c5">能说清「结构化输出底层是工具调用」（<code>include_raw=True</code> 里看到 <code>tool_calls</code> 了）</label></li>
+  <li><input type="checkbox" id="c6"><label for="c6">日志 <code>docs/journal/2026-09-26.md</code> 建成，一句话结论填完</label></li>
+  <li><input type="checkbox" id="c7"><label for="c7"><code>docs/progress.md</code> D6 打勾，README 日期更新</label></li>
+  <li><input type="checkbox" id="c8"><label for="c8"><code>Ctrl + K</code> 提交，且没带上 <code>.env</code> / <code>.venv</code> / <code>.idea</code> / <code>__pycache__</code></label></li>
+</ul>
+
+<div class="foot">
+  D6 ／ 35 ｜ 阶段 W1 打通链路 ｜ 下一个里程碑：D7 <code>w1-cli-v0.1</code><br>
+  勾选状态存在浏览器本地，关掉再打开还在
+</div>
+
+</div>
+
+<script>
+document.querySelectorAll('.check input').forEach(function (box) {
+  var key = 'd06-' + box.id;
+  try { box.checked = localStorage.getItem(key) === '1'; } catch (e) {}
+  box.addEventListener('change', function () {
+    try { localStorage.setItem(key, box.checked ? '1' : '0'); } catch (e) {}
+  });
+});
+</script>
+
+</body>
+</html>
