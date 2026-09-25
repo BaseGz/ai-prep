@@ -11,3 +11,4 @@
 -r week1-basics/day01-setup/requirements.txt
 
 rich
+pydantic
