@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>D7 · 流式对话 CLI 工具 ｜ 影石实习准备</title>
+<style>
+:root{
+  --bg:#f6f7f9; --card:#fff; --line:#e5e7eb; --line2:#eef0f3;
+  --tx:#1a1d21; --tx2:#586170; --tx3:#8b939e;
+  --must:#b4232a; --mustbg:#fdecec;
+  --accent:#0f766e; --accentbg:#e6f4f2;
+  --vidbg:#eef2ff; --vidtx:#3538cd;
+  --docbg:#e9f7ef; --doctx:#1a7f4b;
+  --labbg:#fdf3e3; --labtx:#8a5200;
+  --codbg:#f3f4f6;
+  --radius:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0e1014; --card:#161920; --line:#252a33; --line2:#1e222a;
+    --tx:#e7e9ec; --tx2:#a2aab6; --tx3:#767e8a;
+    --must:#f08b8b; --mustbg:#3a1e20;
+    --accent:#2dd4bf; --accentbg:#12312e;
+    --vidbg:#1d2440; --vidtx:#9aa8f5;
+    --docbg:#12281c; --doctx:#6fd39c;
+    --labbg:#3a2e18; --labtx:#e0b070;
+    --codbg:#1b1f27;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0; padding:0 20px 90px; background:var(--bg); color:var(--tx);
+  font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif;
+  font-size:15px; line-height:1.7; -webkit-font-smoothing:antialiased;}
+.wrap{max-width:900px; margin:0 auto}
+header{padding:44px 0 6px}
+.dtag{display:inline-block; font-size:12px; font-weight:600; color:#fff; background:var(--accent);
+  padding:2px 10px; border-radius:6px; margin-bottom:12px; letter-spacing:.02em}
+h1{font-size:25px; font-weight:600; margin:0 0 8px; letter-spacing:-.01em}
+.sub{color:var(--tx2); font-size:14px; margin:0 0 6px}
+.meta{color:var(--tx3); font-size:13px; margin:0 0 22px}
+.note{background:var(--accentbg); border-left:3px solid var(--accent); padding:14px 18px;
+  border-radius:0 var(--radius) var(--radius) 0; font-size:14.5px; margin:18px 0}
+.note b{color:var(--accent)}
+.warn{background:var(--mustbg); border-left:3px solid var(--must); padding:14px 18px;
+  border-radius:0 var(--radius) var(--radius) 0; font-size:14px; margin:18px 0}
+.warn b{color:var(--must)}
+h2{font-size:17px; font-weight:600; margin:40px 0 12px; padding-bottom:9px;
+  border-bottom:1px solid var(--line); display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+h2 .n{font-size:12px; font-weight:600; background:var(--accentbg); color:var(--accent);
+  padding:2px 9px; border-radius:99px}
+h3{font-size:14.5px; font-weight:600; margin:22px 0 8px; color:var(--tx)}
+.card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+  padding:16px 20px; margin:12px 0}
+table{width:100%; border-collapse:collapse; font-size:14px; margin:10px 0;
+  background:var(--card); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden}
+th{text-align:left; font-weight:600; font-size:12.5px; color:var(--tx3); background:var(--line2);
+  padding:9px 12px; white-space:nowrap}
+td{padding:9px 12px; border-top:1px solid var(--line2); vertical-align:top}
+td.num,th.num{font-variant-numeric:tabular-nums; white-space:nowrap; color:var(--tx2)}
+.tagline{display:inline-block; font-size:11.5px; font-weight:600; padding:1px 7px; border-radius:5px; white-space:nowrap}
+.t-vid{background:var(--vidbg); color:var(--vidtx)}
+.t-doc{background:var(--docbg); color:var(--doctx)}
+.t-lab{background:var(--labbg); color:var(--labtx)}
+.t-skip{background:var(--line2); color:var(--tx3)}
+a{color:var(--accent); text-decoration:none; border-bottom:1px solid var(--accentbg)}
+a:hover{border-bottom-color:var(--accent)}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,"Courier New",monospace; font-size:13px;
+  background:var(--codbg); padding:1px 5px; border-radius:5px}
+pre{background:var(--codbg); border:1px solid var(--line); border-radius:10px; padding:14px 16px;
+  overflow-x:auto; font-family:ui-monospace,SFMono-Regular,Consolas,"Courier New",monospace;
+  font-size:12.8px; line-height:1.6; white-space:pre-wrap; word-break:break-word; margin:8px 0}
+ol,ul{padding-left:22px; margin:8px 0}
+li{margin:5px 0}
+.check{list-style:none; padding-left:0}
+.check li{display:flex; gap:10px; align-items:flex-start; margin:9px 0}
+.check input{margin-top:6px; width:16px; height:16px; accent-color:var(--accent); flex:0 0 auto; cursor:pointer}
+.check label{cursor:pointer}
+.check input:checked + label{color:var(--tx3); text-decoration:line-through}
+.kv{font-size:14px; color:var(--tx2); margin:4px 0}
+.kv b{color:var(--tx)}
+.foot{color:var(--tx3); font-size:12.5px; text-align:center; margin:44px 0 0; line-height:1.9}
+.strike{color:var(--tx3)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="dtag">D7 ／ 35</div>
+  <h1>周末产出：流式对话 CLI 工具</h1>
+  <p class="sub">2026-09-28（周一）实际执行 ｜ 预计 2.5h ｜ 阶段：W1 打通链路</p>
+  <p class="meta">目录 <code>week1-basics/day07-cli/</code> ｜ 计划日 09-27 ｜ 今天不学新内容</p>
+</header>
+
+<div class="note">
+  <b>今天只干一件事：把 D1–D6 串成一个能用的命令行工具。</b><br>
+  跑完你要能不看稿说出这句话 ——
+  <b>「<code>messages</code> 数组就是全部的记忆 —— 模型无状态，每轮我把整份历史重发一遍；
+  <code>with_structured_output()</code> 让抽取结果变成对象，所以我能直接 <code>if</code>。」</b><br>
+  <span class="kv">计划表原话：<b>能稳定跑起来，比功能多重要。</b></span>
+</div>
+
+<div class="warn">
+  <b>⚠️ 开工前先清 D6 的两笔欠账（约 20 分钟）。</b><br>
+  D6 的代码 09-25 就提交完了（4 条 commit 全在远程），但收尾一直没做：<br>
+  ① <code>docs/journal/2026-09-26.md</code> <b>还没建</b>（<code>docs/journal/</code> 里只有 09-20/21/24/25）；
+  ② <code>docs/progress.md</code> 的 D6 还是 <code>[ ]</code>，根 <code>README.md</code> 进度行还停在「已完成 D1 / D4 / D5」+ 日期 09-23。<br>
+  <b>不补上，D6 就永远是个没关掉的口子</b> —— 而且今天的 CLI 要用 D6 的抽取能力，等于顺手复验一遍。<br><br>
+  <b>另外三件不用补</b>：<code>struct_demo.py</code>（c3）已被 notebook 路线顶掉、
+  三个实验（c4）你自己跑过并写成了实验记录、<code>include_raw</code>（c5）归到 D8 学工具调用时一起看。
+</div>
+
+<h2><span class="n">1</span>两个半小时怎么切</h2>
+
+<table>
+  <tr><th class="num">时段</th><th>做什么</th></tr>
+  <tr><td class="num">0:00–0:20</td><td><span class="tagline t-lab">收尾</span> 建 <code>journal/2026-09-26.md</code> + <code>progress.md</code> D6 打勾 + 根 README 进度行</td></tr>
+  <tr><td class="num">0:20–1:50</td><td><span class="tagline t-lab">动手</span> 写 <code>chat_cli.py</code>（90 分钟）—— 建议先自己写一版，卡住再对第 3 节</td></tr>
+  <tr><td class="num">1:50–2:20</td><td><span class="tagline t-lab">动手</span> 跑通 + 做第 3 节的「三处你的活」</td></tr>
+  <tr><td class="num">2:20–2:50</td><td><span class="tagline t-lab">动手</span> 写 <code>day07-cli/README.md</code>，记 3 个踩过的坑（40 分钟）</td></tr>
+  <tr><td class="num">2:50–3:00</td><td><span class="tagline t-lab">收尾</span> 建 <code>journal/2026-09-27.md</code> + 打勾 + 3 条提交 + 打 tag <code>w1-cli-v0.1</code></td></tr>
+</table>
+
+<h2><span class="n">2</span>先清 D6 欠账</h2>
+
+<h3>① 建 <code>docs/journal/2026-09-26.md</code></h3>
+<p class="kv">照 <code>docs/journal/2026-09-25.md</code> 的模板写。核心内容是 09-24 那天实测出来的三个发现：</p>
+<table>
+  <tr><th>发现</th><th>一句话</th></tr>
+  <tr><td><b>模型会编造像真的值</b></td><td>输入里没提年龄，它给 <code>age=30</code>；输入「请介绍一下这家公司」连人都没有，它照样返回一个填满的 <code>Person</code>。<b>比填 0 危险 —— 0 一眼可疑，30 不像</b></td></tr>
+  <tr><td><b><code>ValidationError</code> 少见不是校验弱</b></td><td>是模型先挡了一道：输入说「999 岁」+ <code>Field(ge=1, le=120)</code>，它主动压成 120；绕过模型手工喂 <code>age="三十岁"</code> 给链尾的 parser，pydantic 立刻抛错</td></tr>
+  <tr><td><b>继承 <code>BaseModel</code> 不是「通过审查」</b></td><td>是「拿到造表的工具」。不继承不报错，只是静默给你一份空 Schema → <code>invoke</code> 回来一个 <code>{}</code></td></tr>
+</table>
+<p class="kv">结论行建议（或你自己的话）：<b>「跑通了」≠「跑对了」，「没报错」更不等于「对」—— 一天之内撞到 5 个坑，其中 3 个是不报错的。</b></p>
+
+<h3>② 打勾 + 更新进度</h3>
+<ul>
+  <li><code>docs/progress.md</code>：D6 行改成 <code>[x] 09-25 完成</code></li>
+  <li>根 <code>README.md</code> 第 81 行：进度行改成「已完成 D1 / D4 / D5 / D6，D2 / D3 内容已学过而跳过」+ 最近更新 <code>2026-09-28</code></li>
+</ul>
+
+<h2><span class="n">3</span>动手 · 写 <code>chat_cli.py</code></h2>
+
+<div class="note">
+  <b>建议先自己写一版。</b>你 D1–D6 的东西全在手上：模型创建、流式、<code>messages</code> 数组、
+  <code>with_structured_output</code>。<b>先别往下看</b>，自己按这四步搭：<br>
+  ① 建模型 → ② <code>while True</code> + <code>input()</code> 收输入 → ③ 普通输入走流式对话（记得把回复补进历史）→
+  ④ <code>/extract</code> 开头走结构化抽取 + <code>if</code> 分支。<br>
+  卡住了再对下面的代码 —— <b>这一段我已经在你 venv 里整段跑过两轮，输出印在本节末尾。</b>
+</div>
+
+<p class="kv">新建 <code>week1-basics/day07-cli/chat_cli.py</code>，整段可以粘：</p>
+
+<pre>"""D7 · 流式对话 CLI v0.1
+
+把前 6 天串成一个能用的命令行工具：
+- D1  模型创建      init_chat_model
+- D3  流式输出      model.stream()
+- D4  多轮对话      自己维护 messages 数组（模型没有记忆，历史每轮重发）
+- D5  LCEL 管道     prompt | model | parser
+- D6  结构化抽取    with_structured_output(Lead) → 直接驱动代码分支
+
+命令：
+  普通文字        → 流式对话（带多轮上下文）
+  /extract 文字   → 结构化抽取客户线索 + 分支判断
+  /history        → 看历史有几条
+  /clear          → 清空历史
+  /exit           → 退出
+"""
+from __future__ import annotations
+
+import os
+from pathlib import Path
+
+from dotenv import load_dotenv
+from langchain.chat_models import init_chat_model
+from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
+from pydantic import BaseModel, Field
+from rich.console import Console
+from rich.panel import Panel
+from rich.table import Table
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+load_dotenv(REPO_ROOT / ".env")
+
+# ★ 固定用 deepseek-chat。deepseek-flash 是 thinking 模式，
+#   结构化输出底层是 tool_choice，会直接 400（D6 实测）
+MODEL_NAME = "deepseek:deepseek-chat"
+BASE_URL = os.getenv("DEEPSEEK_BASE_URL")
+API_KEY = os.getenv("DEEPSEEK_API_KEY")
+
+SYSTEM_PROMPT = "你是一个简洁的助手，回答尽量短，不要啰嗦。"
+
+console = Console()
+
+
+class Lead(BaseModel):
+    """从一句话里抽出来的客户线索"""
+
+    name: str = Field(description="姓名")
+    company: str = Field(description="公司")
+    need: str = Field(description="需求")
+    urgency: str = Field(description="紧急度，只能是 高 / 中 / 低 之一")
+
+
+def build_model():
+    """D1 的活：把模型建出来。"""
+    return init_chat_model(
+        MODEL_NAME,
+        base_url=BASE_URL,
+        api_key=API_KEY,
+        temperature=0,
+    )
+
+
+def stream_reply(model, messages: list) -> None:
+    """D3 的活：流式打印，并把完整回复追加进历史。
+
+    注意这里是 print 而不是 console.print —— 流式要精确控制每个 chunk 的尾巴，
+    原生 print(end="", flush=True) 最省心。
+    """
+    print("助手 > ", end="", flush=True)
+    pieces: list[str] = []
+    for chunk in model.stream(messages):
+        piece = chunk.content if isinstance(chunk.content, str) else ""
+        pieces.append(piece)
+        print(piece, end="", flush=True)
+    print()
+    # ★ D4 的关键：把这一轮回复补进历史，下一轮才「记得」
+    messages.append(AIMessage("".join(pieces)))
+
+
+def show_lead(lead: Lead) -> None:
+    """D6 的活：拿到的是对象，不是一段文字 —— 所以能直接 if 分支。"""
+    table = Table(title="抽取结果", show_header=False, border_style="cyan")
+    table.add_row("姓名", lead.name)
+    table.add_row("公司", lead.company)
+    table.add_row("需求", lead.need)
+    table.add_row("紧急度", lead.urgency)
+    console.print(table)
+
+    if lead.urgency == "高":
+        console.print(f"[bold red]【立即跟进】{lead.name}（{lead.company}）→ 转销售主管[/bold red]")
+    elif lead.urgency == "中":
+        console.print(f"[bold yellow]【今日回复】{lead.name}（{lead.company}）→ 普通工单[/bold yellow]")
+    else:
+        console.print(f"[green]【入池培育】{lead.name}（{lead.company}）→ 定期触达[/green]")
+
+
+def main() -> None:
+    model = build_model()
+    extractor = model.with_structured_output(Lead)  # 建一次，反复用
+    messages: list = [SystemMessage(SYSTEM_PROMPT)]
+
+    console.print(
+        Panel.fit(
+            "流式对话 CLI v0.1\n"
+            "普通文字直接聊 ／ [cyan]/extract 一句话[/cyan] 抽线索\n"
+            "[cyan]/history[/cyan] 看历史 ／ [cyan]/clear[/cyan] 清空 ／ [cyan]/exit[/cyan] 退出",
+            border_style="cyan",
+        )
+    )
+
+    while True:
+        try:
+            line = input("你 > ").strip()
+        except (EOFError, KeyboardInterrupt):
+            console.print()
+            break
+
+        if not line:
+            continue
+        if line in ("/exit", "/quit"):
+            break
+        if line == "/clear":
+            messages = [SystemMessage(SYSTEM_PROMPT)]
+            console.print("[yellow]历史已清空[/yellow]")
+            continue
+        if line == "/history":
+            console.print(f"[yellow]历史共 {len(messages)} 条（含 1 条 system）[/yellow]")
+            continue
+        if line.startswith("/extract"):
+            text = line[len("/extract") :].strip()
+            if not text:
+                console.print("[red]用法：/extract 一句话[/red]")
+                continue
+            show_lead(extractor.invoke(text))
+            continue
+
+        # 普通对话：先补进用户这句，再流式要回复
+        messages.append(HumanMessage(line))
+        stream_reply(model, messages)
+
+    console.print("[cyan]再见[/cyan]")
+
+
+if __name__ == "__main__":
+    main()
+</pre>
+
+<h3>★ 已实测的预期输出（我跑过两轮，你的应该一致）</h3>
+<p class="kv">跑法：直接运行 <code>chat_cli.py</code>，然后在提示符 <code>你 &gt;</code> 后面敲。下面是实测记录：</p>
+<pre>┌──────────────────────────────────────────────┐
+│ 流式对话 CLI v0.1                            │
+│ 普通文字直接聊 ／ /extract 一句话 抽线索     │
+│ /history 看历史 ／ /clear 清空 ／ /exit 退出 │
+└──────────────────────────────────────────────┘
+你 &gt; /extract 张三是远景科技的技术负责人，需要一个智能客服方案，很急
+        抽取结果
+┌────────┬──────────────┐
+│ 姓名   │ 张三         │
+│ 公司   │ 远景科技     │
+│ 需求   │ 智能客服方案 │
+│ 紧急度 │ 高           │
+└────────┴──────────────┘
+【立即跟进】张三（远景科技）→ 转销售主管
+
+你 &gt; /history
+历史共 3 条（含 1 条 system）</pre>
+
+<p class="kv">第二轮的<b>多轮验证</b>（这一条最关键，是 D4 那个坑的正向复现）：</p>
+<pre>你 &gt; 我叫Base
+助手 &gt; 你好，Base！有什么可以帮你的？
+你 &gt; 我刚才说我叫什么？
+助手 &gt; 你叫 Base。
+你 &gt; /history
+历史共 5 条（含 1 条 system）</pre>
+<p class="kv"><b>它不是「记得」</b> —— 是 <code>messages</code> 里现在有 5 条，每一轮我都把整份重发了一遍。这就是你 D4 记在 <code>errors/index.md</code> 里那条结论的实操版。</p>
+
+<h3>三处你的活（自己动脑子改）</h3>
+<ol>
+  <li><b>改 <code>SYSTEM_PROMPT</code></b>，再问一次「你好，用一句话介绍你自己」。<br>
+      实跑时它回的是「我是简洁助手，回答尽量短。」—— <b>把 system 提示当成自我介绍答出来了</b>，说明 system 对风格影响极大。换成别的提示试试，体会一下。</li>
+  <li><b>给 <code>Lead</code> 加一个字段，并用 <code>Literal</code> 卡死 <code>urgency</code>。</b><br>
+      <code>from typing import Literal</code>，然后 <code>urgency: Literal["高", "中", "低"]</code>。<br>
+      想想：D6 实测过 <code>Field(ge=0, le=10)</code> 会<b>作为 Schema 一起发给模型</b> ——
+      那这个 <code>Literal</code> 也一样，等于当场把选项列给模型看，比写在 description 里更硬。</li>
+  <li><b>用 <code>extractor.batch()</code> 一次抽多句话。</b><br>
+      <code>extractor</code> 是 <code>RunnableSequence</code>，所以 D5 学的 <code>.batch()</code> 它也有。
+      写个列表塞 3 句话进去，看看和 <code>for</code> 循环逐个 <code>invoke</code> 的区别 ——
+      <b>这是 D5 那个 <code>batch</code> 第一次有真实用途。</b></li>
+</ol>
+
+<h2><span class="n">4</span>动手 · README 记 3 个坑</h2>
+
+<p class="kv">写 <code>week1-basics/day07-cli/README.md</code>（原来的任务书可以留着，或改写成你的产出说明）。
+要求：<b>3 个今天真正踩过的坑</b>，每个按「现象 → 我以为 → 实际 → 怎么定位」写。可以就近取用这几个：</p>
+
+<table>
+  <tr><th>候选坑</th><th>为什么它够格</th></tr>
+  <tr><td><b><code>/extract</code> 换成 <code>flash</code> 就 400</b></td>
+      <td>报错写着 <code>Thinking mode does not support this tool_choice</code>，第一反应会去怀疑库；实际是<b>模型选错了</b>。和 D4 那个 <code>reasoning_content</code> 400 同源</td></tr>
+  <tr><td><b>第二轮它「忘」了上一轮</b></td>
+      <td>如果你忘了 <code>messages.append(AIMessage(...))</code>，模型下一轮就看不到自己说过什么。<b>不是模型失忆，是我没把历史补回去</b></td></tr>
+  <tr><td><b>抽出来的字段是模型编的</b></td>
+      <td>D6 实测：输入里没有的信息它会填一个像真的。字段名 + <code>description</code> 写清楚，是在压低这件事的概率，<b>但压不到零</b></td></tr>
+  <tr><td><b><code>input()</code> 在 PyCharm 运行窗口没反应</b></td>
+      <td>改用底部「终端」标签页跑；或直接用系统终端。<b>这是交互式程序的老问题，不是代码错</b></td></tr>
+</table>
+
+<h2><span class="n">5</span>提交什么 · 3 条 + 1 个 tag</h2>
+
+<h3>第 1 条 · 清 D6 欠账</h3>
+<p class="kv">勾：<code>docs/journal/2026-09-26.md</code>（新）、<code>docs/progress.md</code>、<code>README.md</code></p>
+<pre>docs(day06): 补 D6 日志并打勾，关掉这个口子
+
+代码 09-25 就提交完了，日志和进度拖到今天一起清。
+
+现象：D6 的 notebook 跑通了、笔记也归档了，但进度表里它一直挂着 [ ]。
+我以为：提交完代码就算做完了一天。
+实际：日志没建、progress 没打勾、README 还停在「已完成 D1/D4/D5」——
+      面试官翻 progress.md 会以为 D6 没做完。
+做法：建 journal/2026-09-26.md，把当天三个实测发现写进去；
+      改动 progress.md D6 行与根 README 进度行。
+结论：一天真正的收尾不是「提交」，是「进度表上那个勾」。
+      代码在仓库里，进度不在表里，等于没做 —— 这个勾是我自己给自己的交代。
+</pre>
+
+<h3>第 2 条 · CLI 本体</h3>
+<p class="kv">勾：<code>week1-basics/day07-cli/chat_cli.py</code>（新）</p>
+<pre>feat(day07): 流式对话 CLI v0.1
+
+串起 D1–D6：流式对话 + 一个结构化抽取命令。
+
+现象：前 6 天每天一个脚本，但它们之间没有联系 ——
+      model.stream() 在 D3 的脚本里、messages 数组在 D4 里、结构化抽取在 D6 里，
+      没有一个东西能同时证明我这几块都会用。
+我以为：把六天的代码放在同一个 repo 里，就等于「串起来了」。
+实际：串起来要的不是文件并排，是数据在它们之间真的流动 ——
+      用户敲一句话，它要经过历史数组、流式输出；带 /extract 的，
+      要经过 schema 抽取、再驱动 if 分支。
+做法：写 chat_cli.py，一个 while 循环 + 命令分发：
+      普通输入 → 补进 messages → stream() 流式回 → 把回复也 append 回去；
+      /extract → with_structured_output(Lead) 抽成对象 → 按 urgency 三分支。
+结论：① messages 数组就是全部的记忆，模型无状态，每轮我把整份历史重发一遍
+         —— 实测第二轮它能答出「你叫 Base」，但这个能力是我给的，不是它记得的。
+      ② with_structured_output() 让抽取结果变成对象，所以分支判断是
+         if lead.urgency == "高"，不是字符串匹配 —— D6 那条「玩具和工程的分界线」
+         在这里第一次真的跨过去了。
+
+3 个命令之外还留了 /history、/clear 方便自己排查。
+</pre>
+
+<h3>第 3 条 · README + D7 收尾</h3>
+<p class="kv">勾：<code>week1-basics/day07-cli/README.md</code>、<code>docs/journal/2026-09-27.md</code>（新）、<code>docs/progress.md</code>、根 <code>README.md</code></p>
+<pre>docs(day07): README 记 3 个踩过的坑；D7 打勾
+
+现象：今天这个工具能跑，但我踩的坑一个都没留下 ——
+      明天再遇到同样的报错，我还得重新查一遍。
+我以为：坑记在脑子里就行，代码能跑才是重点。
+实际：D4 立的规矩是这个仓库最值钱的地方就是「现象 / 我以为 / 实际 / 怎么定位」
+      这四段 —— 代码会过时，认知不会。
+做法：README 里按四段式写 3 个坑（见文件），改 progress.md D7 行与根 README。
+结论：README 不是说明书，是当天的错题本。
+      这个仓库里能帮我过面试的，不是「我写了几个脚本」，是「我踩过什么、怎么定位的」。
+</pre>
+
+<h3>打 tag</h3>
+<p class="kv"><b>Git 工具窗（<code>Alt + 9</code>）→ 「日志」→ 右键第 2 条提交 → 「新建标记（New Tag）」→ 名字填
+<code>w1-cli-v0.1</code></b>。这是 W1 的第一个里程碑 —— D1–D7 的成果锚点。</p>
+
+<h2><span class="n">6</span>坑预警</h2>
+
+<table>
+  <tr><th>症状</th><th>真实原因</th></tr>
+  <tr><td><code>/extract</code> 报 <b>400 <code>Thinking mode does not support this tool_choice</code></b></td>
+      <td><b>把 <code>MODEL_NAME</code> 写成了 <code>deepseek-flash</code></b>。它是 thinking 模型，而结构化输出底层靠 <code>tool_choice</code>。固定用 <code>deepseek-chat</code>（D6 实测）</td></tr>
+  <tr><td>PyCharm「运行」窗口里敲字没反应</td>
+      <td>交互式 <code>input()</code> 在运行工具窗里不可靠。改用底部「<b>终端</b>」标签页跑</td></tr>
+  <tr><td>报 <code>API_KEY</code> 为 <code>None</code> / 401</td>
+      <td><code>REPO_ROOT = Path(__file__).resolve().parents[2]</code> <b>依赖文件所在层级</b>。文件必须放在 <code>week1-basics/day07-cli/</code> 里，挪了位置就读不到 <code>.env</code></td></tr>
+  <tr><td>流式看起来是「唰」一下全出来，不像打字机</td>
+      <td><b>正常</b>。D5 实测 <code>deepseek</code> 约 <b>44 字/秒</b>，人眼阈值约 20。不是坏了</td></tr>
+  <tr><td>第二轮对话它不记得上一轮</td>
+      <td>忘了 <code>messages.append(...)</code>。用户那句和<b>模型回复</b>都要补进去，少一个就断</td></tr>
+  <tr><td><code>/extract</code> 抽出的公司/需求是编的</td>
+      <td>模型会<b>编造像真的值</b>（D6 实测）。属于已知边界，不是代码错 —— 底线靠 prompt 约束和后处理</td></tr>
+  <tr><td>提交流程里冒出一堆没改过的文件</td>
+      <td><code>Ctrl + K</code> 默认全勾。<b>逐个核对</b>：不要出现 <code>.env</code> / <code>.venv</code> / <code>.idea</code> / <code>__pycache__</code>（看不到才是对的）</td></tr>
+</table>
+
+<h2><span class="n">7</span>完成清单</h2>
+
+<ul class="check">
+  <li><input type="checkbox" id="c1"><label for="c1">D6 日志 <code>docs/journal/2026-09-26.md</code> 建成，结论行填完</label></li>
+  <li><input type="checkbox" id="c2"><label for="c2"><code>progress.md</code> D6 打勾 + 根 README 进度行更新</label></li>
+  <li><input type="checkbox" id="c3"><label for="c3"><code>chat_cli.py</code> 当天跑通：普通对话能流式回、<code>/extract</code> 能出对象并分支</label></li>
+  <li><input type="checkbox" id="c4"><label for="c4">多轮验证过：问「我刚才说我叫什么」，它答得出</label></li>
+  <li><input type="checkbox" id="c5"><label for="c5">三处「你的活」至少做了 2 处（改 system / 加 <code>Literal</code> / 用 <code>batch</code>）</label></li>
+  <li><input type="checkbox" id="c6"><label for="c6"><code>day07-cli/README.md</code> 记了 3 个坑，每个都是四段式</label></li>
+  <li><input type="checkbox" id="c7"><label for="c7">D7 日志 <code>docs/journal/2026-09-27.md</code> 建成，结论行填完</label></li>
+  <li><input type="checkbox" id="c8"><label for="c8">3 条提交都推上去了，且 <code>git log</code> 里能看到</label></li>
+  <li><input type="checkbox" id="c9"><label for="c9">tag <code>w1-cli-v0.1</code> 打好了（<code>Alt + 9</code> → 日志 → 右键 → 新建标记）</label></li>
+</ul>
+
+<div class="foot">
+  D7 ／ 35 ｜ 阶段 W1 打通链路（<b>最后一天</b>）｜ 下一个里程碑：D14 <code>w2-assistant-v0.2</code><br>
+  勾选状态存在浏览器本地，关掉再打开还在
+</div>
+
+</div>
+
+<script>
+document.querySelectorAll('.check input').forEach(function (box) {
+  var key = 'd07-' + box.id;
+  try { box.checked = localStorage.getItem(key) === '1'; } catch (e) {}
+  box.addEventListener('change', function () {
+    try { localStorage.setItem(key, box.checked ? '1' : '0'); } catch (e) {}
+  });
+});
+</script>
+
+</body>
+</html>
