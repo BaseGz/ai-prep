@@ -12,3 +12,4 @@
 
 rich
 pydantic
+langchain-openrouter
