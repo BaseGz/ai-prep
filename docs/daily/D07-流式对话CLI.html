@@ -89,7 +89,7 @@ li{margin:5px 0}
 <header>
   <div class="dtag">D7 ／ 35</div>
   <h1>周末产出：流式对话 CLI 工具</h1>
-  <p class="sub">2026-09-28（周一）实际执行 ｜ 预计 2.5h ｜ 阶段：W1 打通链路</p>
+  <p class="sub">2026-10-02（周五）实际执行 ｜ 预计 2.5h ｜ 阶段：W1 打通链路</p>
   <p class="meta">目录 <code>week1-basics/day07-cli/</code> ｜ 计划日 09-27 ｜ 今天不学新内容</p>
 </header>
 
@@ -106,7 +106,8 @@ li{margin:5px 0}
   D6 的代码 09-25 就提交完了（4 条 commit 全在远程），但收尾一直没做：<br>
   ① <code>docs/journal/2026-09-26.md</code> <b>还没建</b>（<code>docs/journal/</code> 里只有 09-20/21/24/25）；
   ② <code>docs/progress.md</code> 的 D6 还是 <code>[ ]</code>，根 <code>README.md</code> 进度行还停在「已完成 D1 / D4 / D5」+ 日期 09-23。<br>
-  <b>不补上，D6 就永远是个没关掉的口子</b> —— 而且今天的 CLI 要用 D6 的抽取能力，等于顺手复验一遍。<br><br>
+  <b>不补上，D6 就永远是个没关掉的口子</b> —— 而且今天的 CLI 要用 D6 的抽取能力，等于顺手复验一遍。<br>
+  <span class="kv">这个口子从 09-26 一直拖到今天，<b>进度表上已经挂了 6 天</b>（D6 的代码 09-28 就提交完了，只差日志和打勾）。</span><br><br>
   <b>另外三件不用补</b>：<code>struct_demo.py</code>（c3）已被 notebook 路线顶掉、
   三个实验（c4）你自己跑过并写成了实验记录、<code>include_raw</code>（c5）归到 D8 学工具调用时一起看。
 </div>
@@ -119,7 +120,7 @@ li{margin:5px 0}
   <tr><td class="num">0:20–1:50</td><td><span class="tagline t-lab">动手</span> 写 <code>chat_cli.py</code>（90 分钟）—— 建议先自己写一版，卡住再对第 3 节</td></tr>
   <tr><td class="num">1:50–2:20</td><td><span class="tagline t-lab">动手</span> 跑通 + 做第 3 节的「三处你的活」</td></tr>
   <tr><td class="num">2:20–2:50</td><td><span class="tagline t-lab">动手</span> 写 <code>day07-cli/README.md</code>，记 3 个踩过的坑（40 分钟）</td></tr>
-  <tr><td class="num">2:50–3:00</td><td><span class="tagline t-lab">收尾</span> 建 <code>journal/2026-09-27.md</code> + 打勾 + 3 条提交 + 打 tag <code>w1-cli-v0.1</code></td></tr>
+  <tr><td class="num">2:50–3:00</td><td><span class="tagline t-lab">收尾</span> 建 <code>journal/2026-10-02.md</code> + 打勾 + 3 条提交 + 打 tag <code>w1-cli-v0.1</code></td></tr>
 </table>
 
 <h2><span class="n">2</span>先清 D6 欠账</h2>
@@ -133,11 +134,17 @@ li{margin:5px 0}
   <tr><td><b>继承 <code>BaseModel</code> 不是「通过审查」</b></td><td>是「拿到造表的工具」。不继承不报错，只是静默给你一份空 Schema → <code>invoke</code> 回来一个 <code>{}</code></td></tr>
 </table>
 <p class="kv">结论行建议（或你自己的话）：<b>「跑通了」≠「跑对了」，「没报错」更不等于「对」—— 一天之内撞到 5 个坑，其中 3 个是不报错的。</b></p>
+<p class="kv">★ 还欠一条（09-28 实测，愿意就一起写进这条日志）：
+<b>必填字段缺失时，模型会填一个「合法但假」的值</b> ——
+输入「张三是一名软件工程师」要抽 <code>age</code>，它给 <code>age=0</code>，不是报错；
+换成 <code>Optional[int]</code> 才拿到 <code>None</code>。9 次采样里还撞到 1 次它<b>干脆不填</b> →
+<code>ValidationError: Field required</code>。
+<b>结论：<code>Optional</code> 决定的不是「可写可不写」，是「用哪套空值表示」；<code>0</code> 看着正常，比报错危险。</b></p>
 
 <h3>② 打勾 + 更新进度</h3>
 <ul>
-  <li><code>docs/progress.md</code>：D6 行改成 <code>[x] 09-25 完成</code></li>
-  <li>根 <code>README.md</code> 第 81 行：进度行改成「已完成 D1 / D4 / D5 / D6，D2 / D3 内容已学过而跳过」+ 最近更新 <code>2026-09-28</code></li>
+  <li><code>docs/progress.md</code>：D6 行改成 <code>[x] 09-28 完成</code>（代码与 notebook 是 09-28 提交的）</li>
+  <li>根 <code>README.md</code> 第 81 行：进度行改成「已完成 D1 / D4 / D5 / D6，D2 / D3 内容已学过而跳过」+ 最近更新 <code>2026-10-02</code></li>
 </ul>
 
 <h2><span class="n">3</span>动手 · 写 <code>chat_cli.py</code></h2>
@@ -403,7 +410,7 @@ if __name__ == "__main__":
 </pre>
 
 <h3>第 3 条 · README + D7 收尾</h3>
-<p class="kv">勾：<code>week1-basics/day07-cli/README.md</code>、<code>docs/journal/2026-09-27.md</code>（新）、<code>docs/progress.md</code>、根 <code>README.md</code></p>
+<p class="kv">勾：<code>week1-basics/day07-cli/README.md</code>、<code>docs/journal/2026-10-02.md</code>（新）、<code>docs/progress.md</code>、根 <code>README.md</code></p>
 <pre>docs(day07): README 记 3 个踩过的坑；D7 打勾
 
 现象：今天这个工具能跑，但我踩的坑一个都没留下 ——
@@ -449,7 +456,7 @@ if __name__ == "__main__":
   <li><input type="checkbox" id="c4"><label for="c4">多轮验证过：问「我刚才说我叫什么」，它答得出</label></li>
   <li><input type="checkbox" id="c5"><label for="c5">三处「你的活」至少做了 2 处（改 system / 加 <code>Literal</code> / 用 <code>batch</code>）</label></li>
   <li><input type="checkbox" id="c6"><label for="c6"><code>day07-cli/README.md</code> 记了 3 个坑，每个都是四段式</label></li>
-  <li><input type="checkbox" id="c7"><label for="c7">D7 日志 <code>docs/journal/2026-09-27.md</code> 建成，结论行填完</label></li>
+  <li><input type="checkbox" id="c7"><label for="c7">D7 日志 <code>docs/journal/2026-10-02.md</code> 建成，结论行填完</label></li>
   <li><input type="checkbox" id="c8"><label for="c8">3 条提交都推上去了，且 <code>git log</code> 里能看到</label></li>
   <li><input type="checkbox" id="c9"><label for="c9">tag <code>w1-cli-v0.1</code> 打好了（<code>Alt + 9</code> → 日志 → 右键 → 新建标记）</label></li>
 </ul>
