@@ -134,7 +134,9 @@ print([type(x).__name__ for x in s.steps])
 
 ## 8. 还没做 / 待验证
 
-- 本文件所有结论都来自**同一天的实测**，没有查官方文档逐条对照
-- `include_raw=True` 看 `raw / parsed / parsing_error` 三个出口 —— **未验证**
+- 官方 Models 页 `## Structured output` 小节已读（10-09）；本文件结论仍以**本机实测**为准
+- `include_raw=True` 看 `raw / parsed / parsing_error` 三个出口 —— ✅ **已验证（10-02）**：
+  返回 `dict`，三个键都在，`raw` 里能看到 `tool_calls=[{'name': 'Movie', 'args': {...}}]`
+  （见 `获取结构化结果方式.ipynb`）
 - `method="json_mode"` / `method="json_schema"` 的差异 —— **未验证**（已知 `json_mode` 要求提示词含「json」）
 - 真实工具调用（`bind_tools` + 模型自己产生 `tool_calls`）会不会撞 D4 那个 `reasoning_content` 400 —— **留给 D8/D9**
