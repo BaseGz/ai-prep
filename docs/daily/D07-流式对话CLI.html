@@ -89,7 +89,7 @@ li{margin:5px 0}
 <header>
   <div class="dtag">D7 ／ 35</div>
   <h1>周末产出：流式对话 CLI 工具</h1>
-  <p class="sub">2026-10-02（周五）实际执行 ｜ 预计 2.5h ｜ 阶段：W1 打通链路</p>
+  <p class="sub">2026-09-27（周日）计划 ｜ 实际开展 10-09 – 10-11 ｜ 预计 2.5h ｜ 阶段：W1 打通链路</p>
   <p class="meta">目录 <code>week1-basics/day07-cli/</code> ｜ 计划日 09-27 ｜ 今天不学新内容</p>
 </header>
 
@@ -120,7 +120,7 @@ li{margin:5px 0}
   <tr><td class="num">0:20–1:50</td><td><span class="tagline t-lab">动手</span> 写 <code>chat_cli.py</code>（90 分钟）—— 建议先自己写一版，卡住再对第 3 节</td></tr>
   <tr><td class="num">1:50–2:20</td><td><span class="tagline t-lab">动手</span> 跑通 + 做第 3 节的「三处你的活」</td></tr>
   <tr><td class="num">2:20–2:50</td><td><span class="tagline t-lab">动手</span> 写 <code>day07-cli/README.md</code>，记 3 个踩过的坑（40 分钟）</td></tr>
-  <tr><td class="num">2:50–3:00</td><td><span class="tagline t-lab">收尾</span> 建 <code>journal/2026-10-02.md</code> + 打勾 + 3 条提交 + 打 tag <code>w1-cli-v0.1</code></td></tr>
+  <tr><td class="num">2:50–3:00</td><td><span class="tagline t-lab">收尾</span> 建 <code>journal/2026-09-27.md</code> + 打勾 + 3 条提交 + 打 tag <code>w1-cli-v0.1</code></td></tr>
 </table>
 
 <h2><span class="n">2</span>先清 D6 欠账</h2>
@@ -144,7 +144,7 @@ li{margin:5px 0}
 <h3>② 打勾 + 更新进度</h3>
 <ul>
   <li><code>docs/progress.md</code>：D6 行改成 <code>[x] 09-28 完成</code>（代码与 notebook 是 09-28 提交的）</li>
-  <li>根 <code>README.md</code> 第 81 行：进度行改成「已完成 D1 / D4 / D5 / D6，D2 / D3 内容已学过而跳过」+ 最近更新 <code>2026-10-02</code></li>
+  <li>根 <code>README.md</code> 第 81 行：进度行改成「已完成 D1 / D4 / D5 / D6 / D7，D2 / D3 内容已学过而跳过」+ 最近更新 <code>2026-10-11</code></li>
 </ul>
 
 <h2><span class="n">3</span>动手 · 写 <code>chat_cli.py</code></h2>
@@ -410,7 +410,7 @@ if __name__ == "__main__":
 </pre>
 
 <h3>第 3 条 · README + D7 收尾</h3>
-<p class="kv">勾：<code>week1-basics/day07-cli/README.md</code>、<code>docs/journal/2026-10-02.md</code>（新）、<code>docs/progress.md</code>、根 <code>README.md</code></p>
+<p class="kv">勾：<code>week1-basics/day07-cli/README.md</code>、<code>docs/journal/2026-09-27.md</code>（新）、<code>docs/progress.md</code>、根 <code>README.md</code></p>
 <pre>docs(day07): README 记 3 个踩过的坑；D7 打勾
 
 现象：今天这个工具能跑，但我踩的坑一个都没留下 ——
@@ -450,13 +450,13 @@ if __name__ == "__main__":
 <h2><span class="n">7</span>完成清单</h2>
 
 <ul class="check">
-  <li><input type="checkbox" id="c1"><label for="c1">D6 日志 <code>docs/journal/2026-09-26.md</code> 建成，结论行填完</label></li>
-  <li><input type="checkbox" id="c2"><label for="c2"><code>progress.md</code> D6 打勾 + 根 README 进度行更新</label></li>
-  <li><input type="checkbox" id="c3"><label for="c3"><code>chat_cli.py</code> 当天跑通：普通对话能流式回、<code>/extract</code> 能出对象并分支</label></li>
-  <li><input type="checkbox" id="c4"><label for="c4">多轮验证过：问「我刚才说我叫什么」，它答得出</label></li>
+  <li><input type="checkbox" id="c1" checked><label for="c1">D6 日志 <code>docs/journal/2026-09-26.md</code> 建成，结论行填完</label></li>
+  <li><input type="checkbox" id="c2" checked><label for="c2"><code>progress.md</code> D6 打勾 + 根 README 进度行更新</label></li>
+  <li><input type="checkbox" id="c3" checked><label for="c3"><code>chat_cli.py</code> 当天跑通：普通对话能流式回、<code>/extract</code> 能出对象并分支</label></li>
+  <li><input type="checkbox" id="c4" checked><label for="c4">多轮验证过：问「我刚才说我叫什么」，它答得出</label></li>
   <li><input type="checkbox" id="c5"><label for="c5">三处「你的活」至少做了 2 处（改 system / 加 <code>Literal</code> / 用 <code>batch</code>）</label></li>
-  <li><input type="checkbox" id="c6"><label for="c6"><code>day07-cli/README.md</code> 记了 3 个坑，每个都是四段式</label></li>
-  <li><input type="checkbox" id="c7"><label for="c7">D7 日志 <code>docs/journal/2026-10-02.md</code> 建成，结论行填完</label></li>
+  <li><input type="checkbox" id="c6" checked><label for="c6"><code>day07-cli/README.md</code> 记了 3 个坑，每个都是四段式</label></li>
+  <li><input type="checkbox" id="c7" checked><label for="c7">D7 日志 <code>docs/journal/2026-09-27.md</code> 建成，结论行填完</label></li>
   <li><input type="checkbox" id="c8"><label for="c8">3 条提交都推上去了，且 <code>git log</code> 里能看到</label></li>
   <li><input type="checkbox" id="c9"><label for="c9">tag <code>w1-cli-v0.1</code> 打好了（<code>Alt + 9</code> → 日志 → 右键 → 新建标记）</label></li>
 </ul>

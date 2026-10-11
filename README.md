@@ -78,8 +78,8 @@ python week1-basics/day01-setup/hello_model.py      # 首次调用，会打印 t
 
 ## 进度与里程碑
 
-当前进度：**已完成 D1 / D4 / D5 / D6，D2 / D3 内容已学过而跳过** ｜ 最近更新：2026-10-09
-<br><span style="color:#8b939e;font-size:13px">D4 / D5 实际执行比计划日期提前 3 天；D6 起有滞后（收尾拖到 10-09）。逐日状态见 [`docs/progress.md`](docs/progress.md)。</span>
+当前进度：**已完成 D1 / D4 / D5 / D6 / D7，D2 / D3 内容已学过而跳过** ｜ 最近更新：2026-10-11
+<br><span style="color:#8b939e;font-size:13px">D4 / D5 实际执行比计划日期提前 3 天；D6 起有滞后（D7 跨 10-09 – 10-11 完成）。逐日状态见 [`docs/progress.md`](docs/progress.md)。</span>
 
 | 里程碑 | tag | 含义 |
 |---|---|---|
