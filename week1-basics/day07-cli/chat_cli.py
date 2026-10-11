@@ -54,11 +54,12 @@ i = 1
 while True:
     # 判断用户是提问还是命令
     print("\n", "=" * 10, f"第{i}轮对话开始", "=" * 10, "\n")
+    i += 1
 
     user_input = input("请输入：")
 
     # /EXIT  唯一能跳出循环的路
-    if user_input == "/EXIT":
+    if user_input == "/EXIT" or user_input == "/exit" or user_input == "/Exit":
         print("会话已结束，欢迎下次再来")
         break
 
@@ -67,11 +68,22 @@ while True:
         structured_model = model.with_structured_output(Person)
         result = structured_model.invoke(user_input.removeprefix("/extract").strip())
         print(result)
-        # 把抽取结果加入记忆
         messages.append({
-            "role": "user",
-            "content": user_input.removeprefix("/extract").strip()
-        })
+                "role": "user",
+                "content": str(result)
+             })
+
+        # 把抽取结果加入记忆
+        if user_input.removeprefix("/extract").strip() != "":
+            messages.append({
+                "role": "user",
+                "content": user_input.removeprefix("/extract").strip()
+            })
+            continue
+
+    # /history → 只是数一下记录里有几条(用户和AI总记录)
+    if user_input == "/history":
+        print(f"记录里一共有 {len(messages)} 条消息")
         continue
 
     # 将用户信息添加到消息列表中
@@ -81,18 +93,22 @@ while True:
     })
 
     # 提交记忆给模型得到回答
-    ai_msg = model.invoke(messages)
-    print(ai_msg.content)
+    reply_content = ""
+    for chunk in model.stream(messages):
+        if chunk.content:
+            print(chunk.content, end="", flush=True)
+            reply_content = reply_content + chunk.content
+
+    print()
 
     # 把模型的回答也加入记忆，下一轮才“记得”之前的对话
     messages.append({
         "role": "assistant",
-        "content": ai_msg.content
+        "content": reply_content
     })
 
-    i += 1
 
 
-    # /history → 只是数一下记录里有几条
+
 
 
