@@ -13,3 +13,4 @@
 rich
 pydantic
 langchain-openrouter
+langchain-core
