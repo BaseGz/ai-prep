@@ -15,7 +15,7 @@
 | D5 | 09-25 | W1 | LCEL 管道 | `week1-basics/day05-lcel` | [x] 09-23 完成 |
 | D6 | 09-26 | W1 | 结构化输出 | `week1-basics/day06-structured` | [x] 09-28 完成 |
 | D7 | 09-27 | W1 | 周末产出：流式对话 CLI 工具 | `week1-basics/day07-cli` | [x] 10-11 完成 |
-| D8 | 09-28 | W2 | 工具（Tools）基础 | `week2-tools-agent/day08-tools` | [x] 10-16 完成 |
+| D8 | 09-28 | W2 | 工具（Tools）基础 | `week2-tools-agent/day08-tools` | [x] 10-16 完成（10-19 补 P37–P39） |
 | D9 ★ | 09-29 | W2 | 手写 Agent 循环（脱离框架） | `week2-tools-agent/day09-handwritten-agent` | [ ] |
 | D10 | 09-30 | W2 | 用 create_agent 重建 | `week2-tools-agent/day10-create-agent` | [ ] |
 | D11 | 10-01 | W2 | Agent 进阶用法 | `week2-tools-agent/day11-agent-advanced` | [ ] |
