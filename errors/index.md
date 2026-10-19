@@ -399,8 +399,13 @@ structured.invoke("张三是一名30岁的软件工程师")
 
 **结论**：
 
-**`deepseek-flash` 不能用于任何依赖工具调用的功能** —— 结构化输出、`bind_tools`、
+~~**`deepseek-flash` 不能用于任何依赖工具调用的功能**~~ —— 结构化输出、`bind_tools`、
 Agent 全都撞同一面墙。做这些事一律用 `deepseek-chat`。
+
+> ⚠️ **这条结论在 D8 被收窄了，见下方「D8 · 「flash 不能用于工具调用」—— 我自己的断言被实验推翻」。**
+> flash 跑 `tool_choice` 的 `none` / `auto` / `required` 都正常；真正卡住的应该是
+> **「指定具体函数名」** 那一种，而 `with_structured_output` 恰好用的就是那一种。
+> 保守做法（此处仍用 `deepseek-chat`）不变，但原因要写准。
 
 它和 D4 那条 `reasoning_content must be passed back` **同源**：
 都是「flash 是 thinking 模型」这一个事实的不同侧面。
@@ -697,4 +702,163 @@ name='张伟' age=28 gender='男' identity=<Identity_type.white_collar: '白领'
 **把上下文重新递过去**。
 
 → 排查「它怎么不记得了」，先问两句：**存了吗？递了吗？** —— 多数时候是后者。
+
+---
+
+## D8 · 重开 notebook 只跑 Cell 3 → `NameError: name 'get_weather' is not defined`
+
+**现象**：
+
+```
+NameError: name 'get_weather' is not defined
+```
+
+报错发生在 `In[2]`，而定义 `get_weather` 的 Cell 2 屏幕上明明白白躺着一条
+`In[4]` 的旧输出。
+
+**我以为**：
+
+Cell 2 跑过、输出还在屏幕上，定义自然还在 kernel 里 —— 直接跑 Cell 3 就行。
+
+**实际**：
+
+**notebook 里存的输出是历史记录**（跟着 `.ipynb` 文件走的），不代表当前 kernel 里
+还有这个变量。重开 notebook 拿到的是一个**全新的空 kernel**，屏幕上那些 `In[4]`
+只是上次的存档。
+
+同一族的第二个表现（差点漏掉）：`tool_choice的使用.ipynb` 的 Cell 1 源码已经改成
+`model="deepseek:deepseek-chat"`，但输出里 `model_name` 仍是 **`deepseek-flash`** ——
+**改了源码没重跑，代码和输出是两套状态**。这种不一致不会报错，只会让后面所有结论
+都建立在假的模型上。
+
+**怎么定位到的**：
+
+对比每个 cell 的 `execution_count`：定义 cell 是 `In[4]`，报错却在 `In[2]` ——
+**编号倒退**，说明那个定义 cell 在当前 kernel 里从没执行过。再看执行时间戳，
+输出是前一天的。
+
+**结论**：
+
+**报错先问一句：定义它的 cell，在当前这个 kernel 里跑过吗？**
+
+kernel 重启后一律 **Restart & Run All**；单独跑 cell 省下的那点时间，
+迟早用调试还回去。
+
+→ 顺带一条：**屏幕上的输出不是证据，`execution_count` 才是。**
+
+---
+
+## D8 · `parse_docstring=True` 写进函数签名 → Schema 里多出一个假参数
+
+**现象**：
+
+```python
+def get_weather(city, if_forecast, parse_docstring=True):
+```
+
+能跑，不报错，工具也照常被调用 —— 所以很久都没发现。
+
+**我以为**：
+
+`parse_docstring` 是「要不要解析 docstring」的开关，放哪都行，写进函数括号里
+只是顺手。
+
+**实际**：
+
+**两个括号管两拨人**：
+
+| 位置 | 给谁看 |
+|---|---|
+| `@tool(...)` 的括号 | **框架**的配置 |
+| 函数的括号 | **模型**看的参数表 —— 每个参数都会变成 Schema 的一个字段 |
+
+同一段 docstring，只改这一处，实测两次 `convert_to_openai_tool()`：
+
+正确 `@tool(parse_docstring=True)`：
+
+```json
+{"properties": {"city": {"description": "城市名称", "type": "string"}},
+ "required": ["city"]}
+```
+`description = '查询天气'`
+
+错误（写进签名）：
+
+```json
+{"properties": {"city": {"type": "string"},
+                "parse_docstring": {"default": true, "type": "boolean"}},
+ "required": ["city"]}
+```
+`description = '查询天气\n\n    Args:\n        city: 城市名称'`
+
+**三重伤害**：
+
+1. 多一个假参数 `parse_docstring`，模型得凭空给它编个值；
+2. **`city` 的 `description` 丢了** —— 没开解析，docstring 里的「城市名称」根本没进 Schema，
+   模型不知道该填什么；
+3. 工具的 `description` 变成整段 docstring 原文，`Args:` 这种格式垃圾一起塞进去了。
+
+**怎么定位到的**：
+
+写了两个只差这一处的工具，用 `convert_to_openai_tool()` 把两边的 JSON 打出来对比 ——
+一眼看到 `parse_docstring` 变成了一个 `boolean` 参数，而 `city` 的 `description` 消失了。
+
+**结论**：
+
+**装饰器配置给框架看，函数签名给模型看，两者不能串。**
+
+判断标准只有一句：**这个参数模型需要填吗？** 不需要，就不该出现在签名里。
+
+→ 任何时候怀疑「模型怎么填得这么离谱」，先 `convert_to_openai_tool()` 看一眼
+**它到底看见了什么** —— 你写的不等于它读的。
+
+---
+
+## D8 · 「flash 不能用于工具调用」—— 我自己的断言被实验推翻
+
+**现象**：
+
+D6 那条我写下的结论是：
+
+> **`deepseek-flash` 不能用于任何依赖工具调用的功能** —— 结构化输出、`bind_tools`、
+> Agent 全都撞同一面墙。
+
+可 D8 跟着 P33–P39 用 `deepseek-flash` 跑 `bind_tools`，**正常返回 `tool_calls`，
+一次 400 都没出现**。
+
+**我以为**：
+
+要么 D6 那条记错了，要么 DeepSeek 已经把 flash 修好了。
+
+**实际**：
+
+把 `tool_choice` 的四种取值逐个跑一遍，flash 的表现是：
+
+| `tool_choice` | 结果 | 证据 |
+|---|---|---|
+| `"none"` | ✅ 不调工具，正常回答 | `content` 有正文 |
+| `"auto"` | ✅ 返回 `tool_calls` | 带 `reasoning_content`，确认是 thinking 模式 |
+| `"required"` | ✅ 返回 `tool_calls` | `model_name: 'deepseek-flash'`、`finish_reason: 'tool_calls'` |
+| 指定具体函数名 | ⏳ **还没跑** | `tool_choice="get_weather2"` 那个 cell 未执行 |
+
+所以 D6 那条断言**过宽了**。`with_structured_output` 底层做的不是
+`tool_choice="required"`，而是**把 schema 伪装成一个具名函数、再指定那个函数名** ——
+卡住的应该是第四种。
+
+⚠️ 第四种还没实测（cell 一直没跑），所以这条只算「把怀疑对象收窄了」，
+**不算定论**。
+
+**怎么定位到的**：
+
+不是设计好的实验，是跟着 P39 抄代码时撞出来的 —— 教程里用 `tool_choice="required"`，
+我用的是 flash，本以为必炸，结果没炸。于是回头把四种取值排成表逐个对照。
+
+**结论**：
+
+**断言写得太绝对，迟早被自己打脸 —— 但这是好事，说明在做实验，不是在抄结论。**
+
+「flash 不能用工具调用」→ 收窄为「flash 可能不支持**指定具体函数名**」。
+
+→ 记结论必须带上**触发条件**（哪个参数、哪个取值），否则下次自己都会误用，
+还会拿它去误导别人。
 
