@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>D10 · 用 create_agent 重建 ｜ 影石实习准备</title>
+<style>
+:root{
+  --bg:#f6f7f9; --card:#fff; --line:#e5e7eb; --line2:#eef0f3;
+  --tx:#1a1d21; --tx2:#586170; --tx3:#8b939e;
+  --must:#b4232a; --mustbg:#fdecec;
+  --accent:#0f766e; --accentbg:#e6f4f2;
+  --vidbg:#eef2ff; --vidtx:#3538cd;
+  --docbg:#e9f7ef; --doctx:#1a7f4b;
+  --labbg:#fdf3e3; --labtx:#8a5200;
+  --codbg:#f3f4f6;
+  --radius:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0e1014; --card:#161920; --line:#252a33; --line2:#1e222a;
+    --tx:#e7e9ec; --tx2:#a2aab6; --tx3:#767e8a;
+    --must:#f08b8b; --mustbg:#3a1e20;
+    --accent:#2dd4bf; --accentbg:#12312e;
+    --vidbg:#1d2440; --vidtx:#9aa8f5;
+    --docbg:#12281c; --doctx:#6fd39c;
+    --labbg:#3a2e18; --labtx:#e0b070;
+    --codbg:#1b1f27;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0; padding:0 20px 90px; background:var(--bg); color:var(--tx);
+  font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif;
+  font-size:15px; line-height:1.7; -webkit-font-smoothing:antialiased;}
+.wrap{max-width:900px; margin:0 auto}
+header{padding:44px 0 6px}
+.dtag{display:inline-block; font-size:12px; font-weight:600; color:#fff; background:var(--accent);
+  padding:2px 10px; border-radius:6px; margin-bottom:12px; letter-spacing:.02em}
+h1{font-size:25px; font-weight:600; margin:0 0 8px; letter-spacing:-.01em}
+.sub{color:var(--tx2); font-size:14px; margin:0 0 6px}
+.meta{color:var(--tx3); font-size:13px; margin:0 0 22px}
+.note{background:var(--accentbg); border-left:3px solid var(--accent); padding:14px 18px;
+  border-radius:0 var(--radius) var(--radius) 0; font-size:14.5px; margin:18px 0}
+.note b{color:var(--accent)}
+.warn{background:var(--mustbg); border-left:3px solid var(--must); padding:14px 18px;
+  border-radius:0 var(--radius) var(--radius) 0; font-size:14px; margin:18px 0}
+.warn b{color:var(--must)}
+h2{font-size:17px; font-weight:600; margin:40px 0 12px; padding-bottom:9px;
+  border-bottom:1px solid var(--line); display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+h2 .n{font-size:12px; font-weight:600; background:var(--accentbg); color:var(--accent);
+  padding:2px 9px; border-radius:99px}
+h3{font-size:14.5px; font-weight:600; margin:22px 0 8px; color:var(--tx)}
+.card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+  padding:16px 20px; margin:12px 0}
+table{width:100%; border-collapse:collapse; font-size:14px; margin:10px 0;
+  background:var(--card); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden}
+th{text-align:left; font-weight:600; font-size:12.5px; color:var(--tx3); background:var(--line2);
+  padding:9px 12px; white-space:nowrap}
+td{padding:9px 12px; border-top:1px solid var(--line2); vertical-align:top}
+td.num,th.num{font-variant-numeric:tabular-nums; white-space:nowrap; color:var(--tx2)}
+.tagline{display:inline-block; font-size:11.5px; font-weight:600; padding:1px 7px; border-radius:5px; white-space:nowrap}
+.t-vid{background:var(--vidbg); color:var(--vidtx)}
+.t-doc{background:var(--docbg); color:var(--doctx)}
+.t-lab{background:var(--labbg); color:var(--labtx)}
+.t-skip{background:var(--line2); color:var(--tx3)}
+a{color:var(--accent); text-decoration:none; border-bottom:1px solid var(--accentbg)}
+a:hover{border-bottom-color:var(--accent)}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,"Courier New",monospace; font-size:13px;
+  background:var(--codbg); padding:1px 5px; border-radius:5px}
+pre{background:var(--codbg); border:1px solid var(--line); border-radius:10px; padding:14px 16px;
+  overflow-x:auto; font-family:ui-monospace,SFMono-Regular,Consolas,"Courier New",monospace;
+  font-size:12.8px; line-height:1.6; white-space:pre-wrap; word-break:break-word; margin:8px 0}
+ol,ul{padding-left:22px; margin:8px 0}
+li{margin:5px 0}
+.check{list-style:none; padding-left:0}
+.check li{display:flex; gap:10px; align-items:flex-start; margin:9px 0}
+.check input{margin-top:6px; width:16px; height:16px; accent-color:var(--accent); flex:0 0 auto; cursor:pointer}
+.check label{cursor:pointer}
+.check input:checked + label{color:var(--tx3); text-decoration:line-through}
+.kv{font-size:14px; color:var(--tx2); margin:4px 0}
+.kv b{color:var(--tx)}
+.foot{color:var(--tx3); font-size:12.5px; text-align:center; margin:44px 0 0; line-height:1.9}
+.strike{color:var(--tx3)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="dtag">D10 ／ 35</div>
+  <h1>用 create_agent 重建</h1>
+  <p class="sub">2026-10-23（周五）实际执行 ｜ 预计 3h ｜ 阶段：W2 工具与 Agent</p>
+  <p class="meta">目录 <code>week2-tools-agent/day10-create-agent/</code> ｜ 计划日 09-30 ｜ D9 已于 10-22 收口，今天接着推</p>
+</header>
+
+<div class="note">
+  <b>今天只干一件事：把昨天那 30 行循环收起来，换成 <code>create_agent</code>，让同一道题跑出同一串消息。</b><br>
+  跑完你要能不看稿说出这句话 ——
+  <b>「<code>create_agent</code> 就是把我昨天写的 for 循环包成两个节点（模型节点 ↔ 工具节点）来回跳，
+  跳到我写的「没有 tool_calls 就 return」那里为止。它省的是循环，不是理解；
+  而它默认的轮数上限是 9999 —— 比我手写的 8 轮危险得多。」</b>
+</div>
+
+<div class="warn">
+  <b>先报两个核实结果（都跟你的时间有关）。</b><br><br>
+  <b>✅ 视频引用为真，但今天不能看全章。</b>「尚硅谷第 07 章 智能体」= <b>P51–P63</b>，我逐条核过标题与时长。
+  但计划表写的「约 60 分钟」只够 <b>P51–P56</b>（实测 <b>63:51</b>）—— 这六 P 才是「创建方式 + 3 种基础用法」。
+  <b>P57 起是结构化输出 4 种策略、错误处理、流式、实战</b>，那是 D11 和后几天的事，<b>今天别看</b>，看了也来不及动手。<br><br>
+  <b>⚠️ 官方 Agents 页有三处「文档里没有」，别在那儿空找。</b>
+  ① <b>整页没有 <code>create_agent</code> 的函数签名</b>（只有链接指向 reference 站）；
+  ② <b>返回结构没有集中讲</b>，只在 <code>Agent state</code> 的表格和 <code>Structured output</code> 的例子里各露一半；
+  ③ <b>整页没有 <code>recursion_limit</code></b> —— 那是 LangGraph 的 config 参数。
+  这三处在第 3 节都给了「到哪儿看」，第 4 节的代码里第一行就是 <code>inspect.signature</code>。
+</div>
+
+<h2><span class="n">1</span>三个小时怎么切</h2>
+
+<table>
+  <tr><th class="num">时段</th><th>做什么</th></tr>
+  <tr><td class="num">0:00–1:05</td><td><span class="tagline t-vid">视频</span> <b>P51–P56 全看</b>（63:51）—— 概述 → 两种传模型 → invoke → 绑工具 → 流程分析 → name/system_prompt</td></tr>
+  <tr><td class="num">1:05–1:25</td><td><span class="tagline t-doc">文档</span> Agents 页：<code>Core components</code> → <code>System prompt</code>、<code>Invocation</code>、<code>Agent state</code>、<code>Name your agent</code></td></tr>
+  <tr><td class="num">1:25–2:30</td><td><span class="tagline t-lab">动手</span> 写 <code>agent_create.py</code>：接上 D9 的两个工具，跑「两单物流」那道题（65 分钟）</td></tr>
+  <tr><td class="num">2:30–2:55</td><td><span class="tagline t-lab">对比</span> 填第 4.4 那张「手写 vs 框架」表，把结论写进 <code>docs/decisions.md</code></td></tr>
+  <tr><td class="num">2:55–3:00</td><td><span class="tagline t-lab">收尾</span> 建日志 <code>docs/journal/2026-09-30.md</code> + 两次提交</td></tr>
+</table>
+
+<p class="kv">时间紧的话：<b>P55 可以先跳过</b>（流程分析 + 常见问题，11:42），它讲的东西第 6 节坑预警里都有。省下的时间给动手。</p>
+
+<h2><span class="n">2</span>视频 · 尚硅谷第 07 章 智能体（只到 P56）</h2>
+
+<p class="kv">
+  合集：<a href="https://www.bilibili.com/video/BV1rv7A6oEeP/" target="_blank">BV1rv7A6oEeP《2026 版 LangChain 教程》</a>
+  ｜ 今天 6 P 共 <b>1 小时 03 分 51 秒</b>（计划表写「约 60 分钟」，基本对得上）
+  ｜ 时长已用 B 站接口逐条核对
+</p>
+
+<table>
+  <tr><th class="num">P</th><th>标题</th><th class="num">时长</th><th>看完该能回答</th></tr>
+  <tr>
+    <td class="num"><a href="https://www.bilibili.com/video/BV1rv7A6oEeP/?p=51" target="_blank">P51</a></td>
+    <td>Agent 的概述 <span class="tagline t-vid">必看</span></td>
+    <td class="num">7:41</td>
+    <td>「模型 + 工具 + 循环」这三块里，<b>哪一块是我昨天自己写的</b>？框架补的是哪一块？</td>
+  </tr>
+  <tr>
+    <td class="num"><a href="https://www.bilibili.com/video/BV1rv7A6oEeP/?p=52" target="_blank">P52</a></td>
+    <td>Agent 实例化中模型的两种传入方式 <span class="tagline t-vid">必看</span></td>
+    <td class="num">7:32</td>
+    <td>传字符串和传模型实例，差在哪？<b>昨天你为什么直接传了实例</b>（因为 <code>.env</code> 里的 key/base_url 已经在实例里了）？</td>
+  </tr>
+  <tr>
+    <td class="num"><a href="https://www.bilibili.com/video/BV1rv7A6oEeP/?p=53" target="_blank">P53</a></td>
+    <td>Agent 通过 invoke() 方式调用 <span class="tagline t-vid">必看</span></td>
+    <td class="num">7:14</td>
+    <td>输入为什么必须是 <code>{"messages": [...]}</code> 这种字典？拿到的东西是什么类型？</td>
+  </tr>
+  <tr>
+    <td class="num"><a href="https://www.bilibili.com/video/BV1rv7A6oEeP/?p=54" target="_blank">P54</a></td>
+    <td>Agent 绑定工具并调用 <span class="tagline t-vid">必看</span></td>
+    <td class="num">18:14</td>
+    <td><b>今天的主菜。</b>它内部到底循环了几次？和你昨天的 <code>for round_no in range(...)</code> 对得上吗？</td>
+  </tr>
+  <tr>
+    <td class="num"><a href="https://www.bilibili.com/video/BV1rv7A6oEeP/?p=55" target="_blank">P55</a></td>
+    <td>工具调用流程分析_常见问题分析 <span class="tagline t-skip">可跳</span></td>
+    <td class="num">11:42</td>
+    <td>一次多个 <code>tool_calls</code> 它怎么处理？工具报错会怎样？（第 6 节有实测结论）</td>
+  </tr>
+  <tr>
+    <td class="num"><a href="https://www.bilibili.com/video/BV1rv7A6oEeP/?p=56" target="_blank">P56</a></td>
+    <td>设置 agent 的 name 和 system_prompt <span class="tagline t-vid">必看</span></td>
+    <td class="num">11:28</td>
+    <td><code>system_prompt</code> <b>进不进</b>返回的 <code>messages</code> 里？（第 4.2 节有实测答案，先猜一个）</td>
+  </tr>
+</table>
+
+<p class="kv"><b>P57–P63 今天不要看</b>：结构化输出 4 种策略（P57–P60）、错误处理（P61）、流式（P62）、多功能助手实战（P63）—— 共 100 分钟，正好是 D11 和 D14 的量。</p>
+
+<h2><span class="n">3</span>文档 · 读哪一节、为什么读</h2>
+
+<p class="kv">
+  <a href="https://docs.langchain.com/oss/python/langchain/agents" target="_blank">docs.langchain.com/oss/python/langchain/agents</a>
+  ｜ 只读 4 个小节，20 分钟 ｜ 这页很长，<b>别从头读到尾</b>
+</p>
+
+<ul>
+  <li><b><code>Core components</code> → <code>System prompt</code></b> —— 原文一句：<code>system_prompt</code> 收 <code>str</code> 或 <code>SystemMessage</code>。
+      这就是昨天 <code>messages[0]</code> 的那句话，今天变成参数。<b>顺便回答 P56 的疑问</b>。</li>
+  <li><b><code>Core components</code> → <code>Agent state</code></b> —— 表里有 <code>messages</code> 一行，写的是 <i>The full conversation history… Append-only</i>。
+      <b>「只追加、不替换」正是我昨天 <code>messages.append(...)</code> 在干的事</b>。</li>
+  <li><b><code>Invocation</code></b> —— <code>agent.invoke({"messages": [...]}, config=...)</code>。
+      带 <code>thread_id</code> 那半段今天不用（那是 D13 记忆持久化的入口），<b>看代码长什么样就行</b>。</li>
+  <li><b><code>Configure the harness</code> → <code>Name your agent</code></b> —— <code>name=</code> 参数。今天代码里给了个名字，跑起来看不出区别，<b>知道它是为多 Agent 装配准备的就行</b>。</li>
+</ul>
+
+<div class="warn">
+  <b>三处「文档里没有」，别浪费时间去搜：</b><br>
+  ① <b>签名</b> —— 用 <code>inspect.signature(create_agent)</code> 自己打（第 4 节第一行代码）。本机 langchain <b>1.4.2</b> 实测签名是
+  <code>(model, tools=None, *, system_prompt=None, middleware=(), response_format=None, state_schema=None, …, name=None, …)</code>。<br>
+  ② <b>返回结构</b> —— 实测返回一个 <b>dict，只有一个键 <code>messages</code></b>；要终答就读 <code>result["messages"][-1].content</code>。<br>
+  ③ <b><code>recursion_limit</code></b> —— 页面上完全没有。它在 <code>invoke</code> 的 <code>config</code> 里，
+  <b>本机实测默认值是 9999</b>（<code>agent.config</code> 打印结果），超了抛 <code>GraphRecursionError</code>。对照你昨天的 <code>MAX_ROUNDS = 8</code>。
+</div>
+
+<h2><span class="n">4</span>动手 · 写 <code>agent_create.py</code></h2>
+
+<h3>4.1 骨架（<b>这段我在你的 venv 里整段跑过</b>，输出见 4.2）</h3>
+
+<p class="kv">
+  新建 <code>week2-tools-agent/day10-create-agent/agent_create.py</code>。
+  关键点：<b>不复制工具</b> —— 直接从 D9 那个文件 import 过来。同一对工具、同一个模型，才谈得上「对比」。
+</p>
+
+<pre>"""D10 · 用 create_agent 重建 D9 的 Agent
+
+目标：同一对工具、同一个模型、同一道题。
+跑完要能和手写版逐条对齐：7 条消息，两个 tool_calls 挤在同一轮里。
+"""
+import inspect
+import sys
+from pathlib import Path
+
+# day09 目录：本文件在 week2-tools-agent/day10-create-agent/ 下，往上一级就是 week2
+DAY09 = Path(__file__).resolve().parents[1] / "day09-handwritten-agent"
+sys.path.insert(0, str(DAY09))
+
+from langchain.agents import create_agent
+from agent_loop import find_order, track_package, model   # 复用 D9 的工具、模型、system prompt 话术
+
+QUESTION = "尾号 8899 名下两单的物流都查一下"
+
+
+def show(result):
+    """把返回的 messages 逐条打出来 —— 这串东西就是「链路」。"""
+    msgs = result["messages"]
+    print("返回的键：", list(result.keys()))
+    print("消息条数：", len(msgs))
+    for i, m in enumerate(msgs, 1):
+        calls = [c["name"] for c in getattr(m, "tool_calls", []) or []]
+        head = str(m.content).replace("\n", " ")[:36]
+        print(f"{i}. {type(m).__name__} | 调用 {calls or '-'} | {head}")
+
+
+def main():
+    print("create_agent 的参数：")
+    print(inspect.signature(create_agent))
+    print()
+
+    agent = create_agent(
+        model,
+        [find_order, track_package],
+        system_prompt="你是一个物流智能查询助手",
+        name="logistics_assistant",
+    )
+    print("返回的对象类型：", type(agent).__name__)
+
+    result = agent.invoke({"messages": [{"role": "user", "content": QUESTION}]})
+    show(result)
+
+    print()
+    print("终答：")
+    print(result["messages"][-1].content)
+
+
+if __name__ == "__main__":
+    main()
+</pre>
+
+<h3>4.2 预期输出（我已实跑，结构部分逐行核对）</h3>
+
+<pre>create_agent 的参数：
+(model: 'str | BaseChatModel', tools: ... , *, system_prompt: 'str | SystemMessage | None' = None, ...
+ name: 'str | None' = None, ...)
+
+返回的对象类型： CompiledStateGraph
+返回的键： ['messages']
+消息条数： 7
+1. HumanMessage  | 调用 -                                    | 尾号 8899 名下两单的物流都查一下
+2. AIMessage     | 调用 ['find_order']                      | （过渡话，每次措辞不同）
+3. ToolMessage   | 调用 -                                    | 共查到 2 条订单： - 订单号 ORD-20261015-001｜产品
+4. AIMessage     | 调用 ['track_package', 'track_package']  | （过渡话，每次措辞不同）
+5. ToolMessage   | 调用 -                                    | 订单 ORD-20261015-001 的物流轨迹（共 4 条）：…
+6. ToolMessage   | 调用 -                                    | 订单 ORD-20261018-002 的物流轨迹（共 2 条）：…
+7. AIMessage     | 调用 -                                    | 尾号 8899 名下共两单，物流情况如下：…
+
+终答：
+（一段把两单分开列清的总结，和你昨天手写版等价）</pre>
+
+<p class="kv">
+  <b>数一下：7 条。</b>你昨天手写版的 messages 是 8 条 —— 差的正是那条 <code>SystemMessage</code>：
+  <b>它现在不在 messages 里了，变成了 <code>create_agent</code> 的一个参数</b>（所以 P56 那个问题的答案是「不进」）。
+  除了这一条，<b>Human → AI（工具意图）→ Tool → AI（两个意图）→ Tool → Tool → AI（终答）的序列一模一样</b>。
+</p>
+
+<p class="kv">
+  <b>另一个伏笔：</b><code>返回的对象类型 = CompiledStateGraph</code>。它不是「一次调用」，
+  而是<b>一张编译好的图</b> —— 所以它除了 <code>.invoke()</code> 还有 <code>.stream()</code>、<code>.batch()</code>，
+  也能在 <code>.invoke()</code> 里传 <code>config</code>。这一点马上用到。
+</p>
+
+<h3>4.3 三处要你自己动手的</h3>
+
+<ol>
+  <li>
+    <b>把轮数上限压到 3，看它怎么死。</b>把 <code>agent.invoke(...)</code> 改成：
+    <pre>result = agent.invoke(
+    {"messages": [{"role": "user", "content": QUESTION}]},
+    config={"recursion_limit": 3},
+)</pre>
+    <b>我实测的报错原文（你跑出来应该是同一句）：</b>
+    <pre>GraphRecursionError: Recursion limit of 3 reached without hitting a stop condition.
+You can increase the limit by setting the `recursion_limit` config key.</pre>
+    这就是你昨天 <code>MAX_ROUNDS = 8</code> 那个 <code>return f"超过最大轮数…"</code> 的框架版 ——
+    <b>但它不返回一句话，它直接抛异常</b>。记下来：<b>框架的兜底是「炸」，我的兜底是「说一句」。</b>
+  </li>
+  <li>
+    <b>只给它一个工具，再问那道题。</b>把 <code>[find_order, track_package]</code> 改成 <code>[find_order]</code>，
+    跑同一句「尾号 8899 名下两单的物流都查一下」，<b>看模型怎么退让</b>（是老实说查不了，还是硬编一段轨迹）。
+    <b>这一题我不给预期答案 —— 结果你记下来，正好当 D11「工具不够时 Agent 怎么表现」的底料。</b>
+  </li>
+  <li>
+    <b>把「第几轮」打出来，这是框架白送你的东西。</b>加这段：
+    <pre>print("—— 用 stream 看它在哪两个节点之间跳 ——")
+for chunk in agent.stream(
+    {"messages": [{"role": "user", "content": QUESTION}]},
+    stream_mode="updates",
+):
+    for node, payload in chunk.items():
+        for m in payload.get("messages", []):
+            calls = [c["name"] for c in getattr(m, "tool_calls", []) or []]
+            print(f"[{node}] {type(m).__name__} 调用={calls or '-'}")</pre>
+    <b>我实测的输出（换成「订单 ORD-20261020-003 到哪了？」那道单工具题，轮数更短好观察）：</b>
+    <pre>[model] AIMessage 调用=['track_package']
+[tools] ToolMessage 调用=-
+[model] AIMessage 调用=-</pre>
+    <b>看到那两个节点名没有：<code>model</code> 和 <code>tools</code>。</b>
+    你昨天的 for 循环，就是这两个节点在来回跳 —— <b>框架把它俩画成图了，还每跳一次给你报一次事件。</b>
+    这是「框架多做了什么」里最直观的一条，<b>手写版要自己加 20 行才做得到</b>。
+  </li>
+</ol>
+
+<h3>4.4 填这张表（今天真正的产出）</h3>
+
+<p class="kv">跑完三处实验，把下面这张表<b>按你自己的话</b>填一遍，然后写进 <code>docs/decisions.md</code>。</p>
+
+<table>
+  <tr><th>环节</th><th>D9 手写版在哪一行</th><th>D10 框架版</th><th>谁在干</th></tr>
+  <tr><td>绑工具</td><td><code>model.bind_tools(list(TOOL_MAP.values()))</code></td><td>把 <code>tools</code> 传给 <code>create_agent</code></td><td>一样，位置变了</td></tr>
+  <tr><td>循环</td><td><code>for round_no in range(1, MAX_ROUNDS+1)</code></td><td><code>model</code> ↔ <code>tools</code> 两节点自动跳</td><td><b>框架</b></td></tr>
+  <tr><td>分发执行</td><td><code>for tool_call in response.tool_calls</code></td><td><code>tools</code> 节点批量执行</td><td><b>框架</b></td></tr>
+  <tr><td>回填 ToolMessage</td><td>手造，<code>tool_call_id</code> 自己填</td><td>自动，id 自动配对</td><td><b>框架</b></td></tr>
+  <tr><td>system prompt</td><td>塞进 <code>messages[0]</code></td><td><code>system_prompt=</code> 参数，<b>不进 messages</b></td><td>位置不同</td></tr>
+  <tr><td>轮数上限</td><td><code>MAX_ROUNDS = 8</code>，超了 return 一句话</td><td><code>config={"recursion_limit": N}</code>，默认 <b>9999</b>，超了<b>抛异常</b></td><td><b>框架</b>（但默认值太松）</td></tr>
+  <tr><td>未知工具兜底</td><td>手造 <code>ToolMessage</code> 回填，防死循环</td><td>框架内处理（今天不验）</td><td><b>框架</b></td></tr>
+  <tr><td>看中间过程</td><td><code>print</code> 打日志</td><td><code>stream(stream_mode="updates")</code> 节点级事件</td><td><b>框架</b>白送</td></tr>
+  <tr><td>重放整条链路</td><td>自己维护 <code>messages</code></td><td><code>result["messages"]</code> 全量</td><td><b>框架</b>白送</td></tr>
+</table>
+
+<p class="kv"><b>「少做了什么」也要写</b>（这条最容易漏，面试官爱问）：</p>
+<ul>
+  <li><b>循环内部插不进手。</b>想在第三轮之前加一句「确认一下再继续」，改不动 —— 得下沉到 LangGraph 或写 middleware。</li>
+  <li><b>节点之间传什么被定死了</b>（<code>messages</code>），要带自定义状态得传 <code>state_schema</code>。</li>
+  <li><b>默认 <code>recursion_limit = 9999</code></b>：真死循环时它烧到你账户余额见底才停，你手写的 8 轮反而更安全。</li>
+</ul>
+
+<h3>4.5 验收标准</h3>
+<ul class="check">
+  <li><input type="checkbox" id="v1"><label for="v1"><code>agent_create.py</code> 跑通，打印出 <b>7 条消息</b>，第 4 条带两个 <code>track_package</code></label></li>
+  <li><input type="checkbox" id="v2"><label for="v2">能说清「为什么是 7 条不是 8 条」（SystemMessage 去哪了）</label></li>
+  <li><input type="checkbox" id="v3"><label for="v3"><code>recursion_limit=3</code> 的报错原文抄下来了，且能说出它和你 <code>MAX_ROUNDS</code> 的差别</label></li>
+  <li><input type="checkbox" id="v4"><label for="v4"><code>stream</code> 跑出 <code>[model] / [tools]</code> 的节点名，能指出它就是你的 for 循环</label></li>
+  <li><input type="checkbox" id="v5"><label for="v5">只留 <code>find_order</code> 的那次实验做了，模型的表现记下来了</label></li>
+  <li><input type="checkbox" id="v6"><label for="v6">4.4 那张表按自己的话填完，「少做了什么」写了至少两条</label></li>
+</ul>
+
+<h2><span class="n">5</span>今天提交什么</h2>
+
+<p class="kv">在 PyCharm 里提交，<code>Ctrl + K</code> 打开窗口后<b>先取消勾选不属于本次的文件</b>。分 2 条：代码一条、文档一条。</p>
+
+<h3>第 1 条 · 代码</h3>
+<p class="kv">勾选：<code>week2-tools-agent/day10-create-agent/agent_create.py</code>（新建）</p>
+<pre>feat(day10): 用 create_agent 重建 D9 的 Agent
+
+同一对工具、同一个模型、同一道题，框架版和手写版跑出同一串消息。
+
+现象：
+手写版的 messages 是 8 条，框架版是 7 条 —— 少的正好是 SystemMessage。
+
+我以为：
+create_agent 只是把 bind_tools 包了一层，system_prompt 应该也塞在
+messages 里，只是我看不到。
+
+做法：
+把 D9 的两个工具直接 import 过来（不复制），system_prompt 作为参数传；
+用 inspect.signature 打出签名（官方文档没给），
+再用 stream(stream_mode="updates") 打出节点名，确认循环发生在 model 和 tools 之间。
+
+结论：
+system_prompt 是 create_agent 的参数，不进 messages —— 框架版返回的
+messages 里没有 SystemMessage。
+框架真正的产出不是一个「函数」，是一张编译好的图（CompiledStateGraph）：
+model 和 tools 两个节点来回跳，跳到我手写版那个「没有 tool_calls 就收工」的条件为止。
+默认 recursion_limit 是 9999，超了直接抛 GraphRecursionError，不像我手写版返回一句话。</pre>
+
+<h3>第 2 条 · 文档</h3>
+<p class="kv">勾选：<code>docs/decisions.md</code>（新增一条）、<code>docs/journal/2026-09-30.md</code>（新建）、<code>docs/progress.md</code>（D10 打勾）、<code>README.md</code>（进度行）</p>
+<pre>docs(decisions): 框架多做了什么 / 少做了什么
+
+多：循环控制、消息组装、ToolMessage 回填、节点级流式事件、全量链路重放
+少：循环内部插不进手（要 middleware 或 LangGraph）；节点间只认 messages；
+    默认 recursion_limit = 9999，等于没上限
+
+另：docs/journal/2026-09-30.md 记录当日四个坑；
+docs/progress.md D10 打勾，README 进度行更新。</pre>
+
+<p class="kv"><b>提交前扫一眼文件列表</b>：<b>不要出现</b> <code>.env</code>、<code>.venv/</code>、<code>.idea/</code>、<code>__pycache__/</code>。</p>
+
+<h2><span class="n">6</span>坑预警</h2>
+
+<p class="kv">前 6 条<b>是我今天在你 venv 里实测出来的</b>，报错原文可对；后 2 条是同类项目的常见死法。</p>
+
+<table>
+  <tr><th>症状</th><th>真实原因</th></tr>
+  <tr>
+    <td><code>ModuleNotFoundError: No module named 'agent_loop'</code></td>
+    <td><code>sys.path</code> 那两行没生效或路径层级算错。本文件在 <code>day10-create-agent/</code>，
+        <code>parents[1]</code> 才是 <code>week2-tools-agent</code>。<b>先 <code>print(DAY09)</code> 再 <code>print(DAY09.exists())</code></b></td>
+  </tr>
+  <tr>
+    <td><code>InvalidUpdateError: Expected dict, got 你好</code></td>
+    <td>直接把字符串传给了 <code>agent.invoke()</code>。<b>输入必须是 <code>{"messages": [...]}</code></b>，
+        里面每条是 <code>{"role": "user", "content": "..."}</code></td>
+  </tr>
+  <tr>
+    <td><code>AttributeError: 'dict' object has no attribute 'content'</code></td>
+    <td>返回的是 <b>dict</b>，不是 AIMessage。<b><code>result["messages"][-1].content</code></b> 才是终答</td>
+  </tr>
+  <tr>
+    <td>在 <code>result["messages"]</code> 里找不到那条 system 消息</td>
+    <td><b>本来就不在里面</b>（实测 7 条：Human / AI / Tool / AI / Tool / Tool / AI）。
+        <code>system_prompt</code> 是 <code>create_agent</code> 的参数，图内部单独用</td>
+  </tr>
+  <tr>
+    <td><code>GraphRecursionError: Recursion limit of 3 reached…</code></td>
+    <td>你传的 <code>config={"recursion_limit": 3}</code> 太小（两单题至少要 5 步）。<b>这不是 bug，是实验成功</b> ——
+        顺手记下：默认值实测是 <b>9999</b></td>
+  </tr>
+  <tr>
+    <td><code>400 Thinking mode does not support this tool_choice</code></td>
+    <td>用了 <code>deepseek-flash</code>。<b>工具调用/结构化输出一律 <code>deepseek-chat</code></b>，
+        这条从 D6 一路踩到 D10，别再试了</td>
+  </tr>
+  <tr>
+    <td>去官方 Agents 页找 <code>create_agent</code> 的参数列表，翻到底也没有</td>
+    <td><b>页面确实没有签名小节</b>（正文只外链到 reference 站）。用
+        <code>inspect.signature(create_agent)</code>，比翻文档快</td>
+  </tr>
+  <tr>
+    <td>想「在第三轮之后插一句确认」，发现无处可插</td>
+    <td>这就是框架版的<b>代价</b>，不是你的问题。D11 会讲 middleware（<code>HumanInTheLoopMiddleware</code> 在 P66），
+        那是官方给的插入点。<b>今天先把它写进 decisions.md 的「少做了什么」</b></td>
+  </tr>
+</table>
+
+<h2><span class="n">7</span>完成清单</h2>
+
+<ul class="check">
+  <li><input type="checkbox" id="c1"><label for="c1">P51–P56 看完（P55 可跳），<b>没有</b>顺手把 P57 之后也看了</label></li>
+  <li><input type="checkbox" id="c2"><label for="c2">Agents 页四个小节读完：<code>System prompt</code> / <code>Agent state</code> / <code>Invocation</code> / <code>Name your agent</code></label></li>
+  <li><input type="checkbox" id="c3"><label for="c3"><code>agent_create.py</code> 跑通，7 条消息，第 4 条带两个 <code>track_package</code></label></li>
+  <li><input type="checkbox" id="c4"><label for="c4">三处实验做完：<code>recursion_limit=3</code> / 只留一个工具 / <code>stream</code> 节点名</label></li>
+  <li><input type="checkbox" id="c5"><label for="c5">能不看稿说出：<b>框架省的是循环，不是理解；默认 9999 轮反而更危险</b></label></li>
+  <li><input type="checkbox" id="c6"><label for="c6"><code>docs/decisions.md</code> 加了一条「用 create_agent 不手写循环」，含「少做了什么」</label></li>
+  <li><input type="checkbox" id="c7"><label for="c7">日志 <code>docs/journal/2026-09-30.md</code> 建成，一句话结论填完</label></li>
+  <li><input type="checkbox" id="c8"><label for="c8"><code>docs/progress.md</code> D10 打勾，README 进度行更新</label></li>
+  <li><input type="checkbox" id="c9"><label for="c9">两次 <code>Ctrl + K</code> 提交，都没带上 <code>.env</code> / <code>.venv</code> / <code>.idea</code> / <code>__pycache__</code></label></li>
+</ul>
+
+<div class="foot">
+  D10 ／ 35 ｜ 阶段 W2 工具与 Agent ｜ 下一个里程碑：D14 <code>w2-assistant-v0.2</code><br>
+  勾选状态存在浏览器本地，关掉再打开还在
+</div>
+
+</div>
+
+<script>
+document.querySelectorAll('.check input').forEach(function (box) {
+  var key = 'd10-' + box.id;
+  try { box.checked = localStorage.getItem(key) === '1'; } catch (e) {}
+  box.addEventListener('change', function () {
+    try { localStorage.setItem(key, box.checked ? '1' : '0'); } catch (e) {}
+  });
+});
+</script>
+
+</body>
+</html>
