@@ -1082,3 +1082,85 @@ langgraph.errors.GraphRecursionError: Recursion limit of 3 reached without hitti
 另：`recursion_limit` 放在 config **第一层**，不是 `configurable` 下面；也不能塞进 input 字典。
 
 
+## D11 · `max_retries=0` 不等于「只调一次工具」—— 模型会自己补一次
+
+**现象**：
+
+`ToolRetryMiddleware(max_retries=0)` 跑实验 3（「订单 ORD-20261015-001 的退款进度怎么样了？」）：
+
+```
+2. AIMessage 调用=['query_refund']
+3. ToolMessage Tool 'query_refund' failed after 1 attempt with RuntimeError ...
+4. AIMessage 调用=['query_refund']        ← 又调了一次
+5. ToolMessage Tool 'query_refund' failed after 1 attempt with RuntimeError ...
+6. AIMessage 调用=['OrderAnswer']
+```
+
+中间件重试 0 次，工具却被调了两次。
+
+**我以为**：
+
+`max_retries=0` 就是「不许重试」，工具只执行一次，然后模型换个工具或直接结束。
+
+**实际**：
+
+中间件确实只执行了一次，但它回填的 ToolMessage 结尾是 **`Please try again.`** ——
+模型把这句当指令，自己又发起了一次调用。对比 `max_retries=1`（`after 2 attempts`）和
+`max_retries=3`（`after 4 attempts`）：这两次模型都直接转去 `track_package`、只调一次。
+**失败演得越充分，模型越认命；只失败一次，它反而觉得还能再试。**
+
+**怎么定位到的**：
+
+不是数 `after N attempts` 那个数字（它只反映**同一次调用内部**试了几遍），而是数**带 `query_refund`
+的 `AIMessage` 有几个**。中间件的重试不会产生新的 `AIMessage`，所以出现第二个就一定是模型自己发的。
+
+**结论**：
+
+> **重试有两个来源：中间件的自动重试（`max_retries` 控制）和模型看到错误提示后的自主重试（不可控）。**
+
+想限制工具被调用的总次数，`max_retries` 是不够的 —— 要么把 `max_retries` 调大（让它一次试到底、
+模型更容易放弃），要么在 prompt 里明确「同一个工具失败一次就不要再试」，要么干脆让工具自己返回
+结构化的失败结果（而不是 raise），从源头上不给 `Please try again` 这句话。
+
+
+## D11 · 加一句 prompt，`status` 字段的语义就被写歪了
+
+**现象**：
+
+在 `system_prompt` 末尾加「如果某个工具失败，先尝试用其它工具回答，最后说明哪部分没查到」，
+同一个实验 3，`structured_response` 从
+
+```
+status='退款进度查询失败'          summary='退款服务暂时不可用，请稍后再试'
+```
+
+变成
+
+```
+status='退款进度未知（物流已签收）'  summary='退款服务不可用，物流显示已签收'
+```
+
+**我以为**：
+
+这句只是让它「多查一点、多说一句」，`status` 仍然会说退款的事。
+
+**实际**：
+
+它确实照做了 —— 先调 `track_package` 拿到物流，再把「已签收」写进结果。但 `status` 这个字段
+本来的定义是**退款状态**，现在写进去的是**物流状态**。事实更完整了，字段却不再纯粹：
+下游如果拿 `status` 做判断（比如 `if "失败" in status`），会读到一句模棱两可的话。
+
+**怎么定位到的**：
+
+对比两次运行的 `structured_response` 原文，发现变化不在条数、不在工具顺序，
+**只在 `status` 的取值形态**：从「一个确定的状态」变成了「否定 + 括号补充」。
+
+**结论**：
+
+> **prompt 能提高答案的完整度，代价是它会把别的信息塞进你定义好的字段里。**
+
+字段越严格、越要拿去做判断，越要先想清楚「让模型补一句」会不会污染这个字段。
+需要的话，宁可在 schema 里加一个 `note: str` 专门装补充信息，也不要让它挤进 `status`。
+
+
+

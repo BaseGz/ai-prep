@@ -18,7 +18,7 @@
 | D8 | 09-28 | W2 | 工具（Tools）基础 | `week2-tools-agent/day08-tools` | [x] 10-16 完成（10-19 补 P37–P39） |
 | D9 ★ | 09-29 | W2 | 手写 Agent 循环（脱离框架） | `week2-tools-agent/day09-handwritten-agent` | [x] 10-22 完成 |
 | D10 | 09-30 | W2 | 用 create_agent 重建 | `week2-tools-agent/day10-create-agent` | [x] 10-26 完成 |
-| D11 | 10-01 | W2 | Agent 进阶用法 | `week2-tools-agent/day11-agent-advanced` | [ ] |
+| D11 | 10-01 | W2 | Agent 进阶用法 | `week2-tools-agent/day11-agent-advanced` | [x] 10-29 完成 |
 | D12 | 10-02 | W2 | 上下文与记忆 | `week2-tools-agent/day12-memory` | [ ] |
 | D13 | 10-03 | W2 | 记忆持久化 | `week2-tools-agent/day13-persist` | [ ] |
 | D14 | 10-04 | W2 | 周末产出：多功能智能助手 | `week2-tools-agent/day14-assistant` | [ ] |

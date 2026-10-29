@@ -96,6 +96,46 @@
 
 ---
 
+## D11 · 结构化输出走 `ToolStrategy`，工具异常交给 `ToolRetryMiddleware`
+
+**理由**：
+
+**结构化输出是一次「假工具调用」。** 加了 `response_format=OrderAnswer` 之后，messages 尾部变成
+`AIMessage(tool_calls=['OrderAnswer'])` + `ToolMessage("Returning structured response: ...")`。
+`OrderAnswer` 不是普通工具名，是我的 Pydantic 类名 —— **框架把我的 schema 注册成了一个只有参数表、
+没有实现的工具**，逼模型按这个形状填参数。结果落在 `result["structured_response"]`，**不在 messages 里**。
+
+DeepSeek 上只能走这条路：`ProviderStrategy` 直接 400 `This response_format type is unavailable now`，
+`response_format=OrderAnswer`（裸 Pydantic 类）会落到 `AutoStrategy`，实测同样走 ToolStrategy。
+
+**工具异常不会自己消失。** 裸 `@tool` 里 `raise` 之后，`agent.invoke` 把 `RuntimeError` 抛到顶层，
+**一条消息都拿不到，`structured_response` 也没有**。框架默认不做 D9 那种「包成 ToolMessage 继续跑」。
+兜底是 `ToolRetryMiddleware`，它默认 `on_failure='continue'`：重试完把错误包成一条 `ToolMessage`
+交给模型，循环继续。实测模型会自己换路径 —— 转去调 `track_package`，最后在 `status` 里写
+「退款进度查询失败」。
+
+**代价 / 坑**：
+
+1. **`max_retries` 只管得住一半的重试。** 实测 `max_retries=0` 时文案是 `after 1 attempt`，
+   但模型读到结尾那句 `Please try again.` **自己又调了一次** `query_refund`，一共调了两次。
+   `max_retries=1` / `=3` 反而都直接转去查物流、只调一次。**「重试」有两个来源：
+   中间件的自动重试（可控）+ 模型看到错误提示后的自主重试（不可控）。**
+2. **`structured_response` 在 messages 之外。** 打印 `messages[-1]` 只能看到
+   `Returning structured response: ...` 那行字，真正的对象要单独取；将来做持久化、序列化时
+   这一层要额外处理。
+3. **prompt 决定「失败后怎么补」，而且会把字段语义带歪。** 在 `system_prompt` 里加一句
+   「某个工具失败就先尝试用其它工具回答，最后说明哪部分没查到」之后，`status` 从
+   `退款进度查询失败` 变成 `退款进度未知（物流已签收）` —— 模型确实照做了，但把一个物流事实
+   塞进了退款字段。**引导 prompt 能提高完整度，也会污染字段语义，schema 越严格越要先想清这个副作用。**
+
+**什么时候换**：
+
+默认 `response_format=<Pydantic 类>`；模型填的格式不合规、需要它重来 → `ToolStrategy(handle_errors=...)`
+（注意它处理的是 **schema 校验失败**，不是工具抛异常）；工具本身会挂 → `ToolRetryMiddleware`。
+两者不是一件事：前者在 `response_format` 里，后者在 `middleware=` 里。
+
+---
+
 ## 模板（复制这一段用）
 
 ## D__ · （决定了什么）
