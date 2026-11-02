@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>D12 · 上下文与记忆 ｜ 影石实习准备</title>
+<style>
+:root{
+  --bg:#f6f7f9; --card:#fff; --line:#e5e7eb; --line2:#eef0f3;
+  --tx:#1a1d21; --tx2:#586170; --tx3:#8b939e;
+  --must:#b4232a; --mustbg:#fdecec;
+  --accent:#0f766e; --accentbg:#e6f4f2;
+  --vidbg:#eef2ff; --vidtx:#3538cd;
+  --docbg:#e9f7ef; --doctx:#1a7f4b;
+  --labbg:#fdf3e3; --labtx:#8a5200;
+  --codbg:#f3f4f6;
+  --radius:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0e1014; --card:#161920; --line:#252a33; --line2:#1e222a;
+    --tx:#e7e9ec; --tx2:#a2aab6; --tx3:#767e8a;
+    --must:#f08b8b; --mustbg:#3a1e20;
+    --accent:#2dd4bf; --accentbg:#12312e;
+    --vidbg:#1d2440; --vidtx:#9aa8f5;
+    --docbg:#12281c; --doctx:#6fd39c;
+    --labbg:#3a2e18; --labtx:#e0b070;
+    --codbg:#1b1f27;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0; padding:0 20px 90px; background:var(--bg); color:var(--tx);
+  font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif;
+  font-size:15px; line-height:1.7; -webkit-font-smoothing:antialiased;}
+.wrap{max-width:900px; margin:0 auto}
+header{padding:44px 0 6px}
+.dtag{display:inline-block; font-size:12px; font-weight:600; color:#fff; background:var(--accent);
+  padding:2px 10px; border-radius:6px; margin-bottom:12px; letter-spacing:.02em}
+h1{font-size:25px; font-weight:600; margin:0 0 8px; letter-spacing:-.01em}
+.sub{color:var(--tx2); font-size:14px; margin:0 0 6px}
+.meta{color:var(--tx3); font-size:13px; margin:0 0 22px}
+.note{background:var(--accentbg); border-left:3px solid var(--accent); padding:14px 18px;
+  border-radius:0 var(--radius) var(--radius) 0; font-size:14.5px; margin:18px 0}
+.note b{color:var(--accent)}
+.warn{background:var(--mustbg); border-left:3px solid var(--must); padding:14px 18px;
+  border-radius:0 var(--radius) var(--radius) 0; font-size:14px; margin:18px 0}
+.warn b{color:var(--must)}
+h2{font-size:17px; font-weight:600; margin:40px 0 12px; padding-bottom:9px;
+  border-bottom:1px solid var(--line); display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+h2 .n{font-size:12px; font-weight:600; background:var(--accentbg); color:var(--accent);
+  padding:2px 9px; border-radius:99px}
+h3{font-size:14.5px; font-weight:600; margin:22px 0 8px; color:var(--tx)}
+.card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+  padding:16px 20px; margin:12px 0}
+table{width:100%; border-collapse:collapse; font-size:14px; margin:10px 0;
+  background:var(--card); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden}
+th{text-align:left; font-weight:600; font-size:12.5px; color:var(--tx3); background:var(--line2);
+  padding:9px 12px; white-space:nowrap}
+td{padding:9px 12px; border-top:1px solid var(--line2); vertical-align:top}
+td.num,th.num{font-variant-numeric:tabular-nums; white-space:nowrap; color:var(--tx2)}
+.tagline{display:inline-block; font-size:11.5px; font-weight:600; padding:1px 7px; border-radius:5px; white-space:nowrap}
+.t-vid{background:var(--vidbg); color:var(--vidtx)}
+.t-doc{background:var(--docbg); color:var(--doctx)}
+.t-lab{background:var(--labbg); color:var(--labtx)}
+.t-skip{background:var(--line2); color:var(--tx3)}
+a{color:var(--accent); text-decoration:none; border-bottom:1px solid var(--accentbg)}
+a:hover{border-bottom-color:var(--accent)}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,"Courier New",monospace; font-size:13px;
+  background:var(--codbg); padding:1px 5px; border-radius:5px}
+pre{background:var(--codbg); border:1px solid var(--line); border-radius:10px; padding:14px 16px;
+  overflow-x:auto; font-family:ui-monospace,SFMono-Regular,Consolas,"Courier New",monospace;
+  font-size:12.8px; line-height:1.6; white-space:pre-wrap; word-break:break-word; margin:8px 0}
+ol,ul{padding-left:22px; margin:8px 0}
+li{margin:5px 0}
+.check{list-style:none; padding-left:0}
+.check li{display:flex; gap:10px; align-items:flex-start; margin:9px 0}
+.check input{margin-top:6px; width:16px; height:16px; accent-color:var(--accent); flex:0 0 auto; cursor:pointer}
+.check label{cursor:pointer}
+.check input:checked + label{color:var(--tx3); text-decoration:line-through}
+.kv{font-size:14px; color:var(--tx2); margin:4px 0}
+.kv b{color:var(--tx)}
+.foot{color:var(--tx3); font-size:12.5px; text-align:center; margin:44px 0 0; line-height:1.9}
+.strike{color:var(--tx3)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="dtag">D12 ／ 35</div>
+  <h1>上下文与记忆</h1>
+  <p class="sub">2026-10-30（周五）实际执行 ｜ 预计 3h ｜ 阶段：W2 工具与 Agent</p>
+  <p class="meta">目录 <code>week2-tools-agent/day12-memory/</code> ｜ 计划日 10-02 ｜ D11 已于 10-29 收口</p>
+</header>
+
+<div class="note">
+  <b>今天只干一件事：让 agent 记住 3 轮前说过的话，然后亲手把这段记忆裁掉，看它怎么忘。</b><br>
+  跑完你要能不看稿说出这句话 ——
+  <b>「记忆不是模型的属性，是<b>图的状态</b>。checkpointer 负责存，<code>thread_id</code> 负责区分存给谁；
+  上下文工程就是决定每次送多少进去 —— 送少了它忘事，送多了又贵又慢，而这个界只能靠实测找出来。」</b>
+</div>
+
+<div class="warn">
+  <b>三条核实结果，都会影响你的时间安排。</b><br><br>
+  <b>① 「第 09 章 约 55 分钟」不成立 —— 整个记忆章是 160 分钟。</b>
+  我逐 P 核了标题和时长：<b>记忆章实际是 P86–P101</b>。它包含四块：
+  短期记忆（P86–P88，35 分）、PostgreSQL 部署（P89–P93，32 分）、
+  上下文工程（P94–P95，26 分）、长期记忆 Store（P96–P101，56 分）。
+  3 小时装不下，<b>今天只取 5 个 P：P86 / P87 / P88 / P94 / P95，实测 61:27</b>。
+  剩下的 P89–P93 是装数据库（属于 D13「持久化」），P96–P101 是 Store（长期记忆），今天<b>不看</b>。<br><br>
+  <b>② 文档不用「站内搜」，路径是确定的。</b>
+  <code>docs.langchain.com/oss/python/langchain/short-term-memory</code> 这个页面存在，
+  而且内容正好对得上今天 —— <code>checkpointer</code>、<code>thread_id</code>、trim / delete / summarize 三种策略全在里面。
+  （顺带记一条：同一层还有 <code>long-term-memory</code>，讲 Store 的 put / get / search，那是后面的事。）<br><br>
+  <b>③ P64–P85 那 22 个 P 是「中间件」章，不是漏了。</b>
+  计划表把它安排在<b>「可观测：trace 与成本」</b>那天（跟 LangSmith 一起）。
+  今天如果顺手点开，会多花 3 小时 —— 别点。
+</div>
+
+<h2><span class="n">1</span>三小时怎么切</h2>
+
+<table>
+  <tr><th>时段</th><th>做什么</th><th>类型</th><th class="num">时长</th></tr>
+  <tr><td class="num">0:00–1:05</td><td>视频 P86 → P95（跳过 P89–P93 那五集装数据库的）</td><td><span class="tagline t-vid">视频</span></td><td class="num">61 分钟</td></tr>
+  <tr><td class="num">1:05–1:30</td><td>官方 <code>short-term-memory</code> 页：Usage + 三种策略 + Access memory</td><td><span class="tagline t-doc">文档</span></td><td class="num">25 分钟</td></tr>
+  <tr><td class="num">1:30–2:30</td><td>写 <code>memory.py</code>，跑五个实验；然后做三处「你的活」</td><td><span class="tagline t-lab">动手</span></td><td class="num">60 分钟</td></tr>
+  <tr><td class="num">2:30–2:50</td><td><code>decisions.md</code> 一条 + <code>journal/2026-10-02.md</code></td><td><span class="tagline t-lab">记录</span></td><td class="num">20 分钟</td></tr>
+  <tr><td class="num">2:50–3:00</td><td>打勾 + 两次提交</td><td><span class="tagline t-lab">收尾</span></td><td class="num">10 分钟</td></tr>
+</table>
+
+<h2><span class="n">2</span>视频：只这 5 个 P</h2>
+
+<p class="kv">课程：<a href="https://www.bilibili.com/video/BV1rv7A6oEeP?p=86" target="_blank">尚硅谷 · P86 起</a>。
+<b>P89–P93 直接跳过</b>（那是腾讯云 + PostgreSQL 安装，属于 D13）。</p>
+
+<table>
+  <tr><th class="num">P</th><th>标题</th><th class="num">时长</th><th>这一集要解决的问题</th></tr>
+  <tr>
+    <td class="num"><a href="https://www.bilibili.com/video/BV1rv7A6oEeP?p=86" target="_blank">P86</a></td>
+    <td>记忆的概念和记忆的分类</td><td class="num">14:46</td>
+    <td>短期记忆和长期记忆是按什么分的（thread？用户？），各自该存在哪一层</td>
+  </tr>
+  <tr>
+    <td class="num"><a href="https://www.bilibili.com/video/BV1rv7A6oEeP?p=87" target="_blank">P87</a></td>
+    <td>短期记忆之基于内存的持久化器的实现</td><td class="num">13:48</td>
+    <td><code>checkpointer</code> 加在哪、<code>thread_id</code> 传给谁；图在哪一步写状态、哪一步读</td>
+  </tr>
+  <tr>
+    <td class="num"><a href="https://www.bilibili.com/video/BV1rv7A6oEeP?p=88" target="_blank">P88</a></td>
+    <td>基于内存存储的工作原理和常见问题</td><td class="num">6:52</td>
+    <td>「内存」到底存在哪 —— 进程一退还在不在；为什么同一句话问两次答案不一样</td>
+  </tr>
+  <tr>
+    <td class="num"><a href="https://www.bilibili.com/video/BV1rv7A6oEeP?p=94" target="_blank">P94</a></td>
+    <td>消息裁剪的治理策略</td><td class="num">12:28</td>
+    <td>按 token 裁和按条数裁，各自的盲点在哪</td>
+  </tr>
+  <tr>
+    <td class="num"><a href="https://www.bilibili.com/video/BV1rv7A6oEeP?p=95" target="_blank">P95</a></td>
+    <td>消息删除、摘要的治理策略</td><td class="num">13:33</td>
+    <td>「删掉」和「压成摘要」分别丢了什么、保住了什么</td>
+  </tr>
+</table>
+
+<p class="kv"><b>P88 别跳。</b>它只有 6 分 52 秒，但讲的是「为什么会忘」—— 今天下午你的实验 1 会遇到的
+「每次只有 2 条消息」，原理就在这里。</p>
+
+<h2><span class="n">3</span>文档：只读这一页的四个小节</h2>
+
+<p class="kv"><a href="https://docs.langchain.com/oss/python/langchain/short-term-memory" target="_blank">Short-term memory</a>
+—— 整页不长，但只看对今天有用的四块：</p>
+
+<table>
+  <tr><th>小节</th><th>读什么</th><th>为什么读</th></tr>
+  <tr>
+    <td><code>Usage</code></td>
+    <td><code>create_agent(..., checkpointer=InMemorySaver())</code> 加
+      <code>{"configurable": {"thread_id": "1"}}</code></td>
+    <td>今天的骨架就是这两行。注意 <code>thread_id</code> 是<b>每次 invoke 都传</b>，不是建 agent 时传的</td>
+  </tr>
+  <tr>
+    <td><code>Custom strategies</code> → <code>Trim messages</code></td>
+    <td>用 <code>@before_model</code> 中间件 + <code>RemoveMessage(REMOVE_ALL_MESSAGES)</code> 重建消息列表</td>
+    <td>今天实验 4/5 手写的就是它。<b>留意它保留了 <code>messages[0]</code></b>（系统提示或第一句），这一点是「你的活 ②」的关键</td>
+  </tr>
+  <tr>
+    <td><code>Custom strategies</code> → <code>Delete messages</code></td>
+    <td>删指定几条 / 删全部；末尾那段「删除后历史必须合法」的提醒</td>
+    <td>那段提醒是今天最容易被忽略的坑：<b>带 <code>tool_calls</code> 的 AIMessage 被删掉、<code>ToolMessage</code> 留着，下一次调用直接 400</b></td>
+  </tr>
+  <tr>
+    <td><code>Custom strategies</code> → <code>Summarize messages</code></td>
+    <td><code>SummarizationMiddleware(model=..., trigger=..., keep=...)</code></td>
+    <td>「你的活 ③」要用它替代手写裁剪。参数里 <code>model</code> 是必填 —— 摘要本身也是一次 LLM 调用，要花钱</td>
+  </tr>
+</table>
+
+<p class="kv"><b>不用读</b>：<code>In production</code>（Postgres 那套留给 D13）、<code>Customizing agent memory</code>
+（<code>state_schema</code> 属于 LangGraph 状态改造，不在今天）。</p>
+
+<h2><span class="n">4</span>动手：<code>memory.py</code></h2>
+
+<h3>4.1 建文件，整段粘贴</h3>
+
+<p class="kv">在 <code>week2-tools-agent/day12-memory/</code> 下新建 <code>memory.py</code>，整段粘进去，先跑通再改。
+<b>下面这段我已经在你的 venv 里整段跑过</b>，五个实验全部输出正常（预期输出见 4.2）。</p>
+
+<pre>"""D12 · 上下文与记忆：短期记忆 + 裁剪策略"""
+import sys
+from pathlib import Path
+
+DAY09 = Path(__file__).resolve().parents[1] / "day09-handwritten-agent"
+sys.path.insert(0, str(DAY09))
+
+from langchain.agents import AgentState, create_agent
+from langchain.agents.middleware import before_model
+from langchain_core.messages import RemoveMessage
+from langgraph.checkpoint.memory import InMemorySaver
+from langgraph.graph.message import REMOVE_ALL_MESSAGES
+
+from agent_loop import model
+
+QUESTIONS = ["我叫 Base", "我在学 LangChain", "我在准备实习", "我叫什么？"]
+SYSTEM = "你是一个简洁的助手，回答不超过两句话。"
+
+
+def chat(agent, thread_id, questions):
+    """在同一个 thread 里连问几句，打印每句的答复和累积的消息条数"""
+    cfg = {"configurable": {"thread_id": thread_id}}
+    for q in questions:
+        r = agent.invoke({"messages": [{"role": "user", "content": q}]}, cfg)
+        print(f"  问「{q}」")
+        print(f"  答：{r['messages'][-1].content[:60]}")
+        print(f"  messages 条数 = {len(r['messages'])}")
+    print()
+
+
+def keep_last_n(n):
+    """只保留最近 n 条消息的中间件"""
+
+    @before_model
+    def trim(state: AgentState, runtime) -&gt; dict | None:
+        msgs = state["messages"]
+        if len(msgs) &lt;= n:
+            return None
+        return {"messages": [RemoveMessage(id=REMOVE_ALL_MESSAGES), *msgs[-n:]]}
+
+    return trim
+
+
+if __name__ == "__main__":
+    print("=== 实验 1：没有 checkpointer ===")
+    a1 = create_agent(model, [], system_prompt=SYSTEM)
+    for q in ["我叫 Base", "我叫什么？"]:
+        r = a1.invoke({"messages": [{"role": "user", "content": q}]})
+        print(f"  问「{q}」-&gt; {r['messages'][-1].content[:50]} | messages={len(r['messages'])}")
+
+    print()
+    print("=== 实验 2：checkpointer + 同一个 thread_id ===")
+    a2 = create_agent(model, [], system_prompt=SYSTEM, checkpointer=InMemorySaver())
+    chat(a2, "u1", QUESTIONS)
+
+    print("=== 实验 3：换一个 thread_id 问同样的话 ===")
+    chat(a2, "u2", ["我叫什么？"])
+
+    print("=== 实验 4：裁剪到最近 4 条 ===")
+    a3 = create_agent(
+        model, [], system_prompt=SYSTEM,
+        middleware=[keep_last_n(4)], checkpointer=InMemorySaver(),
+    )
+    chat(a3, "t1", QUESTIONS)
+
+    print("=== 实验 5：裁剪到最近 6 条 ===")
+    a4 = create_agent(
+        model, [], system_prompt=SYSTEM,
+        middleware=[keep_last_n(6)], checkpointer=InMemorySaver(),
+    )
+    chat(a4, "t2", QUESTIONS)</pre>
+
+<h3>4.2 五个实验，我实跑到的结果</h3>
+
+<table>
+  <tr><th class="num">#</th><th>条件</th><th>实测</th><th>说明什么</th></tr>
+  <tr>
+    <td class="num">1</td>
+    <td>没有 <code>checkpointer</code></td>
+    <td><code>messages=2</code>（两次都是）；
+      问「我叫什么」答「我不知道你叫什么，因为你还没有告诉我」</td>
+    <td><b>每次 invoke 都是全新的 state</b>。D9 那套「自己 append 到 messages」的思路，
+      在框架版里没有 checkpointer 就等于没接上</td>
+  </tr>
+  <tr>
+    <td class="num">2</td>
+    <td><code>checkpointer</code> + 同一个 <code>thread_id</code></td>
+    <td>条数 <b>2 → 4 → 6 → 8</b>，每轮 +2；
+      第 4 轮答「你叫 <b>Base</b>」</td>
+    <td>这就是 README 要的「记住 3 轮前」。<b>记忆 = 状态累积，不是模型记住了</b></td>
+  </tr>
+  <tr>
+    <td class="num">3</td>
+    <td>换 <code>thread_id</code></td>
+    <td><code>messages=2</code>，答「抱歉，我不知道你的名字」</td>
+    <td>thread 是隔离边界。同一个 agent 对象、同一个 checkpointer，换个 id 就是另一个人的对话</td>
+  </tr>
+  <tr>
+    <td class="num">4</td>
+    <td>裁到最近 <b>4</b> 条</td>
+    <td>条数 <b>2 → 4 → 5 → 5</b>；第 4 轮答「抱歉，我不知道你的名字 —— 你还没有告诉过我」</td>
+    <td><b>裁太狠：第 1 轮那句「我叫 Base」被裁掉了。</b>注意第 3 轮开始条数就不再往上涨（5 是上限 +1）</td>
+  </tr>
+  <tr>
+    <td class="num">5</td>
+    <td>裁到最近 <b>6</b> 条</td>
+    <td>条数 <b>2 → 4 → 6 → 7</b>；第 4 轮答「你叫 <b>Base</b>」</td>
+    <td><b>裁到 6 就够</b>：第 4 轮时第 1 轮还在窗口里。这就是「上下文工程」要的那个界</td>
+  </tr>
+</table>
+
+<div class="card">
+  <h3>「你的活」三处（必须自己改，改完重跑）</h3>
+  <ol>
+    <li><b>找出临界值。</b>实验 4 用 4 记不住、实验 5 用 6 记得住 —— 那就把 <code>keep_last_n(5)</code>
+      单独跑一次，看它落在哪一边。
+      <span class="kv">判定标准：能说出「记住第 1 轮」最少要保留几条，并解释为什么是偶数（一问一答算两条）。</span></li>
+    <li><b>改成「永远保留第一条 + 最近 n 条」。</b>官方文档的 trim 例子就是
+      <code>[first_msg] + recent_messages</code> —— 它没有把第一条裁掉。照这个改 <code>keep_last_n</code>，
+      然后用 <code>n=4</code> 再跑一次。
+      <span class="kv">判定标准：改完之后 <code>n=4</code> 也能答出名字了 —— 因为「我叫 Base」正好是第一条。
+      <b>但这是取巧</b>：如果关键信息出现在第 2 轮而不是第 1 轮，这个策略照样会丢。想一想为什么。</span></li>
+    <li><b>（选做）用 <code>SummarizationMiddleware</code> 替代手写裁剪。</b>
+      把 <code>middleware=[keep_last_n(4)]</code> 换成：
+      <code>middleware=[SummarizationMiddleware(model=model, trigger=("tokens", 500), keep=("messages", 2))]</code>
+      （记得从 <code>langchain.agents.middleware</code> 导入）。
+      <span class="kv">判定标准：观察两件事 —— ① 摘要之后消息条数变成几条；② 第 4 轮还记不记得名字。
+      <b>摘要和裁剪的本质差别：裁剪是「丢」，摘要是「花一次 LLM 调用换一段压缩后的记忆」。</b></span></li>
+  </ol>
+</div>
+
+<h3>4.3 验收标准</h3>
+
+<ul class="check">
+  <li><input type="checkbox" id="c0a"><label for="c0a">实验 1 能说出：没有 <code>checkpointer</code> 时，两次 invoke 的 <code>messages</code> 互不相干（都是 2 条）</label></li>
+  <li><input type="checkbox" id="c0b"><label for="c0b">实验 2 能说出：记忆是<b>状态累积</b>，条数每轮 +2，第 4 轮能答出「Base」</label></li>
+  <li><input type="checkbox" id="c0c"><label for="c0c">实验 3 能说出：<code>thread_id</code> 是隔离边界，换 id 就换了个人</label></li>
+  <li><input type="checkbox" id="c0d"><label for="c0d">实验 4/5 能说出：裁到 4 记不住、裁到 6 记得住，并指出「我叫 Base」是在哪一步被裁掉的</label></li>
+  <li><input type="checkbox" id="c0e"><label for="c0e">三处「你的活」改完重跑，能找到临界值、能说出「保留第一条」为什么是取巧</label></li>
+</ul>
+
+<h2><span class="n">5</span>提交什么（两次）</h2>
+
+<p class="kv">PyCharm 里 <code>Ctrl + K</code>。<b>一次只提交一件事</b>，两次都要先取消勾选不属于本次的文件 ——
+尤其 <code>.env</code> / <code>.venv</code> / <code>.idea</code> / <code>__pycache__</code>。
+<code>.ipynb</code> 如果出现 <code>AM</code> 状态（暂存区是空壳），先取消勾选再重新勾上。</p>
+
+<h3>第 1 次：代码</h3>
+
+<p class="kv">勾选：<code>week2-tools-agent/day12-memory/memory.py</code></p>
+
+<pre>feat(day12): 短期记忆，能记住 3 轮前提到的信息
+
+现象：
+同一句「我叫什么」，不加 checkpointer 时回答「你没有告诉过我」，
+加了 checkpointer 并固定 thread_id 之后能答出「Base」，messages 条数从 2 一路涨到 8。
+
+我以为：
+记忆是模型的能力 —— 把历史塞进 messages 它就能一直记得。
+
+实际：
+每次 invoke 都是一个全新的 state，模型看不到上一次的消息；是 checkpointer 把 state 存下来、
+下次按 thread_id 取回来再拼进 messages。记忆是图的属性，不是模型的属性。
+而裁剪到 4 条时立刻就忘了（第 1 轮那句被裁掉），裁到 6 条才刚好记住。
+
+做法：
+create_agent(checkpointer=InMemorySaver())，每次 invoke 传
+{"configurable": {"thread_id": "u1"}}；
+用 @before_model + RemoveMessage(REMOVE_ALL_MESSAGES) 手写裁剪，分别试 4 / 6 条；
+换 thread_id 验证隔离。
+
+结论：
+上下文工程没有标准答案，只有实测出来的界 —— 记住 3 轮前至少得留 6 条，
+少一条就失忆。而这个界随对话长度变化，所以它必须是个运行时策略，不能写死。</pre>
+
+<h3>第 2 次：文档</h3>
+
+<p class="kv">勾选：<code>docs/journal/2026-10-02.md</code> + <code>docs/decisions.md</code> +
+<code>docs/progress.md</code> + <code>README.md</code> + <code>docs/daily/D12-上下文与记忆.html</code></p>
+
+<pre>docs(day12): 短期记忆的实测边界 —— 留 6 条记得住，留 4 条就忘
+
+现象：
+裁剪中间件保留最近 4 条时，第 3 轮开始 messages 稳定在 5 条不再增长，
+第 4 轮问名字答「你还没有告诉过我」；改成保留 6 条后条数是 7，答出了名字。
+
+我以为：
+留得越多越稳，成本和效果是这条连续曲线上的取舍。
+
+实际：
+不是连续曲线，是台阶 —— 关键是「第一轮那句还在不在窗口里」。
+一问一答算两条，记住第 1 轮至少留 6 条，5 条就已经丢了。
+
+做法：
+把 4 / 5 / 6 三个值各跑一遍定出临界点；
+再按官方文档的写法改成「永远保留第一条 + 最近 n 条」，验证 n=4 也能记住。
+
+结论：
+裁剪策略的价值不在「留几条」，在「留哪些」—— 第一条值得特殊对待，
+但那只在关键信息出现在开头时成立。换了场景就得重新定策略，没有通用参数。</pre>
+
+<h2><span class="n">6</span>坑预警</h2>
+
+<table>
+  <tr><th>你会看到</th><th>真实原因</th></tr>
+  <tr>
+    <td><code>ValueError: Checkpointer requires one or more of the following 'configurable' keys: thread_id, ...</code></td>
+    <td>建 agent 时传了 <code>checkpointer</code>，但 <code>invoke</code> 时没传第二个参数。<b>这个报错很友好</b>，
+      有些版本不报错，直接在每次 invoke 里新建一个 thread，表现为「记忆完全没生效」</td>
+  </tr>
+  <tr>
+    <td>明明加了 checkpointer，还是记不住</td>
+    <td>三种可能：① 每次 <code>thread_id</code> 都不一样（比如用了 <code>uuid4()</code>）；
+      ② 每次都重新 <code>create_agent</code> 且每次都 new 一个 <code>InMemorySaver()</code>；
+      ③ 只把新消息传进去、期望它自己合并 —— <b>checkpointer 保证的是「读到旧 state」，
+      而 <code>messages</code> 是靠 <code>add_messages</code> reducer 做追加</b></td>
+  </tr>
+  <tr>
+    <td>裁到 6 条，<code>messages</code> 条数却是 7 不是 6</td>
+    <td>裁剪发生在本轮 AI 回复<b>之前</b>（<code>@before_model</code>）。裁完之后这一轮又追加
+      一问一答，所以条数 = 上限 + 1 或 + 2。实验 4 里稳定在 5 就是这个原因</td>
+  </tr>
+  <tr>
+    <td>裁剪之后 API 报 400，提示 tool 消息不匹配</td>
+    <td>把带 <code>tool_calls</code> 的 <code>AIMessage</code> 裁掉了，但它的 <code>ToolMessage</code> 还在。
+      官方文档 <code>Delete messages</code> 末尾专门警告了这条 —— <b>消息历史必须合法，
+      而「合法」是按供应商的规矩算的</b></td>
+  </tr>
+  <tr>
+    <td>跑完脚本，重开一次终端，记忆全没了</td>
+    <td><code>InMemorySaver</code> 存在<b>进程内存</b>里。这不是 bug，是它的定义。
+      要跨进程保留，得换 <code>SqliteSaver</code> / <code>PostgresSaver</code> —— 那是 D13 的事</td>
+  </tr>
+  <tr>
+    <td>实验 2 的答复措辞每次都不一样</td>
+    <td>正常。看<b>条数</b>和<b>答没答出名字</b>，别看它怎么措辞</td>
+  </tr>
+</table>
+
+<h2><span class="n">7</span>今天完成的标准</h2>
+
+<ul class="check">
+  <li><input type="checkbox" id="c1"><label for="c1">视频 P86 / P87 / P88 / P94 / P95 看完（P89–P93 跳过）</label></li>
+  <li><input type="checkbox" id="c2"><label for="c2">官方 <code>short-term-memory</code> 页的 Usage + 三种策略读完</label></li>
+  <li><input type="checkbox" id="c3"><label for="c3"><code>memory.py</code> 五个实验跑通，条数与「记不记得名字」都记下来了</label></li>
+  <li><input type="checkbox" id="c4"><label for="c4">三处「你的活」：临界值、保留第一条、摘要中间件（选做）</label></li>
+  <li><input type="checkbox" id="c5"><label for="c5"><code>decisions.md</code> 加 D12 一条，写清「代价」是什么</label></li>
+  <li><input type="checkbox" id="c6"><label for="c6"><code>docs/journal/2026-10-02.md</code> 写完三行</label></li>
+  <li><input type="checkbox" id="c7"><label for="c7"><code>progress.md</code> D12 打勾 + <code>README.md</code> 进度行</label></li>
+  <li><input type="checkbox" id="c8"><label for="c8">两次提交推送完成</label></li>
+</ul>
+
+<p class="foot">
+  D12 ／ 35 ｜ 上下文与记忆 ｜ 计划日 2026-10-02，实际 10-30<br>
+  下一个：D13 记忆持久化 —— 把今天的 <code>InMemorySaver</code> 换成能跨进程的，重启还能接着聊
+</p>
+
+</div>
+<script>
+document.querySelectorAll('.check input').forEach(function(box){
+  var key = 'd12-' + box.id;
+  box.checked = localStorage.getItem(key) === '1';
+  box.addEventListener('change', function(){
+    localStorage.setItem(key, box.checked ? '1' : '0');
+  });
+});
+</script>
+</body>
+</html>
