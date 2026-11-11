@@ -119,6 +119,7 @@ var S = {
   dTools: "https://docs.langchain.com/oss/python/langchain/tools",
   dAgents: "https://docs.langchain.com/oss/python/langchain/agents",
   dGraph: "https://docs.langchain.com/oss/python/langgraph/overview",
+  dPersist: "https://docs.langchain.com/oss/python/langgraph/checkpointers",
   dRetrieval: "https://docs.langchain.com/oss/python/langchain/retrieval",
   dSmith: "https://docs.langchain.com/langsmith/observability",
   dTrace: "https://docs.langchain.com/langsmith/trace-with-langchain",
@@ -206,8 +207,8 @@ var PLAN = [
      {k:"lab", x:"<b>实操：</b>给 Agent 加上多轮记忆，验证它能记住 3 轮之前提到的信息", tm:"60 分钟"}
    ]},
    { t:"记忆持久化", h:"3h", tasks:[
-     {k:"vid", x:"南哥 AGI 研习社 EP03「Agent 3 种调用方式」与 EP04「短期记忆持久化与记忆管理策略」", l:S.nange, tm:"约 50 分钟"},
-     {k:"doc", x:"LangGraph 持久化（persistence / checkpointer）相关页面", l:S.dGraph, tm:"20 分钟"},
+     {k:"vid", x:"南哥 AGI 研习社 <b>EP03</b>「Agent 3 种调用方式」（<b>BV1sjrBBnEy2</b>，22:41）+ <b>EP04</b>「短期记忆持久化与记忆管理策略」（<b>BV1i1kNBLEY3</b>，24:15）；<b>EP05</b> 长期记忆（BV1DsrUBREsL，14:01）选做，补 D12 欠的 Store", l:S.nange, tm:"47 分钟"},
+     {k:"doc", x:"LangGraph <b>persistence 总览</b>（只读 Checkpointer vs. store 对比表 + Quickstart）+ <b>checkpointers 页</b>（Core concepts / Get and update state / Checkpointer libraries）", l:S.dPersist, tm:"20 分钟"},
      {k:"lab", x:"<b>实操：</b>把对话历史存到 SQLite 或文件，重启进程后还能接着聊", tm:"70 分钟"},
      {k:"key", x:"「重启不丢上下文」是内部工具的基本要求，不是加分项。"}
    ]},

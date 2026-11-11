@@ -1238,6 +1238,98 @@ status='退款进度未知（物流已签收）'  summary='退款服务不可用
 第 4 轮保住第 1 条就要 `n ≥ 7`。而实测 `n=6` 也能答出名字 —— 因为保住的是「需要的那条」
 而不是「第一条」，这两件事在裁剪边界上经常被混为一谈。
 
+## D13 · 删掉 `check_same_thread=False`，以为只是少一层保险
 
+**现象**：
 
+启动日志照常打印，`invoke` 时才炸：
+
+```
+[启动] thread=u1 已有 6 条消息，历史 checkpoint 9 个
+[第二次运行] 新进程，库里已有记录 —— 直接验证它记不记得
+Traceback (most recent call last):
+  File "...\langgraph\pregel\_loop.py", line 1545, in _checkpointer_put_after_previous
+    cast(BaseCheckpointSaver, self.checkpointer).put(
+  File "...\langgraph\checkpoint\sqlite\__init__.py", line 437, in put
+    with self.cursor() as cur:
+  File "...\langgraph\checkpoint\sqlite\__init__.py", line 202, in cursor
+    cur = self.conn.cursor()
+sqlite3.ProgrammingError: SQLite objects created in a thread can only be used in that
+same thread. The object was created in thread id 46444 and this is thread id 58880.
+```
+
+**我以为**：
+
+`sqlite3.connect()` 写在 `main()` 里，整个脚本从头到尾就在一个线程跑；SQLite 是单文件数据库，
+`check_same_thread=False` 只是「多加一层保险」，删了顶多并发时慢一点。
+
+**实际**：
+
+**读在主线程，写在线程池。** LangGraph 的 Pregel 执行器（`SyncPregelLoop` + `ThreadPoolExecutor`）
+把 `checkpointer.put(...)` 交给 worker 线程执行。sqlite3 默认 `check_same_thread=True`，
+规定「这个连接只能由创建它的线程使用」，于是主线程建连接、worker 线程动它 → 直接拒绝。
+所以 `get_state` / `get_state_history` 全都没事，一 `invoke` 就崩。
+
+**怎么定位到的**：
+
+traceback 里有两类帧混在一起，不是一条调用链：
+
+- `_loop.py:1545` → `checkpointer.put(...)`：要写库了
+- `_executor.py:80 done` → `thread.py:59 run`：在 worker 线程里
+- `sqlite/__init__.py:437 put → 202 cursor`：拿到连接就报错
+
+异常在 `58880` 线程发生，但由主线程 `46444` 的 `future.result()` 重新抛出 —— 所以栈看起来
+像一条线，其实是两个线程拼起来的。
+
+**结论**：
+
+> **sqlite 连接要跨线程用，`check_same_thread=False` 不是保险，是必要条件；
+> 关掉它等于把并发控制完全交给 SQLite 的锁。**
+
+---
+
+## D13 · 以为一轮对话就是一个 checkpoint
+
+**现象**：
+
+第一轮只有 2 条消息，库里却是 **3 个 checkpoint、3 行 writes**；跑到第二轮变成 6 个 / 6 行。
+给 agent 加一个 `find_order` 工具再跑一轮，4 条消息对应 **5 个 checkpoint**，而 writes 是 **7 行** ——
+两个数第一次不相等（全库 26 个 checkpoint、28 行 writes）。
+
+**我以为**：
+
+一轮对话 = 一次 `invoke` = 一个 checkpoint；writes 是 checkpoint 的附属记录，应该一一对应。
+
+**实际**：
+
+**super-step 才是持久化的最小单位。** 一轮无工具对话是 3 个 super-step：
+
+```
+input（收到输入）→ __start__（消息写进 state）→ model（跑完，到 END）
+```
+
+带工具时变成 5 个：`model` 输出 `tool_calls` 是一个，`tools` 执行是一个，再回 `model` 出最终回答又是一个。
+而 write 是按 **channel** 统计的，一个 checkpoint 可以装 0 条、1 条或 2 条：
+
+| channel | 含义 | u1（两轮无工具） | u4（一轮带工具） |
+|---|---|---|---|
+| `messages` | 消息列表 | 6 | 4 |
+| `branch:to:model` | 下一步去哪个节点 | 3 | 2 |
+| `__pregel_tasks` | 把活派给 tools | 0 | 1 |
+
+`__pregel_tasks` 只有带工具才出现 —— 所以「checkpoint 数 = writes 数」只在没有分叉的直线上成立。
+
+**怎么定位到的**：
+
+先用 `get_state_history` 把 `step / source / next / 消息数` 逐条打出来，得到 6 行、
+消息数 `4 → 3 → 2 → 2 → 1 → 0`，看清 `source=input` 与 `source=loop` 的交替；
+再直接查库 `select channel, count(*) from writes where thread_id=? group by channel`，
+`__pregel_tasks` 那一行只在 u4 出现，差值就定位到了。
+
+**结论**：
+
+> **一轮对话不是一次写入，是若干个 super-step 的拼接；checkpoint 是快照，write 是快照里的
+> 每一笔产出，两者不是一对一。**
+
+---
 

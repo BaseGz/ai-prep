@@ -175,6 +175,35 @@ DeepSeek 上只能走这条路：`ProviderStrategy` 直接 400 `This response_fo
 
 ---
 
+## D13 · 持久化落 SQLite checkpointer，不上 Postgres / Redis
+
+**理由**：
+
+**换一个构造参数就能验证核心命题。** `checkpointer=SqliteSaver(conn)` 顶替 `InMemorySaver()`，
+其余代码一行不动，就能证明「关掉进程还记不记得」。Postgres / Redis 是同一个概念的不同后端，
+多出来的是部署成本，不是理解成本。
+
+**课程里 Docker + Postgres + DBeaver 那一段跳过。** 三个具体理由：Docker Desktop 在这台机器上
+要开 WSL2/Hyper-V、装完要重启、占几个 G，为了一段可选演示吃掉 3 小时里的一大块；
+DBeaver 只是「表里有什么」的可视化查看器，一条 `select count(*) from checkpoints` 就够；
+而今天的验收标准本来就是「重启不丢上下文」，换个后端证明的是同一件事，成本高好几倍。
+
+**代价**：
+
+1. **单文件、单机、单用户、低并发。** 多个进程同时写同一个 `memory.db` 会锁表，
+   所以只能本地开发 / 单实例演示。
+2. **连接必须跨线程用。** `check_same_thread=False` 是硬性要求（LangGraph 把 `put` 丢到线程池），
+   关掉之后并发控制就完全交给 SQLite 自己的锁 —— 出问题只会在运行期炸，编译期看不出来。
+3. **没有可视化客户端。** 想看表结构、查某条 thread 的历史，得自己写 SQL。
+
+**什么时候换**：
+
+部署成多人用的服务、或要跨机器共享会话 → `PostgresSaver`（多一步 `.setup()` 建表）；
+需要 TTL / 高频读写 → `RedisSaver`；
+只是本地跑、验证概念 → SQLite 够用，别提前上重装备。
+
+---
+
 ## 模板（复制这一段用）
 
 ## D__ · （决定了什么）

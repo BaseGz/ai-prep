@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>D13 · 记忆持久化 ｜ 影石实习准备</title>
+<style>
+:root{
+  --bg:#f6f7f9; --card:#fff; --line:#e5e7eb; --line2:#eef0f3;
+  --tx:#1a1d21; --tx2:#586170; --tx3:#8b939e;
+  --must:#b4232a; --mustbg:#fdecec;
+  --accent:#0f766e; --accentbg:#e6f4f2;
+  --vidbg:#eef2ff; --vidtx:#3538cd;
+  --docbg:#e9f7ef; --doctx:#1a7f4b;
+  --labbg:#fdf3e3; --labtx:#8a5200;
+  --codbg:#f3f4f6;
+  --radius:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0e1014; --card:#161920; --line:#252a33; --line2:#1e222a;
+    --tx:#e7e9ec; --tx2:#a2aab6; --tx3:#767e8a;
+    --must:#f08b8b; --mustbg:#3a1e20;
+    --accent:#2dd4bf; --accentbg:#12312e;
+    --vidbg:#1d2440; --vidtx:#9aa8f5;
+    --docbg:#12281c; --doctx:#6fd39c;
+    --labbg:#3a2e18; --labtx:#e0b070;
+    --codbg:#1b1f27;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0; padding:0 20px 90px; background:var(--bg); color:var(--tx);
+  font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif;
+  font-size:15px; line-height:1.7; -webkit-font-smoothing:antialiased;}
+.wrap{max-width:900px; margin:0 auto}
+header{padding:44px 0 6px}
+.dtag{display:inline-block; font-size:12px; font-weight:600; color:#fff; background:var(--accent);
+  padding:2px 10px; border-radius:6px; margin-bottom:12px; letter-spacing:.02em}
+h1{font-size:25px; font-weight:600; margin:0 0 8px; letter-spacing:-.01em}
+.sub{color:var(--tx2); font-size:14px; margin:0 0 6px}
+.meta{color:var(--tx3); font-size:13px; margin:0 0 22px}
+.note{background:var(--accentbg); border-left:3px solid var(--accent); padding:14px 18px;
+  border-radius:0 var(--radius) var(--radius) 0; font-size:14.5px; margin:18px 0}
+.note b{color:var(--accent)}
+.warn{background:var(--mustbg); border-left:3px solid var(--must); padding:14px 18px;
+  border-radius:0 var(--radius) var(--radius) 0; font-size:14px; margin:18px 0}
+.warn b{color:var(--must)}
+h2{font-size:17px; font-weight:600; margin:40px 0 12px; padding-bottom:9px;
+  border-bottom:1px solid var(--line); display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+h2 .n{font-size:12px; font-weight:600; background:var(--accentbg); color:var(--accent);
+  padding:2px 9px; border-radius:99px}
+h3{font-size:14.5px; font-weight:600; margin:22px 0 8px; color:var(--tx)}
+.card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+  padding:16px 20px; margin:12px 0}
+table{width:100%; border-collapse:collapse; font-size:14px; margin:10px 0;
+  background:var(--card); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden}
+th{text-align:left; font-weight:600; font-size:12.5px; color:var(--tx3); background:var(--line2);
+  padding:9px 12px; white-space:nowrap}
+td{padding:9px 12px; border-top:1px solid var(--line2); vertical-align:top}
+td.num,th.num{font-variant-numeric:tabular-nums; white-space:nowrap; color:var(--tx2)}
+.tagline{display:inline-block; font-size:11.5px; font-weight:600; padding:1px 7px; border-radius:5px; white-space:nowrap}
+.t-vid{background:var(--vidbg); color:var(--vidtx)}
+.t-doc{background:var(--docbg); color:var(--doctx)}
+.t-lab{background:var(--labbg); color:var(--labtx)}
+.t-skip{background:var(--line2); color:var(--tx3)}
+a{color:var(--accent); text-decoration:none; border-bottom:1px solid var(--accentbg)}
+a:hover{border-bottom-color:var(--accent)}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,"Courier New",monospace; font-size:13px;
+  background:var(--codbg); padding:1px 5px; border-radius:5px}
+pre{background:var(--codbg); border:1px solid var(--line); border-radius:10px; padding:14px 16px;
+  overflow-x:auto; font-family:ui-monospace,SFMono-Regular,Consolas,"Courier New",monospace;
+  font-size:12.8px; line-height:1.6; white-space:pre-wrap; word-break:break-word; margin:8px 0}
+ol,ul{padding-left:22px; margin:8px 0}
+li{margin:5px 0}
+.check{list-style:none; padding-left:0}
+.check li{display:flex; gap:10px; align-items:flex-start; margin:9px 0}
+.check input{margin-top:6px; width:16px; height:16px; accent-color:var(--accent); flex:0 0 auto; cursor:pointer}
+.check label{cursor:pointer}
+.check input:checked + label{color:var(--tx3); text-decoration:line-through}
+.kv{font-size:14px; color:var(--tx2); margin:4px 0}
+.kv b{color:var(--tx)}
+.foot{color:var(--tx3); font-size:12.5px; text-align:center; margin:44px 0 0; line-height:1.9}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="dtag">D13 ／ 35</div>
+  <h1>记忆持久化</h1>
+  <p class="sub">2026-11-10（周二）实际执行 ｜ 预计 3h ｜ 阶段：W2 工具与 Agent</p>
+  <p class="meta">目录 <code>week2-tools-agent/day13-persist/</code> ｜ 计划日 10-03 ｜ D12 已于 11-02 收口</p>
+</header>
+
+<div class="note">
+  <b>今天只干一件事：把昨天的 <code>InMemorySaver</code> 换成 SQLite，然后<b>关掉进程、重新启动</b>，看它还记不记得。</b><br>
+  跑完你要能不看稿说出这句话 ——
+  <b>「持久化不是把对话存成文本，是把<b>图的每一个 super-step</b> 存成 checkpoint。
+  同一个 <code>thread_id</code> 能读回整条状态链，换一个就什么也没有 ——
+  所以『记住』这件事在工程上等于：一张表 + 一个 id + 一个连接字符串。」</b>
+</div>
+
+<div class="warn">
+  <b>四条核实结果，其中两条会让你当场卡住。</b><br><br>
+  <b>① 依赖没装，我已经替你装了。</b>
+  <code>langgraph-checkpoint-sqlite</code> 你 venv 里没有，<code>from langgraph.checkpoint.sqlite import SqliteSaver</code>
+  直接 <code>ModuleNotFoundError</code>。已执行 <code>pip install langgraph-checkpoint-sqlite</code>，
+  装完后 <code>langgraph-checkpoint</code> 顺带从 <b>4.2.0 升到 4.3.1</b>。
+  我验证过 D12 的 <code>memory.py</code> 仍能正常导入，不受影响。<br><br>
+  <b>② 计划的视频只给了 UP 主主页，没给具体视频。</b>
+  计划表里 D13 的链接是 <code>space.bilibili.com/509246474</code>（整个 UP 主空间），等于没有坐标。
+  我按合集逐条核了，实际是：
+  <b>EP03 = <code>BV1sjrBBnEy2</code>（22:41）+ EP04 = <code>BV1i1kNBLEY3</code>（24:15），合计 46:56</b>。
+  计划表写「约 50 分钟」—— 这次是<b>准的</b>，误差 3 分钟。
+  但 <b>EP03 对你已经是复习</b>：<code>invoke</code> 天天在用、<code>stream(updates)</code> 在 D10 实验 3 打过、
+  <code>chain.batch</code> 在 D5 跑过，D8 笔记里还有一张「三种调用方式」的表。
+  所以 <b>D13 只留 EP04</b>，省下的 22 分钟全部给动手。<br><br>
+  <b>③ 文档路径变了。</b>
+  <code>…/langgraph/persistence</code> 现在是一个<b>总览页</b>，只有对比表和 Quickstart，
+  真正的实现在 <code>…/langgraph/checkpointers</code>。今天两页都看，但重点在后者。<br><br>
+  <b>④ 今天顺手补一笔 D12 的欠账。</b>
+  EP05「长期记忆持久化」（<code>BV1DsrUBREsL</code>，14:01）就是 D12 里说「后面补」的 Store。
+  放在最后，<b>选做</b> —— 不看也不影响今天的验收，但看了会明白「信息重要就存到 messages 之外」到底是存到哪。
+</div>
+
+<h2><span class="n">1</span>三小时怎么切</h2>
+<table>
+  <tr><th class="num">时间</th><th>做什么</th><th>类型</th><th class="num">时长</th></tr>
+  <tr><td class="num">0:00–0:24</td><td>视频<b>只留 EP04</b>（<code>BV1i1kNBLEY3</code>，24:15）；EP03 跳过 —— 3 种调用方式 D5/D8/D10 已覆盖</td><td><span class="tagline t-vid">视频</span></td><td class="num">24 分钟</td></tr>
+  <tr><td class="num">0:24–0:44</td><td>文档两页：<code>persistence</code> 总览 + <code>checkpointers</code> 的三小节</td><td><span class="tagline t-doc">文档</span></td><td class="num">20 分钟</td></tr>
+  <tr><td class="num">0:44–2:14</td><td>写 <code>memory_persist.py</code>，<b>跑两次</b>（第二次是新进程）；三个实验 + 两处「你的活」</td><td><span class="tagline t-lab">动手</span></td><td class="num">90 分钟</td></tr>
+  <tr><td class="num">2:14–2:28</td><td>EP05 长期记忆（选做，补 D12 欠账）</td><td><span class="tagline t-skip">选做</span></td><td class="num">14 分钟</td></tr>
+  <tr><td class="num">2:28–2:45</td><td><code>decisions.md</code> + journal + errors</td><td><span class="tagline t-doc">文档</span></td><td class="num">17 分钟</td></tr>
+  <tr><td class="num">2:45–2:53</td><td>两次提交</td><td><span class="tagline t-lab">动手</span></td><td class="num">8 分钟</td></tr>
+  <tr><td class="num">2:53–3:00</td><td>缓冲：跨进程调试余量／顺手试 <code>stream_mode</code> 的其它取值</td><td><span class="tagline t-skip">缓冲</span></td><td class="num">7 分钟</td></tr>
+</table>
+
+<h2><span class="n">2</span>视频：只看 EP04，24 分钟</h2>
+<table>
+  <tr><th class="num">P</th><th>标题</th><th class="num">时长</th><th>看完要带走的一句话</th></tr>
+  <tr>
+    <td class="num"><a href="https://www.bilibili.com/video/BV1sjrBBnEy2">EP03</a><br><span class="tagline t-skip">跳过</span></td>
+    <td>Agent 3 种调用方式<br><span class="kv">invoke / stream / batch —— D5 的 <code>chain.batch</code>、D8 的三种调用表、D10 实验 3 的 <code>stream</code> 都练过了</span></td>
+    <td class="num">22:41</td>
+    <td>同一个 agent 有三种入口（invoke / stream / batch），<b>状态都在 checkpointer 里，不在调用方式里</b>。
+      换调用方式不影响记忆，换 <code>thread_id</code> 才影响</td>
+  </tr>
+  <tr>
+    <td class="num"><a href="https://www.bilibili.com/video/BV1i1kNBLEY3">EP04</a></td>
+    <td>短期记忆持久化存储和记忆管理策略</td>
+    <td class="num">24:15</td>
+    <td><code>InMemorySaver</code> → <code>SqliteSaver</code> 只换了<b>一个构造参数</b>，
+      其余代码一行不动；管理策略（裁剪/摘要）和持久化是<b>两件正交的事</b></td>
+  </tr>
+</table>
+<p class="kv">合集地址：<a href="https://space.bilibili.com/509246474">南哥 AGI 研习社</a>，这套是「零基础上手 LangChain V1.x」系列，
+EP04 在里面，EP03 跳过不看。EP05（长期记忆）在 2:14 那一段按需再点。</p>
+
+<h2><span class="n">3</span>文档：两页，重点在第二页</h2>
+<table>
+  <tr><th>页面</th><th>读什么</th><th>为什么</th></tr>
+  <tr>
+    <td><a href="https://docs.langchain.com/oss/python/langgraph/persistence">persistence</a></td>
+    <td>只看 <code>Checkpointer vs. store</code> 那张对比表 + <code>Quickstart</code></td>
+    <td>把两个概念分开：<b>checkpointer 管一个 thread（短）</b>、<b>store 管跨 thread（长）</b>。
+      今天只做前者，后者是 EP05 的内容</td>
+  </tr>
+  <tr>
+    <td><a href="https://docs.langchain.com/oss/python/langgraph/checkpointers">checkpointers</a></td>
+    <td>三小节：<b>Core concepts</b>（Threads / Checkpoints / Super-steps）、
+      <b>Get and update state</b>（get_state / get_state_history）、
+      <b>Checkpointer libraries</b>（SqliteSaver 的构造方式）</td>
+    <td>「每个 super-step 一个 checkpoint」是今天所有数字的来源 —— 你会看到一轮对话产生
+      <b>3 个</b> checkpoint，而不是 1 个</td>
+  </tr>
+</table>
+<p class="kv">注意文档里<b>没有</b> <code>check_same_thread</code> 的说明，也<b>没有</b> pip 安装命令 ——
+这两处都是文档缺口，今天你会亲手撞到（见第 6 节第 1 条）。</p>
+
+<h2><span class="n">4</span>动手：<code>memory_persist.py</code></h2>
+
+<h3>4.1 建文件，整段粘贴</h3>
+<p class="kv">这段我<b>在你的 venv 里跨两次进程跑过</b>，预期输出见 4.2。
+设计上它第一次跑「建立记忆」、第二次跑「验证记忆」，所以<b>同一份代码跑两次，行为不同</b> —— 这就是跨进程。</p>
+<pre>"""D13 · 记忆持久化：SQLite checkpointer，重启不丢上下文"""
+import sqlite3
+import sys
+from pathlib import Path
+
+DAY09 = Path(__file__).resolve().parents[1] / "day09-handwritten-agent"
+sys.path.insert(0, str(DAY09))
+
+from langchain.agents import create_agent
+from langgraph.checkpoint.sqlite import SqliteSaver
+
+from agent_loop import model
+
+DB = Path(__file__).with_name("memory.db")
+THREAD = "u1"
+SYSTEM = "你是一个简洁的助手，回答不超过两句话。"
+
+
+def build():
+    """一句 sqlite3.connect + 一个 SqliteSaver，就是全部持久化配置"""
+    conn = sqlite3.connect(DB, check_same_thread=False)
+    agent = create_agent(model, [], system_prompt=SYSTEM, checkpointer=SqliteSaver(conn))
+    return agent, conn
+
+
+def show_tables(conn):
+    """直接查库，眼见为实"""
+    names = [r[0] for r in conn.execute(
+        "select name from sqlite_master where type='table' order by name")]
+    print("  库里的表：", names)
+    for t in names:
+        n = conn.execute(f"select count(*) from {t}").fetchone()[0]
+        print(f"    {t}: {n} 行")
+
+
+def main():
+    size_before = DB.stat().st_size if DB.exists() else 0
+    agent, conn = build()
+    cfg = {"configurable": {"thread_id": THREAD}}
+
+    snap = agent.get_state(cfg)
+    history = list(agent.get_state_history(cfg))
+    msgs = snap.values.get("messages", []) or []
+    print(f"[启动] 数据库 {DB.name} 大小 {size_before} 字节")
+    print(f"[启动] thread={THREAD} 已有 {len(msgs)} 条消息，历史 checkpoint {len(history)} 个")
+
+    if not msgs:
+        print("[第一次运行] 库里是空的 —— 先建立记忆")
+        r = agent.invoke({"messages": [{"role": "user", "content": "我叫 Base，我在准备 AI 实习"}]}, cfg)
+    else:
+        print("[第二次运行] 新进程，库里已有记录 —— 直接验证它记不记得")
+        r = agent.invoke({"messages": [{"role": "user", "content": "我叫什么？我在准备什么？"}]}, cfg)
+
+    print("  答：", str(r["messages"][-1].content)[:80])
+    print(f"  本轮结束后 {len(r['messages'])} 条")
+
+    snap2 = agent.get_state(cfg)
+    print(f"[结束] 库里 {len(snap2.values['messages'])} 条消息，"
+          f"checkpoint {len(list(agent.get_state_history(cfg)))} 个，"
+          f"文件 {DB.stat().st_size} 字节")
+    show_tables(conn)
+    conn.close()
+
+
+if __name__ == "__main__":
+    main()
+</pre>
+
+<h3>4.2 我实跑两次的输出（预期）</h3>
+<pre>########## 第 1 次运行 ##########
+[启动] 数据库 memory.db 大小 0 字节
+[启动] thread=u1 已有 0 条消息，历史 checkpoint 0 个
+[第一次运行] 库里是空的 —— 先建立记忆
+  答： Base 你好，很高兴认识你！准备 AI 实习是个好方向……
+  本轮结束后 2 条
+[结束] 库里 2 条消息，checkpoint 3 个，文件 4096 字节
+  库里的表： ['checkpoints', 'writes']
+    checkpoints: 3 行
+    writes: 3 行
+
+########## 第 2 次运行（新进程）##########
+[启动] 数据库 memory.db 大小 20480 字节
+[启动] thread=u1 已有 2 条消息，历史 checkpoint 3 个
+[第二次运行] 新进程，库里已有记录 —— 直接验证它记不记得
+  答： 你叫 Base，你在准备 AI 实习。
+  本轮结束后 4 条
+[结束] 库里 4 条消息，checkpoint 6 个，文件 20480 字节
+  库里的表： ['checkpoints', 'writes']
+    checkpoints: 6 行
+    writes: 6 行
+</pre>
+<p class="kv"><b>三个数字要盯住</b>：① 文件从 0 字节变成 4096，再涨到 20480；
+② 每轮 <b>+3 个 checkpoint</b>，不是 +1；③ 第二次启动时「已有 2 条消息」是<b>从磁盘读回来的</b> ——
+上一轮进程早就退出了。答话措辞会和这里不同，数字必须一致。</p>
+
+<h3>4.3 三个实验（改一处、跑一次，改完记得改回来）</h3>
+<table>
+  <tr><th>#</th><th>怎么改</th><th>看什么</th></tr>
+  <tr>
+    <td class="num">1</td>
+    <td>把 <code>THREAD = "u1"</code> 改成 <code>"u2"</code>，跑一次</td>
+    <td>启动时应该是<b>0 条消息、0 个 checkpoint</b>，且会走「第一次运行」分支。
+      <b>同一个数据库、同一个 agent，换个 id 就是另一个人</b></td>
+  </tr>
+  <tr>
+    <td class="num">2</td>
+    <td>在 <code>main()</code> 里加一段循环，打印 <code>get_state_history</code> 的每一步：
+      把 <code>s.metadata.get("step")</code>、<code>s.metadata.get("source")</code>、
+      <code>s.next</code>、<code>len(s.values.get("messages", []))</code> 打出来</td>
+    <td>倒序看到 6 条记录：<code>step=4 source=loop</code>、<code>step=3 source=loop</code>、
+      <code>step=2 source=input</code>、<code>step=1</code>、<code>step=0</code>、<code>step=-1</code>。
+      <b><code>source=input</code> 是"用户说话了"，<code>source=loop</code> 是"节点跑完了"</b></td>
+  </tr>
+  <tr>
+    <td class="num">3</td>
+    <td>把 <code>SqliteSaver</code> 换回 <code>InMemorySaver()</code>（照 D12 的写法），
+      删掉 <code>conn</code> 相关行，跑两次</td>
+    <td>第二次启动<b>又是 0 条</b>。这就是 D12 结尾那句「进程一退就失忆」的实证 ——
+      也是今天为什么要换</td>
+  </tr>
+</table>
+
+<div class="card">
+  <h3>「你的活」两处（必须自己改）</h3>
+  <ol>
+    <li><b>把 <code>check_same_thread=False</code> 删掉，看会发生什么。</b>
+      跑一次，抄下报错原文。
+      <span class="kv">判定标准：能说出「为什么 LangGraph 需要它」——
+      提示：报错里有两个不同的 thread id，一个是你建连接的线程，一个是执行节点的线程。
+      <b>这条是今天的核心坑，比记住 API 重要。</b></span></li>
+    <li><b>给 agent 加一个工具，再跑一次。</b>
+      从 <code>agent_loop</code> 里 import <code>find_order</code>，塞进工具列表，
+      问「尾号 8899 的订单到哪了？」
+      <span class="kv">判定标准：从启动日志的 checkpoint 数能看出一次工具调用多消耗了几个 super-step；
+      再对比档案里 <code>checkpoints</code> 表的行数变化。
+      你会看到<b>一轮带工具的对话产生的 checkpoint 远多于 3 个</b>。</span></li>
+  </ol>
+</div>
+
+<h3>4.4 验收标准</h3>
+<ul class="check">
+  <li><input type="checkbox" id="c0a"><label for="c0a">能说出：第一次和第二次运行是<b>两个进程</b>，第二次读到的 2 条消息来自磁盘</label></li>
+  <li><input type="checkbox" id="c0b"><label for="c0b">能说出：一轮对话产生 <b>3 个</b> checkpoint，且能指着 <code>source</code> 区分 input / loop</label></li>
+  <li><input type="checkbox" id="c0c"><label for="c0c">能说出：换 <code>thread_id</code> 后同一个库就是空的 —— 隔离靠 id，不靠文件</label></li>
+  <li><input type="checkbox" id="c0d"><label for="c0d">能说出：<code>InMemorySaver</code> → <code>SqliteSaver</code> 只改了一个构造参数</label></li>
+  <li><input type="checkbox" id="c0e"><label for="c0e">「你的活」两条做完，能解释 <code>check_same_thread=False</code> 为什么必需</label></li>
+</ul>
+
+<h2><span class="n">5</span>提交什么（两次）</h2>
+
+<h3>第 1 次：代码</h3>
+<p class="kv">勾选：<code>week2-tools-agent/day13-persist/memory_persist.py</code>、
+<code>week2-tools-agent/day13-persist/README.md</code>。
+<b>不要勾</b> <code>memory.db</code>（<code>.gitignore</code> 里已有 <code>*.db</code>，正常不会出现；
+如果提交窗口里出现了，取消勾选 —— 数据库是运行时产物，不该进仓库）。</p>
+<pre>feat(day13): 对话历史落 SQLite，换掉 InMemorySaver 后重启仍能续聊
+
+现象：
+同一份脚本，第一次运行库里 0 条、答完写入 2 条、文件 4096 字节；
+关掉进程重新启动，启动日志显示「已有 2 条消息、3 个 checkpoint」，
+直接问「我叫什么」答出「你叫 Base，你在准备 AI 实习」。
+
+我以为：
+把对话存成文本追加到文件里就够了，读回来拼进 messages 即可；
+持久化就是把 messages 序列化。
+
+做法：
+sqlite3.connect(DB, check_same_thread=False) + SqliteSaver(conn) 一个构造参数换掉 InMemorySaver；
+用 get_state / get_state_history 读回来，用 sqlite_master 直接查表看结构；
+三个实验：换 thread_id、打印 checkpoint 明细、换回 InMemorySaver 对照。
+
+结论：
+持久化存的不是对话文本，是图的每一个 super-step —— 一轮对话 3 个 checkpoint，
+表里是 checkpoints + writes 两张，按 thread_id 索引。
+「记住」在工程上等于：一张表 + 一个 id + 一个连接；
+而连接必须跨线程，因为执行节点的不止一个线程。
+</pre>
+
+<h3>第 2 次：文档</h3>
+<p class="kv">勾选：<code>docs/journal/2026-10-03.md</code>、<code>docs/decisions.md</code>、
+<code>errors/index.md</code>、<code>docs/progress.md</code>、<code>README.md</code>。</p>
+<pre>docs(day13): 持久化不是存对话，是存每一个 super-step
+
+现象：
+第一轮对话 2 条消息，库里却是 3 个 checkpoint、3 行 writes；
+删掉 check_same_thread=False 直接报 ProgrammingError，两个线程 id 对不上。
+
+我以为：
+checkpoint 数应该等于轮数；SQLite 是单文件、单进程，加线程参数是多余的小心。
+
+做法：
+把 get_state_history 的 step / source / next / 消息数逐条打出来，
+确认 step=-1 是输入、step=0 之后是节点执行；
+再删掉 check_same_thread=False 复现报错，抄下两个线程 id。
+
+结论：
+super-step 才是持久化的最小单位，一轮对话是多个 super-step 拼出来的。
+文档没写 check_same_thread，因为那是 sqlite3 的常识、不是 LangGraph 的 API ——
+这类「文档缺口」只能靠跑出来补。
+</pre>
+<p class="kv">按 <code>Ctrl+K</code> 提交，两次之后 <code>Ctrl+Shift+K</code> 推送。<b>D13 不打 tag</b>，
+<code>w2-assistant-v0.2</code> 是 D14 的事。</p>
+
+<h2><span class="n">6</span>坑预警</h2>
+<table>
+  <tr><th>症状</th><th>真实原因</th></tr>
+  <tr>
+    <td><code>ProgrammingError: SQLite objects created in a thread can only be used in that same thread.
+      The object was created in thread id 27912 and this is thread id 24736</code></td>
+    <td><b>必须 <code>check_same_thread=False</code>。</b>LangGraph 执行节点用的是另一个线程，
+      而 <code>sqlite3</code> 默认禁止跨线程用同一个连接。文档没写这一条，但少它必炸</td>
+  </tr>
+  <tr>
+    <td>以为一轮对话只产生 1 个 checkpoint</td>
+    <td>超步（super-step）才是单位：输入 1 个、模型节点 1 个、收尾 1 个 —— <b>一轮 3 个</b>。
+      带工具的一轮更多，因为每个工具调用也是节点</td>
+  </tr>
+  <tr>
+    <td>第二次运行还是 0 条消息</td>
+    <td>要么 <code>THREAD</code> 改了没改回来，要么 <code>DB</code> 路径变了（
+      <code>Path(__file__).with_name()</code> 跟着文件跑），要么跑的还是 <code>InMemorySaver</code></td>
+  </tr>
+  <tr>
+    <td><code>ValueError: Checkpointer requires one or more of the following 'configurable' keys: thread_id</code></td>
+    <td>有 checkpointer 但 <code>invoke</code> 没传 <code>config</code>。D12 就踩过，今天换库之后同样成立</td>
+  </tr>
+  <tr>
+    <td>提交窗口里冒出 <code>memory.db</code></td>
+    <td><code>.gitignore</code> 已有 <code>*.db</code>，正常情况下不会。如果出现，说明被强制加了 ——
+      <b>取消勾选</b>，数据库是运行产物</td>
+  </tr>
+  <tr>
+    <td><code>ModuleNotFoundError: No module named 'langgraph.checkpoint.sqlite'</code></td>
+    <td>没装 <code>langgraph-checkpoint-sqlite</code>。今天已替你装好；如果换了机器或重建 venv，要重新装</td>
+  </tr>
+</table>
+
+<h2><span class="n">7</span>今天完成的标准</h2>
+<ul class="check">
+  <li><input type="checkbox" id="c1"><label for="c1">EP04 看完（24:15）；EP03 跳过（3 种调用方式 D5/D8/D10 已覆盖）</label></li>
+  <li><input type="checkbox" id="c2"><label for="c2">文档两页读完，能分开 checkpointer（thread 内）和 store（跨 thread）</label></li>
+  <li><input type="checkbox" id="c3"><label for="c3"><code>memory_persist.py</code> 跑通两次，第二次答出名字</label></li>
+  <li><input type="checkbox" id="c4"><label for="c4">三个实验：换 thread_id / 看 checkpoint 明细 / 换回 InMemorySaver</label></li>
+  <li><input type="checkbox" id="c5"><label for="c5">「你的活」两条：删 <code>check_same_thread=False</code> 复现报错、加工具看 checkpoint 变化</label></li>
+  <li><input type="checkbox" id="c6"><label for="c6"><code>decisions.md</code> 加 D13 一条，写清「代价」是什么</label></li>
+  <li><input type="checkbox" id="c7"><label for="c7"><code>docs/journal/2026-10-03.md</code> 写完三行</label></li>
+  <li><input type="checkbox" id="c8"><label for="c8"><code>progress.md</code> D13 打勾 + <code>README.md</code> 进度行</label></li>
+  <li><input type="checkbox" id="c9"><label for="c9">两次提交推送完成</label></li>
+</ul>
+
+<p class="foot">
+  D13 ／ 35 ｜ 记忆持久化 ｜ 计划日 2026-10-03，实际 11-10<br>
+  下一个：D14 周末产出 —— 多功能智能助手（查 / 算 / 写 三类工具 + 记忆 + 流式 + 界面），要打 tag <code>w2-assistant-v0.2</code>
+</p>
+
+</div>
+<script>
+document.querySelectorAll('.check input').forEach(function(box){
+  var key = 'd13-' + box.id;
+  box.checked = localStorage.getItem(key) === '1';
+  box.addEventListener('change', function(){
+    localStorage.setItem(key, box.checked ? '1' : '0');
+  });
+});
+</script>
+</body>
+</html>
