@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>D14 · 多功能智能助手 ｜ 影石实习准备</title>
+<style>
+:root{
+  --bg:#f6f7f9; --card:#fff; --line:#e5e7eb; --line2:#eef0f3;
+  --tx:#1a1d21; --tx2:#586170; --tx3:#8b939e;
+  --must:#b4232a; --mustbg:#fdecec;
+  --accent:#0f766e; --accentbg:#e6f4f2;
+  --vidbg:#eef2ff; --vidtx:#3538cd;
+  --docbg:#e9f7ef; --doctx:#1a7f4b;
+  --labbg:#fdf3e3; --labtx:#8a5200;
+  --codbg:#f3f4f6;
+  --radius:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0e1014; --card:#161920; --line:#252a33; --line2:#1e222a;
+    --tx:#e7e9ec; --tx2:#a2aab6; --tx3:#767e8a;
+    --must:#f08b8b; --mustbg:#3a1e20;
+    --accent:#2dd4bf; --accentbg:#12312e;
+    --vidbg:#1d2440; --vidtx:#9aa8f5;
+    --docbg:#12281c; --doctx:#6fd39c;
+    --labbg:#3a2e18; --labtx:#e0b070;
+    --codbg:#1b1f27;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0; padding:0 20px 90px; background:var(--bg); color:var(--tx);
+  font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif;
+  font-size:15px; line-height:1.7; -webkit-font-smoothing:antialiased;}
+.wrap{max-width:900px; margin:0 auto}
+header{padding:44px 0 6px}
+.dtag{display:inline-block; font-size:12px; font-weight:600; color:#fff; background:var(--accent);
+  padding:2px 10px; border-radius:6px; margin-bottom:12px; letter-spacing:.02em}
+h1{font-size:25px; font-weight:600; margin:0 0 8px; letter-spacing:-.01em}
+.sub{color:var(--tx2); font-size:14px; margin:0 0 6px}
+.meta{color:var(--tx3); font-size:13px; margin:0 0 22px}
+.note{background:var(--accentbg); border-left:3px solid var(--accent); padding:14px 18px;
+  border-radius:0 var(--radius) var(--radius) 0; font-size:14.5px; margin:18px 0}
+.note b{color:var(--accent)}
+.warn{background:var(--mustbg); border-left:3px solid var(--must); padding:14px 18px;
+  border-radius:0 var(--radius) var(--radius) 0; font-size:14px; margin:18px 0}
+.warn b{color:var(--must)}
+h2{font-size:17px; font-weight:600; margin:40px 0 12px; padding-bottom:9px;
+  border-bottom:1px solid var(--line); display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+h2 .n{font-size:12px; font-weight:600; background:var(--accentbg); color:var(--accent);
+  padding:2px 9px; border-radius:99px}
+h3{font-size:14.5px; font-weight:600; margin:22px 0 8px; color:var(--tx)}
+.card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+  padding:16px 20px; margin:12px 0}
+table{width:100%; border-collapse:collapse; font-size:14px; margin:10px 0;
+  background:var(--card); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden}
+th{text-align:left; font-weight:600; font-size:12.5px; color:var(--tx3); background:var(--line2);
+  padding:9px 12px; white-space:nowrap}
+td{padding:9px 12px; border-top:1px solid var(--line2); vertical-align:top}
+td.num,th.num{font-variant-numeric:tabular-nums; white-space:nowrap; color:var(--tx2)}
+.tagline{display:inline-block; font-size:11.5px; font-weight:600; padding:1px 7px; border-radius:5px; white-space:nowrap}
+.t-vid{background:var(--vidbg); color:var(--vidtx)}
+.t-doc{background:var(--docbg); color:var(--doctx)}
+.t-lab{background:var(--labbg); color:var(--labtx)}
+.t-skip{background:var(--line2); color:var(--tx3)}
+a{color:var(--accent); text-decoration:none; border-bottom:1px solid var(--accentbg)}
+a:hover{border-bottom-color:var(--accent)}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,"Courier New",monospace; font-size:13px;
+  background:var(--codbg); padding:1px 5px; border-radius:5px}
+pre{background:var(--codbg); border:1px solid var(--line); border-radius:10px; padding:14px 16px;
+  overflow-x:auto; font-family:ui-monospace,SFMono-Regular,Consolas,"Courier New",monospace;
+  font-size:12.8px; line-height:1.6; white-space:pre-wrap; word-break:break-word; margin:8px 0}
+ol,ul{padding-left:22px; margin:8px 0}
+li{margin:5px 0}
+.check{list-style:none; padding-left:0}
+.check li{display:flex; gap:10px; align-items:flex-start; margin:9px 0}
+.check input{margin-top:6px; width:16px; height:16px; accent-color:var(--accent); flex:0 0 auto; cursor:pointer}
+.check label{cursor:pointer}
+.check input:checked + label{color:var(--tx3); text-decoration:line-through}
+.kv{font-size:14px; color:var(--tx2); margin:4px 0}
+.kv b{color:var(--tx)}
+.foot{color:var(--tx3); font-size:12.5px; text-align:center; margin:44px 0 0; line-height:1.9}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="dtag">D14 ／ 35</div>
+  <h1>周末产出：多功能智能助手</h1>
+  <p class="sub">2026-11-12（周四）实际执行 ｜ 预计 3h ｜ 阶段：W2 收口</p>
+  <p class="meta">目录 <code>week2-tools-agent/day14-assistant/</code> ｜ 计划日 10-04 ｜ <b>产出日：没有视频、没有文档</b></p>
+</header>
+
+<div class="note">
+  <b>今天不学新东西，只把 D8–D13 焊成一个能用的东西。</b><br>
+  你要交的是一个命令行助手：<b>4 个工具（查订单 / 查物流 / 算数 / 写笔记）+ SQLite 记忆 + 流式输出</b>。
+  关掉窗口重新打开，它还得认得你刚才查了哪几单。<br>
+  今天结束时你要能说：<b>「工具决定它能做什么，记忆决定它还记不记得，流式决定它看起来像不像在说话。」</b>
+</div>
+
+<h2><span class="n">1</span>三小时怎么切</h2>
+<table>
+  <tr><th class="num">时间</th><th>做什么</th><th>类型</th><th class="num">时长</th></tr>
+  <tr><td class="num">0:00–0:15</td><td><b>先清 D13 的账</b>：还原 <code>THREAD="u1"</code>、工具列表还原 <code>[]</code>，跑一次确认 u1 的 6 条消息还在；两次提交</td><td><span class="tagline t-skip">收尾</span></td><td class="num">15 分钟</td></tr>
+  <tr><td class="num">0:15–2:15</td><td>写 <code>assistant.py</code>：4 个工具 + SQLite 记忆 + 流式 CLI；跑通「查 → 算 → 写」三连</td><td><span class="tagline t-lab">动手</span></td><td class="num">120 分钟</td></tr>
+  <tr><td class="num">2:15–2:52</td><td>周复盘 200 字 + 截一张运行图（存 <code>docs/journal/</code>）</td><td><span class="tagline t-doc">文档</span></td><td class="num">37 分钟</td></tr>
+  <tr><td class="num">2:52–3:00</td><td>两次提交 + 打 tag <code>w2-assistant-v0.2</code></td><td><span class="tagline t-lab">动手</span></td><td class="num">8 分钟</td></tr>
+</table>
+
+<h2><span class="n">2</span>先清 D13 的账：15 分钟</h2>
+<p class="kv">产出日的第一件事不是写新代码，是把上一个没关掉的口子收掉。D13 还差这几样：</p>
+<table>
+  <tr><th>欠的</th><th>怎么做</th><th class="num">判断标准</th></tr>
+  <tr>
+    <td>代码停在实验状态</td>
+    <td><code>memory_persist.py</code> 里 <code>THREAD="u3"</code>、工具列表 <code>[find_order]</code> 还没还原</td>
+    <td class="num">改回 <code>u1</code> / <code>[]</code>，跑一次</td>
+  </tr>
+  <tr>
+    <td>重启后该看到什么</td>
+    <td><code>[启动] thread=u1 已有 6 条消息，历史 checkpoint 9 个</code></td>
+    <td class="num">数字对上</td>
+  </tr>
+  <tr>
+    <td>两次提交</td>
+    <td>提交词在 D13 执行单第 5 节（代码 / 文档分开），<b>打完再开始今天的活</b></td>
+    <td class="num">git log 有 feat(day13) 和 docs(day13)</td>
+  </tr>
+  <tr>
+    <td>进度表打勾</td>
+    <td><code>docs/progress.md</code> 的 D13 行改成 <code>[x] 11-11 完成</code></td>
+    <td class="num">—</td>
+  </tr>
+</table>
+<div class="warn">
+  <b>为什么要先做这个：</b>今天的 <code>assistant.py</code> 要复用 D13 的 SQLite 写法。如果 D13 的数据库正被一个
+  跑了一半的实验状态占着，你今天调记忆的时候会分不清「是我写错了」还是「里面本来就脏」。
+</div>
+
+<h2><span class="n">3</span>写 <code>assistant.py</code>：这是今天的全部</h2>
+
+<h3>3.1 建文件，整段粘贴</h3>
+<p class="kv">下面这段我<b>在本机 venv 里实跑过</b>：4 个工具全部被调用过、跨进程记忆生效，预期输出见 3.2。</p>
+<pre>"""D14 · 多功能智能助手 v0.2：工具 + 记忆 + 流式"""
+import ast
+import operator
+import sqlite3
+import sys
+from pathlib import Path
+
+DAY09 = Path(__file__).resolve().parents[1] / "day09-handwritten-agent"
+sys.path.insert(0, str(DAY09))
+
+from langchain.agents import create_agent
+from langchain_core.messages import AIMessageChunk
+from langchain_core.tools import tool
+from langgraph.checkpoint.sqlite import SqliteSaver
+
+from agent_loop import find_order, model, track_package
+
+DB = Path(__file__).with_name("assistant.db")
+THREAD = "cli"
+
+SYSTEM = """你是影石的内部助手，能查订单、查物流、算数、记笔记。
+回答简洁；需要数据时必须调工具，不要凭记忆编造。"""
+
+
+@tool(parse_docstring=True)
+def calc(expression: str) -> str:
+    """计算一个四则运算表达式
+
+    Args:
+        expression: 只含数字和 + - * / ( ) 的表达式，例如 (12+8)*3
+    """
+    ops = {
+        ast.Add: operator.add,
+        ast.Sub: operator.sub,
+        ast.Mult: operator.mul,
+        ast.Div: operator.truediv,
+        ast.USub: operator.neg,
+    }
+
+    def ev(node):
+        if isinstance(node, ast.Constant) and isinstance(node.value, (int, float)):
+            return node.value
+        if isinstance(node, ast.BinOp) and type(node.op) in ops:
+            return ops[type(node.op)](ev(node.left), ev(node.right))
+        if isinstance(node, ast.UnaryOp) and type(node.op) in ops:
+            return ops[type(node.op)](ev(node.operand))
+        raise ValueError("只支持数字与 + - * / ( )")
+
+    try:
+        return str(ev(ast.parse(expression, mode="eval").body))
+    except Exception as e:
+        return f"算不了：{e}"
+
+
+@tool(parse_docstring=True)
+def save_note(title: str, content: str) -> str:
+    """把一段内容记成笔记文件
+
+    Args:
+        title: 笔记标题，会用作文件名
+        content: 笔记正文
+    """
+    safe = "".join(c for c in title if c.isalnum() or c in "-_ ").strip() or "note"
+    path = Path(__file__).with_name("notes") / f"{safe}.md"
+    path.parent.mkdir(exist_ok=True)
+    path.write_text(content, encoding="utf-8")
+    return f"已写入 {path.name}（{len(content)} 字）"
+
+
+TOOLS = [find_order, track_package, calc, save_note]
+
+
+def build():
+    conn = sqlite3.connect(DB, check_same_thread=False)
+    agent = create_agent(
+        model, TOOLS, system_prompt=SYSTEM, checkpointer=SqliteSaver(conn)
+    )
+    return agent, conn
+
+
+def main():
+    agent, conn = build()
+    cfg = {"configurable": {"thread_id": THREAD}}
+    print("助手已启动（/exit 退出）")
+    while True:
+        q = input("\n你&gt; ").strip()
+        if q in {"/exit", "/quit"}:
+            break
+        if not q:
+            continue
+        print("助手&gt; ", end="", flush=True)
+        for chunk, _meta in agent.stream(
+            {"messages": [{"role": "user", "content": q}]},
+            cfg,
+            stream_mode="messages",
+        ):
+            if isinstance(chunk, AIMessageChunk) and chunk.content:
+                print(chunk.content, end="", flush=True)
+        print()
+    conn.close()
+
+
+if __name__ == "__main__":
+    main()</pre>
+
+<div class="note">
+  <b>为什么 <code>calc</code> 要用 <code>ast</code> 而不是 <code>eval()</code>：</b>
+  <code>eval</code> 会把字符串当代码执行，模型被诱导一下就能跑 <code>__import__('os').system(...)</code>。
+  <code>ast.parse</code> 先把表达式拆成语法树，只放行数字和四则运算符，遇到别的节点直接抛错 ——
+  <b>工具的参数是模型写的，等于外部输入，不能直接喂给 <code>eval</code>。</b>
+</div>
+
+<h3>3.2 我实跑的输出（预期）</h3>
+<pre>助手已启动（/exit 退出）
+
+你&gt; 我手机尾号 8899，帮我查订单，顺便查一下 ORD-20261018-002 的物流
+助手&gt; **订单**
+
+| 订单号 | 产品 | 下单日期 | 状态 |
+|---|---|---|---|
+| ORD-20261015-001 | 无线蓝牙耳机 Pro | 2026-10-15 | 已签收 |
+| ORD-20261018-002 | 65W 充电底座 | 2026-10-18 | 运输中 |
+
+**ORD-20261018-002 物流**
+
+1. 已揽收
+2. 运输中
+
+当前状态：运输中
+
+你&gt; 帮我算 (128+72)*3 是多少
+助手&gt; (128+72)*3 = 600
+
+你&gt; 把刚才的算式和结果存成笔记，标题叫 周末核算
+助手&gt; 已存为笔记「周末核算.md」：
+
+- 算式：(128+72)*3
+- 结果：600</pre>
+<p class="kv">然后<b>关掉窗口、重新运行</b>（新进程），问一句：</p>
+<pre>你&gt; 刚才我查了哪几个订单号？物流到哪了？
+助手&gt; 刚才你查了 2 个订单：
+
+- **ORD-20261015-001**（无线蓝牙耳机 Pro）：已签收
+- **ORD-20261018-002**（65W 充电底座）：运输中
+
+物流方面，只有 ORD-20261018-002 查过轨迹：已揽收 → 运输中，当前状态为运输中。</pre>
+<p class="kv">措辞每次不同，但<b>必须</b>满足三件事：① 第一轮要同时出现订单表和物流轨迹；② 算式结果是 <b>600</b>；
+③ 重启后能说出那两个订单号。<code>notes/周末核算.md</code> 会生成在 <code>day14-assistant/</code> 下。</p>
+
+<h3>3.3 「你的活」三处（必须自己改）</h3>
+<table>
+  <tr><th class="num">#</th><th>改什么</th><th>判断标准</th></tr>
+  <tr>
+    <td class="num">1</td>
+    <td><b>自己加第 5 个工具</b>，比如「把金额换算成人民币大写」或「统计一段文字多少字」，
+      照 <code>calc</code> 的写法加 <code>@tool(parse_docstring=True)</code> + docstring 里写 <code>Args:</code>，
+      再塞进 <code>TOOLS</code></td>
+    <td>问一句只有这个工具能答的话，模型<b>主动</b>调它。<br>
+      调不出来 → 八成是 docstring 里的描述没写清「什么时候用」</td>
+  </tr>
+  <tr>
+    <td class="num">2</td>
+    <td>把 <code>SYSTEM</code> 改成「<b>每次回答不超过一句话</b>」，重跑第 1 轮</td>
+    <td>看订单表还出不出来 —— 大概率变成一句话带过。
+      <b>这就是「系统提示词在压工具输出」，面试可以讲</b></td>
+  </tr>
+  <tr>
+    <td class="num">3</td>
+    <td>把 <code>stream_mode="messages"</code> 换成 <code>"updates"</code>，<code>for</code> 循环改成
+      <code>for event in agent.stream(...): print(list(event.keys()))</code></td>
+    <td>输出会从「逐字打字」变成「一串节点名」。<br>
+      能说出：<code>messages</code> 给的是<b>模型吐的字</b>，<code>updates</code> 给的是<b>哪个节点跑完了</b>（D10 实验 3）</td>
+  </tr>
+</table>
+
+<h3>3.4 验收标准</h3>
+<ul class="check">
+  <li><input type="checkbox" id="a1"><label for="a1">一次会话里连续完成「查订单 → 算数 → 写笔记」，三件事都不用重开</li>
+  <li><input type="checkbox" id="a2"><label for="a2">关掉窗口重开，问「刚才查了哪些订单」能答出订单号</li>
+  <li><input type="checkbox" id="a3"><label for="a3">回答是逐字流出来的，不是憋几秒一次性蹦出来</label></li>
+  <li><input type="checkbox" id="a4"><label for="a4"><code>notes/</code> 目录下真的生成了那个 .md 文件，内容正确</label></li>
+  <li><input type="checkbox" id="a5"><label for="a5">第 5 个工具能自己写出来并被模型调用</label></li>
+</ul>
+
+<h2><span class="n">4</span>周复盘：200 字，别写成流水账</h2>
+<p class="kv">写在 <code>docs/journal/2026-10-04.md</code>，三段各 60–70 字，<b>不要</b>按天罗列做了什么。</p>
+<table>
+  <tr><th>段落</th><th>写什么</th><th>反例（别这么写）</th></tr>
+  <tr>
+    <td><b>搞懂了什么</b></td>
+    <td>挑<b>一个</b>能讲给别人听的机制，带上你自己的数字。例如「一轮对话 3 个 checkpoint，
+      带工具变 5 个，因为 super-step 才是持久化单位」</td>
+    <td>「学会了 Agent、记忆、持久化」</td>
+  </tr>
+  <tr>
+    <td><b>还没懂什么</b></td>
+    <td>写到具体到「下一步查什么」的程度。例如「<code>__pregel_tasks</code> 这个 channel 是谁写的，
+      只知道带工具才有，不知道具体时机」</td>
+    <td>「还有很多要学」</td>
+  </tr>
+  <tr>
+    <td><b>下周验证什么</b></td>
+    <td>一个能在 W3 里被证伪的猜想。例如「切分粒度从 1000 降到 500，检索准确率会掉，
+      因为一句话被切断」</td>
+    <td>「继续努力学习」</td>
+  </tr>
+</table>
+<p class="kv">截图存 <code>docs/journal/2026-10-04-run.png</code>，截那个「重启后仍然记得订单号」的终端。</p>
+
+<h2><span class="n">5</span>提交与打 tag</h2>
+<p class="kv">PyCharm <code>Ctrl+K</code>，分两次。<b>记得取消勾选</b> <code>.env</code> / <code>.venv</code> /
+<code>.idea</code> / <code>__pycache__</code> / <code>*.db</code> / <code>notes/</code>（如果不想把笔记提交）。</p>
+
+<h3>第 1 条：代码</h3>
+<pre>feat(day14): 多功能助手 v0.2 —— 4 个工具 + SQLite 记忆 + 流式 CLI
+
+现象：
+一次会话里连续问「查订单 → 算 (128+72)*3 → 存成笔记」，三轮都正确；
+关掉进程重新运行，问「刚才查了哪几个订单号」，答出 ORD-20261015-001 和 ORD-20261018-002。
+
+我以为：
+把几个工具塞进一个列表就行，界面和流式是锦上添花，可以最后再加。
+
+做法：
+查（find_order / track_package）+ 算（calc，用 ast 白名单而不是 eval）+ 写（save_note）
+四件工具，create_agent 一次装配；checkpointer 沿用 D13 的 SqliteSaver；
+输出用 stream(stream_mode="messages")，只打印 AIMessageChunk，过滤掉工具返回。
+
+结论：
+工具决定「能做什么」，记忆决定「还记不记得」，流式决定「像不像在说话」——
+三件事各管一层，互不替代。工具的 docstring 就是它的使用说明书，
+写得含糊模型就不会调，这比代码本身更容易出问题。</pre>
+<p class="kv">勾选：<code>week2-tools-agent/day14-assistant/assistant.py</code>（以及 <code>notes/</code> 如果你要留）</p>
+
+<h3>第 2 条：文档</h3>
+<pre>docs(day14): 第 2 周复盘 —— 工具、记忆、流式各自解决什么
+
+现象：
+这一周从手写 Agent 循环走到 create_agent，再加工具、结构化输出、记忆、持久化，
+每天都能跑通，但拼在一起时才发现「记忆」和「工具」是两套完全独立的机制。
+
+我以为：
+Agent 变强是靠模型变强，框架只是把调用包得好看一点。
+
+做法：
+把 W2 的六天各挑一个实测数字写进复盘：一轮 3 个 checkpoint、带工具 5 个、
+裁剪到 5 条就失忆、max_retries=0 模型仍会自己补调一次。
+
+结论：
+框架给的是「可组合的零件」，不是「更聪明的模型」。
+下一步（W3）要验证的是：检索的质量能不能用数据证明，而不是感觉「答得还行」。</pre>
+<p class="kv">勾选：<code>docs/journal/2026-10-04.md</code>、<code>docs/journal/2026-10-04-run.png</code>、
+<code>docs/progress.md</code>（D14 打勾）、<code>docs/decisions.md</code>（如果加了 D14 一条）</p>
+
+<h3>打 tag：<code>w2-assistant-v0.2</code></h3>
+<div class="card">
+  <ol>
+    <li><code>Alt + 9</code> 打开 Git 工具窗 → <b>日志</b> 标签</li>
+    <li>找到刚才那条 <code>docs(day14)</code> 提交，<b>右键 → 新建标记</b>（New Tag）</li>
+    <li>名称填 <code>w2-assistant-v0.2</code>，类型选<b>普通</b>，确定</li>
+    <li>推送时勾上 <b>推送标记</b>（Push Tags），否则 tag 只在本地</li>
+  </ol>
+  <p class="kv">这个 tag 是 W2 的交付物坐标 —— W3 之后所有 RAG 的对比，都拿这个版本当基线。</p>
+</div>
+
+<h2><span class="n">6</span>坑预警</h2>
+<table>
+  <tr><th>症状</th><th>真实原因</th></tr>
+  <tr>
+    <td>回答里混进了 <code>ToolMessage(...)</code> 或工具原始返回值</td>
+    <td><code>stream(mode="messages")</code> 会把工具返回的消息也当 chunk 吐出来，
+      必须用 <code>isinstance(chunk, AIMessageChunk)</code> 过滤，只打模型说的话</td>
+  </tr>
+  <tr>
+    <td>重开之后完全不记得</td>
+    <td>三种可能：<code>thread_id</code> 变了、<code>checkpointer</code> 没传、或者你在用
+      <code>InMemorySaver</code>。<b>先打印启动时的 checkpoint 数</b>，一眼分清</td>
+  </tr>
+  <tr>
+    <td>模型死活不调工具，自己瞎答</td>
+    <td>docstring 只写了「做什么」没写「什么时候用」。把 <code>Args:</code> 里的参数说明写具体，
+      <code>SYSTEM</code> 里加一句「需要数据必须调工具」</td>
+  </tr>
+  <tr>
+    <td><code>calc</code> 报「算不了：invalid syntax」</td>
+    <td>模型把「128 加 72 乘以 3」原样传进来了，没转成算式。参数描述里要写死例子，例如
+      <code>只含数字和 + - * / ( )，例如 (12+8)*3</code></td>
+  </tr>
+  <tr>
+    <td><code>save_note</code> 报路径错误 / 文件写到奇怪的地方</td>
+    <td>标题里带了 <code>/</code> 或 <code>:</code>。代码里已经用白名单过滤，如果你改动了这段，注意别去掉</td>
+  </tr>
+  <tr>
+    <td>输入中文显示成乱码</td>
+    <td>PyCharm 运行窗口编码。在运行配置的 <b>环境变量</b> 里加 <code>PYTHONIOENCODING=utf-8</code></td>
+  </tr>
+  <tr>
+    <td><code>ModuleNotFoundError: agent_loop</code></td>
+    <td>文件没建在 <code>day14-assistant/</code> 下，或者 PyCharm 解释器不是项目 venv</td>
+  </tr>
+</table>
+
+<h2><span class="n">7</span>今天完成的标准</h2>
+<ul class="check">
+  <li><input type="checkbox" id="c1"><label for="c1">D13 已收口：代码还原、两次提交、进度表打勾</label></li>
+  <li><input type="checkbox" id="c2"><label for="c2"><code>assistant.py</code> 跑通，4 个工具都能被调用</label></li>
+  <li><input type="checkbox" id="c3"><label for="c3">关闭进程重开，还能答出刚才查过的订单号</label></li>
+  <li><input type="checkbox" id="c4"><label for="c4">「你的活」三处改完：第 5 个工具 / 一句话 SYSTEM / updates 模式</label></li>
+  <li><input type="checkbox" id="c5"><label for="c5">周复盘 200 字写完，三段都有具体数字</label></li>
+  <li><input type="checkbox" id="c6"><label for="c6">截图存进 <code>docs/journal/</code> 并提交</label></li>
+  <li><input type="checkbox" id="c7"><label for="c7">两次提交完成，tag <code>w2-assistant-v0.2</code> 已打</label></li>
+</ul>
+
+<p class="foot">
+  W2 结束。这一周你把「调用模型」变成了「组装一个能干活的东西」。<br>
+  下周换成 RAG：从「模型能调什么」变成「模型该看到什么」。
+</p>
+
+</div>
+
+<script>
+document.querySelectorAll('.check input').forEach(function (box) {
+  var key = 'd14-' + box.id;
+  box.checked = localStorage.getItem(key) === '1';
+  box.addEventListener('change', function () {
+    localStorage.setItem(key, box.checked ? '1' : '0');
+  });
+});
+</script>
+</body>
+</html>
