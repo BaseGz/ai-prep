@@ -18,8 +18,8 @@
 
 ## 二、今天动手做什么
 
-- [ ] 把对话历史存到 SQLite，**关掉进程重新启动**后还能接着聊（90 分钟）
-- [ ] 三个实验：换 `thread_id` / 打印 checkpoint 明细 / 换回 `InMemorySaver` 对照
+- [x] 把对话历史存到 SQLite，**关掉进程重新启动**后还能接着聊（90 分钟）
+- [x] 三个实验：换 `thread_id` / 打印 checkpoint 明细 / 换回 `InMemorySaver` 对照
 
 ## 三、今天提交什么
 
