@@ -2,6 +2,8 @@
 
 这份是骨架：外壳（CLI / 流式 / SQLite 记忆 / 工具注册）已经写好，
 """
+import ast
+import operator
 import sqlite3
 import sys
 from pathlib import Path
@@ -23,6 +25,16 @@ SYSTEM = """你是影石的内部助手，能查订单、查物流、算数、�
 回答简洁；需要数据时必须调工具，不要凭记忆编造。"""
 
 
+_OPS = {
+    ast.Add: operator.add,
+    ast.Sub: operator.sub,
+    ast.Mult: operator.mul,
+    ast.Div: operator.truediv,
+    ast.USub: operator.neg,
+    ast.UAdd: operator.pos,
+}
+
+
 @tool(parse_docstring=True)
 def calc(expression: str) -> str:
     """
@@ -31,9 +43,29 @@ def calc(expression: str) -> str:
     Args:
         expression: 只含数字和 + - * / ( ) 的表达式，例如 (12+8)*3
     """
-    # TODO 1（你）: 先写 return str(eval(expression)) 跑通，
-    #               再换成 ast 白名单（那时自己加 import ast / operator）
-    raise NotImplementedError("calc 还没写")
+
+    def ev(node):
+        # 数字叶子：只认 int / float 本身，bool 是 int 子类，要排掉
+        if isinstance(node, ast.Constant) and type(node.value) in (int, float):
+            return node.value
+        # 二元运算：先算出左右子节点，再按运算符查表
+        if isinstance(node, ast.BinOp):
+            if type(node.op) in _OPS:
+                return _OPS[type(node.op)](ev(node.left), ev(node.right))
+            raise ValueError(f"不支持的运算符：{type(node.op).__name__}")
+        # 一元正负号：只有一个子节点
+        if isinstance(node, ast.UnaryOp):
+            if type(node.op) in _OPS:
+                return _OPS[type(node.op)](ev(node.operand))
+            raise ValueError(f"不支持的运算符：{type(node.op).__name__}")
+        # 其余节点（Call / Name / Attribute ...）一律拒绝
+        raise ValueError(f"不支持的写法：{type(node).__name__}")
+
+    try:
+        # mode="eval" 只接受单个表达式，不接受语句（如 x=1）
+        return str(ev(ast.parse(expression, mode="eval").body))
+    except Exception as e:
+        return f"算不了：{e}"
 
 
 @tool(parse_docstring=True)
