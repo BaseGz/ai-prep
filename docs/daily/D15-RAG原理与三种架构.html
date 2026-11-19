@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>D15 · RAG 原理与三种架构 ｜ 影石实习准备</title>
+<style>
+:root{
+  --bg:#f6f7f9; --card:#fff; --line:#e5e7eb; --line2:#eef0f3;
+  --tx:#1a1d21; --tx2:#586170; --tx3:#8b939e;
+  --must:#b4232a; --mustbg:#fdecec;
+  --accent:#0f766e; --accentbg:#e6f4f2;
+  --vidbg:#eef2ff; --vidtx:#3538cd;
+  --docbg:#e9f7ef; --doctx:#1a7f4b;
+  --labbg:#fdf3e3; --labtx:#8a5200;
+  --codbg:#f3f4f6;
+  --radius:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0e1014; --card:#161920; --line:#252a33; --line2:#1e222a;
+    --tx:#e7e9ec; --tx2:#a2aab6; --tx3:#767e8a;
+    --must:#f08b8b; --mustbg:#3a1e20;
+    --accent:#2dd4bf; --accentbg:#12312e;
+    --vidbg:#1d2440; --vidtx:#9aa8f5;
+    --docbg:#12281c; --doctx:#6fd39c;
+    --labbg:#3a2e18; --labtx:#e0b070;
+    --codbg:#1b1f27;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0; padding:0 20px 90px; background:var(--bg); color:var(--tx);
+  font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif;
+  font-size:15px; line-height:1.7; -webkit-font-smoothing:antialiased;}
+.wrap{max-width:900px; margin:0 auto}
+header{padding:44px 0 6px}
+.dtag{display:inline-block; font-size:12px; font-weight:600; color:#fff; background:var(--accent);
+  padding:2px 10px; border-radius:6px; margin-bottom:12px; letter-spacing:.02em}
+h1{font-size:25px; font-weight:600; margin:0 0 8px; letter-spacing:-.01em}
+.sub{color:var(--tx2); font-size:14px; margin:0 0 6px}
+.meta{color:var(--tx3); font-size:13px; margin:0 0 22px}
+.note{background:var(--accentbg); border-left:3px solid var(--accent); padding:14px 18px;
+  border-radius:0 var(--radius) var(--radius) 0; font-size:14.5px; margin:18px 0}
+.note b{color:var(--accent)}
+.warn{background:var(--mustbg); border-left:3px solid var(--must); padding:14px 18px;
+  border-radius:0 var(--radius) var(--radius) 0; font-size:14px; margin:18px 0}
+.warn b{color:var(--must)}
+h2{font-size:17px; font-weight:600; margin:40px 0 12px; padding-bottom:9px;
+  border-bottom:1px solid var(--line); display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+h2 .n{font-size:12px; font-weight:600; background:var(--accentbg); color:var(--accent);
+  padding:2px 9px; border-radius:99px}
+h3{font-size:14.5px; font-weight:600; margin:22px 0 8px; color:var(--tx)}
+.card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+  padding:16px 20px; margin:12px 0}
+table{width:100%; border-collapse:collapse; font-size:14px; margin:10px 0;
+  background:var(--card); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden}
+th{text-align:left; font-weight:600; font-size:12.5px; color:var(--tx3); background:var(--line2);
+  padding:9px 12px; white-space:nowrap}
+td{padding:9px 12px; border-top:1px solid var(--line2); vertical-align:top}
+td.num,th.num{font-variant-numeric:tabular-nums; white-space:nowrap; color:var(--tx2)}
+.tagline{display:inline-block; font-size:11.5px; font-weight:600; padding:1px 7px; border-radius:5px; white-space:nowrap}
+.t-vid{background:var(--vidbg); color:var(--vidtx)}
+.t-doc{background:var(--docbg); color:var(--doctx)}
+.t-lab{background:var(--labbg); color:var(--labtx)}
+.t-skip{background:var(--line2); color:var(--tx3)}
+a{color:var(--accent); text-decoration:none; border-bottom:1px solid var(--accentbg)}
+a:hover{border-bottom-color:var(--accent)}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,"Courier New",monospace; font-size:13px;
+  background:var(--codbg); padding:1px 5px; border-radius:5px}
+pre{background:var(--codbg); border:1px solid var(--line); border-radius:10px; padding:14px 16px;
+  overflow-x:auto; font-family:ui-monospace,SFMono-Regular,Consolas,"Courier New",monospace;
+  font-size:12.8px; line-height:1.6; white-space:pre-wrap; word-break:break-word; margin:8px 0}
+ol,ul{padding-left:22px; margin:8px 0}
+li{margin:5px 0}
+.check{list-style:none; padding-left:0}
+.check li{display:flex; gap:10px; align-items:flex-start; margin:9px 0}
+.check input{margin-top:6px; width:16px; height:16px; accent-color:var(--accent); flex:0 0 auto; cursor:pointer}
+.check label{cursor:pointer}
+.check input:checked + label{color:var(--tx3); text-decoration:line-through}
+.kv{font-size:14px; color:var(--tx2); margin:4px 0}
+.kv b{color:var(--tx)}
+.foot{color:var(--tx3); font-size:12.5px; text-align:center; margin:44px 0 0; line-height:1.9}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="dtag">D15 ／ 35</div>
+  <h1>RAG 原理与三种架构</h1>
+  <p class="sub">2026-11-18（周三）实际执行 ｜ 预计 3h ｜ 阶段：W3 开篇</p>
+  <p class="meta">目录 <code>week3-rag/day15-corpus/</code> ｜ 计划日 10-05 ｜ <b>今天没有新代码，只有一次选型决策</b></p>
+</header>
+
+<div class="note">
+  <b>今天只干一件事：把你的语料库定下来。</b><br>
+  从 D19 开始，你写的每一个检索器、每一次调参、D34 的提效度量，全部跑在这套语料上。
+  选错不会报错，只会在三周后让你发现「问题都是自己编的」。<br>
+  今天结束时你要能不看稿说出：<b>「RAG 不改变模型，只改变它回答前能看到什么；三种架构的差别不是技术难度，是控制权在谁手里。」</b>
+</div>
+
+<h2><span class="n">1</span>三小时怎么切</h2>
+<table>
+  <tr><th class="num">时间</th><th>做什么</th><th>类型</th><th class="num">时长</th></tr>
+  <tr><td class="num">0:00–0:18</td><td>视频三集：基本概念 / RAG 原理 / 深入 RAG（同一合集，连着看）</td><td><span class="tagline t-vid">视频</span></td><td class="num">18 分钟</td></tr>
+  <tr><td class="num">0:18–0:43</td><td>官方 <code>Retrieval</code> 页：两条限制 + <b>三种架构对比表</b> + 三小节</td><td><span class="tagline t-doc">文档</span></td><td class="num">25 分钟</td></tr>
+  <tr><td class="num">0:43–1:50</td><td>选语料库；写清 <b>3 个具体问题</b>（每条：现在怎么查 / 几步 / 多久 / 错在哪）</td><td><span class="tagline t-lab">动手</span></td><td class="num">67 分钟</td></tr>
+  <tr><td class="num">1:50–2:20</td><td>建目录、把原始资料放进 <code>datasets/raw/</code>、补 <code>datasets/README.md</code> 的清单行</td><td><span class="tagline t-lab">动手</span></td><td class="num">30 分钟</td></tr>
+  <tr><td class="num">2:20–2:45</td><td><code>docs/journal/2026-10-05.md</code> + <code>decisions.md</code> 一条（为什么选这套语料）</td><td><span class="tagline t-doc">文档</span></td><td class="num">25 分钟</td></tr>
+  <tr><td class="num">2:45–3:00</td><td>两次提交（见第 5 节）</td><td><span class="tagline t-lab">动手</span></td><td class="num">15 分钟</td></tr>
+</table>
+
+<h2><span class="n">2</span>视频：18 分钟，三集</h2>
+
+<div class="warn">
+  <b>计划表里第一条视频已经失效。</b><br>
+  《大模型 RAG 入门到精通》<code>BV1hccSeJEUD</code> 的接口返回 <code>-404 啥都木有</code>，
+  计划写的三讲（05:48 / 10:24 / 08:16）<b>全部无法观看</b>。2026-11-18 用 B 站接口核实，不是网络问题。<br>
+  替代方案是下面这门 41 P 的合集，P2 和 P5 的标题、时长与计划表<b>逐字吻合</b>（05:21 / 08:46），说明是同一套内容换了地址。
+  再补一个 P1 讲大模型本身，把「为什么需要 RAG」的底补齐。
+</div>
+
+<table>
+  <tr><th class="num">分 P</th><th>标题</th><th class="num">时长</th><th>看完要能回答</th></tr>
+  <tr>
+    <td class="num"><a href="https://www.bilibili.com/video/BV1TKe3zmEQT/?p=1">P1</a></td>
+    <td>AI 大模型基本概念</td>
+    <td class="num">04:11</td>
+    <td>模型的知识为什么是「冻结」的？</td>
+  </tr>
+  <tr>
+    <td class="num"><a href="https://www.bilibili.com/video/BV1TKe3zmEQT/?p=2">P2</a></td>
+    <td>RAG 的原理是什么？</td>
+    <td class="num">05:21</td>
+    <td>「检索 → 增强 → 生成」三步各产出什么？</td>
+  </tr>
+  <tr>
+    <td class="num"><a href="https://www.bilibili.com/video/BV1TKe3zmEQT/?p=5">P5</a></td>
+    <td>深入 RAG：你以为的简单，其实是错觉</td>
+    <td class="num">08:46</td>
+    <td>RAG 的难点为什么不在「接一个向量库」？</td>
+  </tr>
+</table>
+
+<p class="kv">合计 <b>18:18</b>，比原计划少 22 分钟 —— 这 22 分钟挪到第 4 节，语料选型比看视频费时间。</p>
+<p class="kv">看的时候只盯一件事：<b>RAG 没有训练模型、没有改参数，它只是把资料塞进 prompt</b>。P5 会讲为什么这么朴素的做法却很难做好——那个「难」就是 D16–D20 要逐块解决的。</p>
+
+<h2><span class="n">3</span>文档：一张表定生死</h2>
+
+<p class="kv">页面：<a href="https://docs.langchain.com/oss/python/langchain/retrieval">Retrieval</a>（会自动跳到 <code>/oss/python/deepagents/retrieval</code>，是同一个页面）</p>
+
+<h3>先读开头两段（2 分钟）</h3>
+<p class="kv">它把「为什么需要 RAG」压缩成两条，比视频更利落：</p>
+<ul>
+  <li><b>Finite context</b> —— 上下文塞不下整个语料库</li>
+  <li><b>Static knowledge</b> —— 训练数据冻结在某个时间点</li>
+</ul>
+<p class="kv">这两条决定了后面所有设计：<b>因为塞不下，所以要检索；因为会过期，所以要挂外部库。</b></p>
+
+<h3>再读 <code>RAG architectures</code> 那张表（10 分钟，重点）</h3>
+<p class="kv">这就是计划表说的「三种架构」，原文只有一张四列表，我把它抄在这里（<b>内容来自官方页面，未做改写</b>）：</p>
+
+<table>
+  <tr><th>架构</th><th>一句话</th><th class="num">控制力</th><th class="num">灵活性</th><th class="num">延迟</th></tr>
+  <tr>
+    <td><b>2-Step RAG</b></td>
+    <td>检索永远在生成之前，一条直线</td>
+    <td class="num">高</td><td class="num">低</td><td class="num">快</td>
+  </tr>
+  <tr>
+    <td><b>Agentic RAG</b></td>
+    <td>由 agent 在推理中自己决定<b>什么时候、怎么</b>检索</td>
+    <td class="num">低</td><td class="num">高</td><td class="num">不定</td>
+  </tr>
+  <tr>
+    <td><b>Hybrid</b></td>
+    <td>两者混合，中间加校验步骤</td>
+    <td class="num">中</td><td class="num">中</td><td class="num">不定</td>
+  </tr>
+</table>
+
+<p class="kv">读这张表只问自己一句：<b>为什么 Agentic 的「灵活性高」反而意味着「控制力低」？</b></p>
+<p class="kv">因为控制权转移了。2-Step 里你知道它一定会检索、一定检索 top-k、一定拼进 prompt——每一步都可预测，出了问题能定位。
+Agentic 把「要不要检索」交给模型判断，模型可能不查就答，也可能查五次。能力上限更高，但<b>你不再能保证它做了什么</b>。</p>
+
+<h3>最后读三小节各一段（13 分钟）</h3>
+<table>
+  <tr><th>小节</th><th>读什么</th><th>为什么读</th></tr>
+  <tr>
+    <td><code>2-step RAG</code></td>
+    <td>只有一段话，说明检索是生成的前置条件</td>
+    <td>D19 你要写的第一个 MVP 就是这个架构</td>
+  </tr>
+  <tr>
+    <td><code>Agentic RAG</code></td>
+    <td>看代码示例：<b>一个 <code>@tool</code> 包住检索，就完成了 RAG</b></td>
+    <td>你 D9–D14 写的全是这个模式，只是工具换成了「查资料」</td>
+  </tr>
+  <tr>
+    <td><code>Hybrid RAG</code></td>
+    <td>三个组件的名字：query enhancement / retrieval validation / answer validation</td>
+    <td>D20「检索优化」就是在这三个位置各加一道工序</td>
+  </tr>
+</table>
+
+<div class="card">
+  <p class="kv"><b>读到这里你会发现：这三种架构你这周已经手写过了。</b></p>
+  <p class="kv">2-Step = 你在 D10 写的「先查询、再回答」；Agentic = 你在 D9 写的手写循环，模型自己决定调不调工具；
+  Hybrid = 你在 D11 试过的「工具报错后重试」。<b>RAG 没有新机制，它只是把「工具」换成了「检索器」。</b></p>
+  <p class="kv">这也是为什么 D15 不给代码 —— 机制你已经会了，今天缺的是<b>一套自己的数据</b>。</p>
+</div>
+
+<h2><span class="n">4</span>动手：定下你的语料库</h2>
+
+<p class="kv">这一步没有标准答案，但有硬性条件。<b>不满足就别急着往下走</b>，因为后面 5 天全部依赖它。</p>
+
+<h3>三个候选方向</h3>
+<table>
+  <tr><th>方向</th><th>优点</th><th>风险</th></tr>
+  <tr>
+    <td><b>影石产品说明 / 官网参数</b></td>
+    <td>公开、结构化、你熟悉产品；面试时能讲业务背景</td>
+    <td>页面是动态渲染的，D16 抓取要费点劲</td>
+  </tr>
+  <tr>
+    <td><b>你学过的课程资料</b></td>
+    <td>PDF/PPT 多，正好练 D16 的多种加载器</td>
+    <td>版权问题，别把付费课程内容提交进仓库</td>
+  </tr>
+  <tr>
+    <td><b>你熟悉的技术文档</b>（如 LangChain 文档、某开源项目 README）</td>
+    <td>纯文本、结构规整、好切分</td>
+    <td>太「干净」，测不出真实场景的脏数据问题</td>
+  </tr>
+</table>
+
+<p class="kv">建议：<b>影石产品说明 + 你自己的课程笔记</b>混合。前者有业务感，后者有非结构化文本，切分实验（D17）才有对比。</p>
+
+<h3>硬性条件（四条，缺一条就换）</h3>
+<ol>
+  <li><b>规模 20–500 个文件</b>。少于 20 个，检索永远是「全命中」，测不出召回率；多于 500 个，D19 建索引要等太久。</li>
+  <li><b>你读过其中至少三分之一</b>。否则检索结果对不对，你自己判断不了——这是最容易翻车的地方。</li>
+  <li><b>能回答 3 个具体问题</b>。问题必须在这套语料里有明确答案，且答案有唯一出处。</li>
+  <li><b>可以公开</b>。公司内部资料、含个人信息的文档，一律不放。</li>
+</ol>
+
+<h3>写 3 个具体问题（今天最值钱的产出）</h3>
+<p class="kv">每条按这个格式写，四行，缺一行都不算完成：</p>
+
+<pre>问题 1：影石 X4 的最大防水深度是多少（裸机 / 带壳）？
+现在怎么查：官网 → 产品页 → 规格表 → Ctrl+F 搜「防水」，3 步，约 40 秒
+慢在哪：规格表是图片，Ctrl+F 搜不到，只能肉眼找
+为什么值得做：这类参数客服每天被问几十次，答案固定但查找成本高</pre>
+
+<p class="kv"><b>「慢在哪」这一行是 D34 提效度量的基准线。</b>现在写不出具体数字（几步、几秒），三周后就没有对比对象，
+最后只能写「感觉快了一点」——那种结论在面试里一文不值。</p>
+
+<h3>落到文件上</h3>
+<p class="kv">① 原始资料放进 <code>datasets/raw/</code>（已在 <code>.gitignore</code> 里，不会入库）：
+<code>datasets/raw/*</code> + <code>!datasets/raw/.gitkeep</code>，参考项目根目录的 <code>.gitignore</code> 第 40 行起。</p>
+<p class="kv">② 把 <code>datasets/README.md</code> 里那行「（待 D15 确定）」换成真实内容：</p>
+
+<pre>| 影石官网产品参数 | insta360.com 产品页（公开） | 34 个页面 | 产品名 / 参数名 / 参数值 / 来源 URL | 2026-11-18 |</pre>
+
+<p class="kv">③ 3 个问题写进 <code>docs/journal/2026-10-05.md</code>，不要只写在脑子里。</p>
+
+<h3>验收标准</h3>
+<ul class="check">
+  <li><input type="checkbox" id="c1"><label for="c1"><code>datasets/raw/</code> 下至少有 20 个真实文件（不是占位符），且 <code>git status</code> 看不到它们</label></li>
+  <li><input type="checkbox" id="c2"><label for="c2"><code>datasets/README.md</code> 的清单表已填，含来源 / 规模 / 字段 / 日期</label></li>
+  <li><input type="checkbox" id="c3"><label for="c3">3 个问题都写了「现在怎么查 / 几步 / 多久 / 慢在哪」四行</label></li>
+  <li><input type="checkbox" id="c4"><label for="c4">能指着其中任意一页说：这个问题的答案就在这一段的第几句</label></li>
+</ul>
+
+<h2><span class="n">5</span>提交什么</h2>
+
+<p class="kv">两次提交。Ctrl + K 打开后<b>记得取消勾选不属于本次的文件</b>：<code>.env</code>、<code>.venv/</code>、<code>.idea/</code>、<code>__pycache__/</code>、<code>*.db</code>、<code>datasets/raw/</code> 下的原始文件。</p>
+
+<h3>第 1 条：语料</h3>
+<pre>chore(datasets): 确定语料库为影石官网产品参数 + 课程笔记
+
+现象：
+D15 之前所有练习用的都是 mock 数据（MOCK_ORDERS 里手写的两条订单），
+检索类练习没有真实语料就无从验证召回率。
+
+我以为：
+语料随便找点文档就行，反正只是跑通流程。
+
+做法：
+主语料选影石官网公开产品页（34 页），辅以自己整理的课程笔记；
+原始文件放 datasets/raw/（已 gitignore），只提交清单与来源说明；
+按四条硬性条件筛：20-500 个文件、读过三分之一、能答 3 个问题、可公开。
+
+结论：
+语料不是「有就行」，它决定了后面所有实验能不能证伪。
+规模太小会全命中、太大建索引慢，而「自己读过」是判断检索质量的唯一前提。</pre>
+
+<p class="kv">勾选：<code>datasets/README.md</code>、<code>datasets/raw/.gitkeep</code>（如果 <code>.gitkeep</code> 有改动）</p>
+
+<h3>第 2 条：3 个问题 + 决策</h3>
+<pre>docs(day15): RAG 要解决的 3 个具体问题
+
+现象：
+平时查产品参数要开官网、进产品页、翻规格表，规格表是图片，Ctrl+F 搜不到；
+同一类问题客服每天重复回答，答案固定但查找路径长。
+
+我以为：
+RAG 的价值是「让模型更聪明」。
+
+做法：
+写清 3 个问题的现状：几步、多少秒、慢在哪一处；
+对照官方 Retrieval 页的三种架构，记录为什么 D19 先做 2-Step。
+
+结论：
+RAG 不改变模型能力，只改变它回答前能看到什么；
+三种架构的差别不是技术难度，是控制权在谁手里 ——
+2-Step 可预测、Agentic 灵活但不可控、Hybrid 是折中且延迟不定。
+「慢在哪」这一行是 D34 提效度量的基准线，现在不写，三周后就没有对比。</pre>
+
+<p class="kv">勾选：<code>docs/journal/2026-10-05.md</code>、<code>docs/decisions.md</code>、<code>week3-rag/day15-corpus/README.md</code>（如果勾了复选框）、<code>docs/progress.md</code></p>
+
+<h2><span class="n">6</span>坑预警</h2>
+<table>
+  <tr><th>症状</th><th>真实原因</th></tr>
+  <tr>
+    <td>D19 检索永远返回全部文档</td>
+    <td>语料太少（不足 20 个），top-k 比总量还大 —— 不是检索器写对了，是它没得选</td>
+  </tr>
+  <tr>
+    <td>检索出来的段落「看起来相关」但答非所问</td>
+    <td>语料是自己没读过的资料，判断不了对错。<b>必须读过三分之一</b></td>
+  </tr>
+  <tr>
+    <td>D34 写不出提效数字</td>
+    <td>今天「现在怎么查」只写了「大概查一下」，没记步数和秒数</td>
+  </tr>
+  <tr>
+    <td><code>git status</code> 里冒出几百 MB 文件</td>
+    <td><code>datasets/raw/</code> 已被忽略，但如果放到别处（如 <code>week3-rag/</code>）就会进仓库</td>
+  </tr>
+  <tr>
+    <td>官网页面用 <code>requests</code> 抓到空 HTML</td>
+    <td>页面是 JS 渲染的。这是 D16 的问题，今天只要确认「能手动存下来」即可</td>
+  </tr>
+</table>
+
+<h2><span class="n">7</span>今天完成的标准</h2>
+<ul class="check">
+  <li><input type="checkbox" id="c5"><label for="c5">视频 P1 / P2 / P5 看完（18:18），知道「检索 → 增强 → 生成」各自产出什么</label></li>
+  <li><input type="checkbox" id="c6"><label for="c6">能不看表说出三种架构的名字，以及各自的「控制力 / 灵活性 / 延迟」</label></li>
+  <li><input type="checkbox" id="c7"><label for="c7">语料库已定，<code>datasets/raw/</code> 里有 20+ 个真实文件</label></li>
+  <li><input type="checkbox" id="c8"><label for="c8">3 个问题写完四行，其中「几步 / 多少秒」是真实测过的，不是估的</label></li>
+  <li><input type="checkbox" id="c9"><label for="c9">两次提交完成，<code>progress.md</code> 的 D15 打勾</label></li>
+</ul>
+
+<p class="foot">
+  D15 · RAG 原理与三种架构 ｜ 下一站 D16：文档加载（3 种格式 + 看 metadata）<br>
+  从今天起，你写的每一行代码都跑在自己的语料上。
+</p>
+
+</div>
+
+<script>
+document.querySelectorAll('.check input').forEach(function(box){
+  var key = 'd15-' + box.id;
+  if (localStorage.getItem(key) === '1') { box.checked = true; }
+  box.addEventListener('change', function(){
+    localStorage.setItem(key, box.checked ? '1' : '0');
+  });
+});
+</script>
+</body>
+</html>
