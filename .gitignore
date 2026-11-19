@@ -16,6 +16,8 @@ build/
 chroma_db/
 *.sqlite
 *.db
+# 助手的运行产物（笔记由模型生成，不入库）
+week2-tools-agent/day14-assistant/notes/
 .DS_Store
 .idea/
 .vscode/

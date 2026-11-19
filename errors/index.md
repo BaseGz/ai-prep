@@ -1333,3 +1333,52 @@ input（收到输入）→ __start__（消息写进 state）→ model（跑完�
 
 ---
 
+## D14 · 进程中途崩了，残缺的 checkpoint 会被永久留下
+
+**现象**：
+
+助手启动后第一句就直接炸，连输入都没读到：
+
+```
+langchain_openai.chat_models.base.OpenAIInvalidRequestError: Error code: 400 -
+{'error': {'message': "An assistant message with 'tool_calls' must be followed by
+tool messages responding to each 'tool_call_id'. (insufficient tool messages
+following tool_calls message)"}}
+```
+
+**我以为**：
+
+持久化只是「把历史存下来」，读回来最坏情况是内容旧一点，不会影响请求本身是否合法。
+
+**实际**：
+
+11-16 那次跑骨架版时，`calc` 还是 `raise NotImplementedError`。模型输出 `tool_calls=[calc]`
+之后，工具执行抛异常，图在「model 已输出 tool_calls、tools 尚未执行」的位置中断。
+**这个半截状态照样被 checkpoint 提交了**。今天新进程读回来，消息序列是：
+
+```
+4  HumanMessage   '帮我算 (128+72)*3'
+5  AIMessage      tool_calls=[calc]      ← 没有 ToolMessage 接上
+6  HumanMessage   '我手机尾号 8899…'
+```
+
+DeepSeek 的接口校验「带 tool_calls 的 assistant 消息后面必须跟齐 tool 消息」，直接 400。
+请求在模型还没被调用时就失败了。
+
+**怎么定位到的**：
+
+不用猜，直接读库。`SqliteSaver(conn).get_tuple(cfg)` 拿到最后一个 checkpoint，
+取 `checkpoint['channel_values']['messages']`，逐条打印 `type(m).__name__` 和 `m.tool_calls`，
+第 5 条有 `calc` 调用、第 6 条却是 HumanMessage —— 缺的那一环一眼就看到了。
+
+**结论**：
+
+> **checkpoint 不是事务。它每个 super-step 提交一次，所以「做了一半」也会被记住，
+> 而且这种残缺状态不会自愈 —— 下次启动读回来就是一个 API 永远不接受的历史。**
+
+修法三选一：换 `thread_id`（换条链）、删库重来（开发期最省事）、
+或把 `invoke` 包一层 `try/except`，异常时补一条 `ToolMessage` 把这次调用「答完」。
+第三种的思路值得记住：**图的每个节点都必须有出口，否则断掉的那一步会停在历史里。**
+
+---
+
