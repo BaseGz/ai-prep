@@ -22,7 +22,7 @@
 | D12 | 10-02 | W2 | 上下文与记忆 | `week2-tools-agent/day12-memory` | [x] 11-02 完成 |
 | D13 | 10-03 | W2 | 记忆持久化 | `week2-tools-agent/day13-persist` | [x] |
 | D14 | 10-04 | W2 | 周末产出：多功能智能助手 | `week2-tools-agent/day14-assistant` | [ ] |
-| D15 | 10-05 | W3 | RAG 原理与三种架构 | `week3-rag/day15-corpus` | [ ] |
+| D15 | 10-05 | W3 | RAG 原理与三种架构 | `week3-rag/day15-corpus` | [x] |
 | D16 | 10-06 | W3 | 文档加载 | `week3-rag/day16-loaders` | [ ] |
 | D17 ★ | 10-07 | W3 | 文本切分（关键实验） | `experiments/chunking` | [ ] |
 | D18 | 10-08 | W3 | 向量与 Embedding | `experiments/embedding` | [ ] |
