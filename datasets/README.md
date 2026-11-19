@@ -15,4 +15,6 @@ RAG 练习用的真实语料。**从 D15 起所有练习都用它**，D29 之后
 
 | 名称 | 来源 | 规模 | 字段 | 加入日期 |
 |---|---|---|---|---|
-| （待 D15 确定） |  |  |  |  |
+| `x4-manual`（影石 X4 官方在线手册，中文） | `onlinemanual.insta360.com/x4/zh-cn/`（公开，服务端渲染，URL 取自官方 `sitemap.xml`） | **114 个 HTML 页面 / 3.4 MB**；正文中位数 1171 字，最长 7454 字 | 页面路径 / 标题 / 正文文本（原始 HTML 保留 `<script>`、导航等噪声，留给 D16 的加载器处理） | 2026-11-19 |
+
+目录分布：`operating_tutorials` 47 / `troubleshooting` 32 / `camera` 25 / `specs` 7 / `accessories-kit` 3。
