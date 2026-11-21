@@ -268,6 +268,50 @@ D29 项目需要「多源冲突」或更长的时间跨度时，加第二套语�
 
 ---
 
+## D16 · 明知官方写「should no longer be used」，今天还是用 `langchain-community`
+
+**背景**：官方文档对这批加载器的原话是 ——
+
+> `PyPDFLoader`, `PyMuPDFLoader`, `PDFMinerLoader`, and `PDFPlumberLoader` live in the unmaintained
+> `langchain-community` package but **should no longer be used**. Prefer one of the partner packages above.
+
+而今天的 `loaders.py`，`PyPDFLoader` 和 `BSHTMLLoader` 都从 `langchain_community.document_loaders` 导入。
+
+**理由**：
+
+**1. 先对齐课程，再谈迁移。**
+P34 / P35 的代码就是 `langchain_community.document_loaders`。今天同时在学「加载器是什么」和「换一套包」，
+两件事会互相遮住 —— 分不清是概念没懂还是 API 用错了。
+
+**2. 替代品的成本不在这 3 小时里。**
+Docling 要下版面分析模型；Unstructured 在 Windows 上要 poppler / libreoffice / tesseract，
+`pip install "unstructured[md]"` 会拖进 45 个包（整个 spaCy 生态 + numba + llvmlite），150–250 MB，
+还会顺手升级 `setuptools` / `certifi` —— 这台机器挂着 MITM 代理，底层包能不动就不动。
+今天装完，「加载器概念」大概率一个字都没学到。
+
+**3. 接口是 `BaseLoader` 定的，换包只改 import 一行。**
+`load()` / `lazy_load()` / `Document(page_content, metadata)` 这套接口不随包变。
+所以现在写的代码不是废的 —— 迁移时改的是名字，不是结构。
+
+**代价**：
+
+1. **每次运行顶部一条 `DeprecationWarning`**，`loaders.py` 第一行就是它。它不是报错，程序照跑。
+2. **包不再修 bug。** 今天 `PyPDFLoader(..., extract_images=True)` 报 `No module named 'PIL'` ——
+   可选依赖缺失这个问题，社区版不会有人改好。
+3. **API 不统一。** `TextLoader` 叫 `encoding`，`BSHTMLLoader` 叫 `open_encoding`。
+   这类历史遗留只会在迁移时被统一，现在只能一个个试。
+
+**判断标准不是「官方说了什么」，是「迁移成本 vs 今天的学习目标」。**
+官方那句是面向新项目的长期建议，不是今天的禁令。
+
+**什么时候换**：
+
+- 要处理**扫描版 PDF**（需要 OCR）时 → Docling
+- 表格、多栏排版**还原不准**，影响检索质量时 → Docling / Unstructured
+- 需要**按文档结构切分**（标题层级直接进 metadata）时 → 那时的问题已经转到切分器上了
+
+---
+
 ## 模板（复制这一段用）
 
 ## D__ · （决定了什么）

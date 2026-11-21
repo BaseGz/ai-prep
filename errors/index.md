@@ -1382,3 +1382,54 @@ DeepSeek 的接口校验「带 tool_calls 的 assistant 消息后面必须跟齐
 
 ---
 
+## D16 · `BSHTMLLoader` 不传编码：同一行代码在 shell 里跑通，在 PyCharm 里崩
+
+**现象**：
+
+```
+UnicodeDecodeError: 'gbk' codec can't decode byte 0xae in position 1683: illegal multibyte sequence
+
+  File ".../langchain_community/document_loaders/html_bs.py", line 126, in lazy_load
+    soup = BeautifulSoup(f, **self.bs_kwargs)
+```
+
+**我以为**：
+
+这段代码刚才明明跑通了（`[HTML 单页] 1 条，0.07s`），我只改了「三处你的活」，
+`load_one_html()` 那一行一个字没动。所以问题一定在我新写的代码里 —— 大概是某个变量被改坏了。
+
+**实际**：
+
+那一行一直是对的。变的是**「谁在读文件、用什么编码读」**：
+
+| 环境 | `sys.flags.utf8_mode` | `getpreferredencoding(False)` | 结果 |
+|---|---|---|---|
+| 工具内置 shell | 1 | `utf-8` | 通过 |
+| PyCharm 运行 | 0 | `cp936`（GBK） | 崩 |
+
+`BSHTMLLoader.__init__` 的 `open_encoding` 默认是 `None`；`None` 时内部用 `open()` 不带 encoding，
+于是落到系统 locale —— PyCharm 下就是 GBK。114 个 HTML 都是 UTF-8 存的，GBK 读到第 1683 字节的中文就炸。
+
+**怎么定位到的**：
+
+报错里 `'gbk' codec` 这四个字就是半条线索：**我自己代码里没有任何地方写过 `gbk`**，
+所以它只能来自某个默认值。于是在两边各打一行 `locale.getpreferredencoding(False)`，
+一边 `utf-8`、一边 `cp936`，差异当场确定。
+
+再用 `python -X utf8=0` 在我这边强制关掉 UTF-8 模式，复现出**连 `position 1683` 都一模一样**的报错，
+确认是同一件事；最后只加一个 `open_encoding="utf-8"` 验证通过。
+
+**结论**：
+
+> **凡是从文件读文本，编码永远显式写。默认值会随机器、IDE、Python 版本变 ——
+> 「我这跑通了」只能证明这台机器的 locale 恰好匹配，不能证明代码是对的。**
+
+附带两个容易混的点：
+
+1. **参数名不统一**：`TextLoader` 叫 `encoding`，`BSHTMLLoader` 叫 `open_encoding`。
+   写错会报 `unexpected keyword argument` —— 别猜，`Ctrl+点` 跳进 `__init__` 看签名。
+2. **`position 1683` 是字节位置，不是字符位置**，落在某个中文字的中间。
+   排查时别拿它去数「第几个字」。
+
+---
+

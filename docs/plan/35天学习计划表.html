@@ -121,6 +121,7 @@ var S = {
   dGraph: "https://docs.langchain.com/oss/python/langgraph/overview",
   dPersist: "https://docs.langchain.com/oss/python/langgraph/checkpointers",
   dRetrieval: "https://docs.langchain.com/oss/python/langchain/retrieval",
+  dLoaders: "https://docs.langchain.com/oss/python/integrations/document_loaders",
   dSmith: "https://docs.langchain.com/langsmith/observability",
   dTrace: "https://docs.langchain.com/langsmith/trace-with-langchain",
   chroma: "https://docs.trychroma.com/"
@@ -227,8 +228,8 @@ var PLAN = [
      {k:"key", x:"从今天起所有练习一律用你自己的语料。<b>面试时这套语料就是你的项目。</b>"}
    ]},
    { t:"文档加载", h:"3h", tasks:[
-     {k:"vid", x:"RAG 入门到精通 <b>第 4 讲 文档的加载与切割 07:10 + 第 34 讲 文件加载器（一）17:48 + 第 35 讲（二）25:05</b>", l:S.rag, tm:"50 分钟"},
-     {k:"doc", x:"官方文档加载器相关页面（站内搜 document loaders）", l:S.dRetrieval, tm:"20 分钟"},
+     {k:"vid", x:"《RAG 向量数据库全套》<b>P34 RAG 文件加载器（一）17:48 + P35（二）25:05</b>（<s>原「第 4 讲 文档的加载与切割 07:10」所属合集 BV1hccSeJEUD 已 404，且该合集第 4 讲实为「大模型微调流程」</s>）", l:S.ragfull, tm:"43 分钟"},
+     {k:"doc", x:"官方 <b>Document loader integrations</b> 页：<b>Interface</b> 小节（load / lazy_load）+ Webpages/PDFs 两张表 + <b>sunset 说明</b>（<s>原写的「站内搜 document loaders」指向 …/langchain/document-loaders，该路径 404</s>）", l:S.dLoaders, tm:"20 分钟"},
      {k:"lab", x:"<b>实操：</b>加载 3 种格式（PDF / Markdown / 网页），打印 Document 的正文和 metadata，看清元数据里有什么可用信息", tm:"70 分钟"}
    ]},
    { t:"文本切分（关键实验）", h:"3.5h", star:true, tasks:[

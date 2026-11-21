@@ -23,7 +23,7 @@
 | D13 | 10-03 | W2 | 记忆持久化 | `week2-tools-agent/day13-persist` | [x] |
 | D14 | 10-04 | W2 | 周末产出：多功能智能助手 | `week2-tools-agent/day14-assistant` | [ ] |
 | D15 | 10-05 | W3 | RAG 原理与三种架构 | `week3-rag/day15-corpus` | [x] |
-| D16 | 10-06 | W3 | 文档加载 | `week3-rag/day16-loaders` | [ ] |
+| D16 | 10-06 | W3 | 文档加载 | `week3-rag/day16-loaders` | [x] 11-21 完成 |
 | D17 ★ | 10-07 | W3 | 文本切分（关键实验） | `experiments/chunking` | [ ] |
 | D18 | 10-08 | W3 | 向量与 Embedding | `experiments/embedding` | [ ] |
 | D19 | 10-09 | W3 | 向量库 + 最小可用 RAG | `week3-rag/day19-mvp` | [ ] |

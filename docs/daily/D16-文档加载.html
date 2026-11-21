@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>D16 · 文档加载 ｜ 影石实习准备</title>
+<style>
+:root{
+  --bg:#f6f7f9; --card:#fff; --line:#e5e7eb; --line2:#eef0f3;
+  --tx:#1a1d21; --tx2:#586170; --tx3:#8b939e;
+  --must:#b4232a; --mustbg:#fdecec;
+  --accent:#0f766e; --accentbg:#e6f4f2;
+  --vidbg:#eef2ff; --vidtx:#3538cd;
+  --docbg:#e9f7ef; --doctx:#1a7f4b;
+  --labbg:#fdf3e3; --labtx:#8a5200;
+  --codbg:#f3f4f6;
+  --radius:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0e1014; --card:#161920; --line:#252a33; --line2:#1e222a;
+    --tx:#e7e9ec; --tx2:#a2aab6; --tx3:#767e8a;
+    --must:#f08b8b; --mustbg:#3a1e20;
+    --accent:#2dd4bf; --accentbg:#12312e;
+    --vidbg:#1d2440; --vidtx:#9aa8f5;
+    --docbg:#12281c; --doctx:#6fd39c;
+    --labbg:#3a2e18; --labtx:#e0b070;
+    --codbg:#1b1f27;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0; padding:0 20px 90px; background:var(--bg); color:var(--tx);
+  font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif;
+  font-size:15px; line-height:1.7; -webkit-font-smoothing:antialiased;}
+.wrap{max-width:900px; margin:0 auto}
+header{padding:44px 0 6px}
+.dtag{display:inline-block; font-size:12px; font-weight:600; color:#fff; background:var(--accent);
+  padding:2px 10px; border-radius:6px; margin-bottom:12px; letter-spacing:.02em}
+h1{font-size:25px; font-weight:600; margin:0 0 8px; letter-spacing:-.01em}
+.sub{color:var(--tx2); font-size:14px; margin:0 0 6px}
+.meta{color:var(--tx3); font-size:13px; margin:0 0 22px}
+.note{background:var(--accentbg); border-left:3px solid var(--accent); padding:14px 18px;
+  border-radius:0 var(--radius) var(--radius) 0; font-size:14.5px; margin:18px 0}
+.note b{color:var(--accent)}
+.warn{background:var(--mustbg); border-left:3px solid var(--must); padding:14px 18px;
+  border-radius:0 var(--radius) var(--radius) 0; font-size:14px; margin:18px 0}
+.warn b{color:var(--must)}
+h2{font-size:17px; font-weight:600; margin:40px 0 12px; padding-bottom:9px;
+  border-bottom:1px solid var(--line); display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+h2 .n{font-size:12px; font-weight:600; background:var(--accentbg); color:var(--accent);
+  padding:2px 9px; border-radius:99px}
+h3{font-size:14.5px; font-weight:600; margin:22px 0 8px; color:var(--tx)}
+.card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+  padding:16px 20px; margin:12px 0}
+table{width:100%; border-collapse:collapse; font-size:14px; margin:10px 0;
+  background:var(--card); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden}
+th{text-align:left; font-weight:600; font-size:12.5px; color:var(--tx3); background:var(--line2);
+  padding:9px 12px; white-space:nowrap}
+td{padding:9px 12px; border-top:1px solid var(--line2); vertical-align:top}
+td.num,th.num{font-variant-numeric:tabular-nums; white-space:nowrap; color:var(--tx2)}
+.tagline{display:inline-block; font-size:11.5px; font-weight:600; padding:1px 7px; border-radius:5px; white-space:nowrap}
+.t-vid{background:var(--vidbg); color:var(--vidtx)}
+.t-doc{background:var(--docbg); color:var(--doctx)}
+.t-lab{background:var(--labbg); color:var(--labtx)}
+.t-skip{background:var(--line2); color:var(--tx3)}
+a{color:var(--accent); text-decoration:none; border-bottom:1px solid var(--accentbg)}
+a:hover{border-bottom-color:var(--accent)}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,"Courier New",monospace; font-size:13px;
+  background:var(--codbg); padding:1px 5px; border-radius:5px}
+pre{background:var(--codbg); border:1px solid var(--line); border-radius:10px; padding:14px 16px;
+  overflow-x:auto; font-family:ui-monospace,SFMono-Regular,Consolas,"Courier New",monospace;
+  font-size:12.8px; line-height:1.6; white-space:pre-wrap; word-break:break-word; margin:8px 0}
+ol,ul{padding-left:22px; margin:8px 0}
+li{margin:5px 0}
+.check{list-style:none; padding-left:0}
+.check li{display:flex; gap:10px; align-items:flex-start; margin:9px 0}
+.check input{margin-top:6px; width:16px; height:16px; accent-color:var(--accent); flex:0 0 auto; cursor:pointer}
+.check label{cursor:pointer}
+.check input:checked + label{color:var(--tx3); text-decoration:line-through}
+.kv{font-size:14px; color:var(--tx2); margin:4px 0}
+.kv b{color:var(--tx)}
+.foot{color:var(--tx3); font-size:12.5px; text-align:center; margin:44px 0 0; line-height:1.9}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="dtag">D16 ／ 35</div>
+  <h1>文档加载</h1>
+  <p class="sub">2026-11-21（周六）实际执行 ｜ 预计 3h ｜ 阶段：W3 第 2 天</p>
+  <p class="meta">目录 <code>week3-rag/day16-loaders/</code> ｜ 计划日 10-06 ｜ 语料已就位：114 页 HTML + 1 份 PDF + 你的 Markdown 笔记</p>
+</header>
+
+<div class="note">
+  <b>今天只干一件事：把三种格式的文件，变成同一种东西 —— <code>Document</code>。</b><br>
+  昨天定的 114 页语料还躺在磁盘上，是一堆 HTML。今天要让它变成 114 个带正文、带元数据的对象，
+  因为后面 D17 切分、D18 向量化，吃进去的只能是 <code>Document</code>。<br>
+  今天结束时你要能不看稿说出：<b>「加载器不判断正文，它只做两件事 —— 决定切分单位，把文件里的信息抄进 metadata。」</b>
+</div>
+
+<h2><span class="n">1</span>三小时怎么切</h2>
+<table>
+  <tr><th class="num">时间</th><th>做什么</th><th>类型</th><th class="num">时长</th></tr>
+  <tr><td class="num">0:00–0:43</td><td>视频 P34 + P35：RAG 文件加载器（一）（二），连着看</td><td><span class="tagline t-vid">视频</span></td><td class="num">43 分钟</td></tr>
+  <tr><td class="num">0:43–1:03</td><td>官方 <code>document_loaders</code> 页：<b>Interface</b> 小节 + 两张分类表 + 那段 sunset 说明</td><td><span class="tagline t-doc">文档</span></td><td class="num">20 分钟</td></tr>
+  <tr><td class="num">1:03–2:13</td><td>写 <code>loaders.py</code>，跑通 PDF / HTML / Markdown 三种 + 三处「你的活」</td><td><span class="tagline t-lab">动手</span></td><td class="num">70 分钟</td></tr>
+  <tr><td class="num">2:13–2:38</td><td><code>docs/journal/2026-10-06.md</code> + <code>decisions.md</code> 一条（为什么今天还用已 sunset 的包）</td><td><span class="tagline t-doc">文档</span></td><td class="num">25 分钟</td></tr>
+  <tr><td class="num">2:38–2:55</td><td>两次提交（见第 5 节）</td><td><span class="tagline t-lab">动手</span></td><td class="num">17 分钟</td></tr>
+  <tr><td class="num">2:55–3:00</td><td>缓冲：跑崩了重来、顺手看一眼 <code>lazy_load</code></td><td><span class="tagline t-skip">缓冲</span></td><td class="num">5 分钟</td></tr>
+</table>
+
+<p class="kv">进度上还有一笔旧账：<code>progress.md</code> 里 D14 仍是 <code>[ ]</code>，因为「三处你的活」和 <code>w2-assistant-v0.2</code> 的 tag 没做。它不挡今天，想清就先清，不想清就等 W2 收尾时一起补。</p>
+
+<h2><span class="n">2</span>视频：43 分钟，只有两集</h2>
+
+<div class="warn">
+  <b>计划表里那条 7 分钟的视频，指向一个已经下线的合集。</b><br>
+  计划写「第 4 讲 文档的加载与切割 07:10」，但它属于《大模型 RAG 入门到精通》（<code>BV1hccSeJEUD</code>）——
+  这个 BV 号从 D15 起就返回 <code>-404 啥都木有</code>，2026-11-21 再次核实仍是 404。<br>
+  而且就算能打开也对不上：该合集第 4 讲的标题是「大模型微调流程 06:30」，不是加载。<b>这条引用是错的，直接划掉。</b><br>
+  加载这件事由下面两集讲，共 42:53，比计划的 50 分钟还省 7 分钟。
+</div>
+
+<table>
+  <tr><th class="num">分 P</th><th>标题</th><th class="num">时长</th><th>看的时候盯住</th></tr>
+  <tr>
+    <td class="num"><a href="https://www.bilibili.com/video/BV1TKe3zmEQT/?p=34">P34</a></td>
+    <td>RAG 文件加载器（一）</td>
+    <td class="num">17:48</td>
+    <td>每讲一种加载器，它返回的 <b>Document 有几个</b>（一页一个？整篇一个？）</td>
+  </tr>
+  <tr>
+    <td class="num"><a href="https://www.bilibili.com/video/BV1TKe3zmEQT/?p=35">P35</a></td>
+    <td>RAG 文件加载器（二）</td>
+    <td class="num">25:05</td>
+    <td>打印出来的 <b>metadata 里有哪些字段</b>；讲师有没有拿它做过筛选</td>
+  </tr>
+</table>
+
+<p class="kv">合计 <b>42:53</b>。这两集属于同一个 41 P 的合集（<code>BV1TKe3zmEQT</code>），也就是 D15 看 P1/P2/P5 的那门课。</p>
+<p class="kv"><b>P36「RAG 文本拆分器（一）21:19」是 D17 的内容，今天不要点。</b>加载和切分是两件事，一起看会把「Document 的边界由谁决定」搞混——那是明天的主线。</p>
+
+<h2><span class="n">3</span>文档：20 分钟，只读三块</h2>
+
+<p class="kv">页面：<a href="https://docs.langchain.com/oss/python/integrations/document_loaders">Document loader integrations</a>（
+<s>计划表指向的 <code>…/langchain/document-loaders</code> 是 404，我核实过</s>，现行路径在 <code>integrations</code> 下）</p>
+
+<h3>① <code>Interface</code> 小节（3 分钟）</h3>
+<p class="kv">整页只有这一处讲 API，两个方法：</p>
+<ul>
+  <li><code>load()</code> —— 一次性把全部文档读进内存，返回 <code>list[Document]</code></li>
+  <li><code>lazy_load()</code> —— 返回生成器，读一条给一条</li>
+</ul>
+<p class="kv">为什么要有后者？因为 114 页不多，但一个公司的知识库可能是 11 万页。<b>能流式处理的时候不要一次性全读进来</b>，这是今天唯一需要记住的工程习惯。</p>
+
+<h3>② <code>By category</code> 下面的 Webpages / PDFs 两张表（7 分钟）</h3>
+<p class="kv">不用背，只看两件事：</p>
+<ul>
+  <li>每个加载器名字后面都标了 <b>Package</b> 或 <b>API</b> —— 说明绝大多数加载器<b>不在 LangChain 主包里</b>，要单独装</li>
+  <li>同一个格式有 <b>四五个加载器</b>（PDF 那行有 PyPDF / PyMuPDF / PDFMiner / PDFPlumber / Docling …）——
+    它们解析同一份 PDF 的结果不一样，表格、扫描件、多栏排版的还原能力差很多</li>
+</ul>
+
+<h3>③ 那段 sunset 提示（10 分钟，今天最重要）</h3>
+<p class="kv">原文（<b>未改写</b>）：</p>
+<div class="card">
+  <p class="kv"><code>PyPDFLoader</code>, <code>PyMuPDFLoader</code>, <code>PDFMinerLoader</code>, and <code>PDFPlumberLoader</code> live in the unmaintained <code>langchain-community</code> package but should no longer be used. Prefer one of the partner packages above for new work.</p>
+</div>
+<p class="kv">翻译过来：<b>官方让你别再用了</b>，建议换 Docling / Unstructured 这类合作方包。</p>
+
+<div class="warn">
+  <b>但今天你还是要用 <code>langchain-community</code>。</b>这是一个明确的取舍，不是忽略警告：<br><br>
+  <b>1. 课程用的就是它。</b>P34 / P35 的代码是 <code>langchain_community.document_loaders</code>，先对齐再迁移，否则你要同时学「加载器概念」和「换包」两件事。<br>
+  <b>2. 替代品的成本不在这 3 小时里。</b>Docling 要下版面分析模型，Unstructured 在 Windows 上要 poppler、libreoffice、tesseract —— 装完可能今天什么都不剩。<br>
+  <b>3. 接口是一样的。</b><code>load()</code> / <code>lazy_load()</code> / <code>Document(page_content, metadata)</code> 是 <code>BaseLoader</code> 定义的，换包只改 <code>import</code> 那一行。<br><br>
+  代价也要写清楚：每次运行顶部都会打一条 <code>DeprecationWarning</code>，而且这个包<b>不再修 bug</b>。
+  什么时候换？等你要处理扫描版 PDF、或者表格还原不准的时候 —— 那时你会自然地去找 Docling。
+</div>
+
+<h2><span class="n">4</span>动手：70 分钟，把 116 个文件变成 Document</h2>
+
+<h3>先把依赖装上（2 分钟）</h3>
+<p class="kv">我已经在你的 venv 里装好了，<b>你不用再装一遍</b>。命令记下来，换机器时用：</p>
+<pre>.venv/Scripts/python.exe -m pip install langchain-community pypdf beautifulsoup4 lxml</pre>
+<p class="kv">装完的实际变化：<code>langchain-community 0.4.2</code>、<code>pypdf 7.1.1</code>、<code>beautifulsoup4 4.15.0</code>、<code>lxml 6.1.3</code>，
+顺带带进来 <code>langchain-classic 1.0.8</code> 和 <code>langchain-text-splitters 1.1.3</code>（后者是 D17 要用的，到时候不用再装）。<code>langchain-core</code> 仍是 1.6.3，<b>没有被降级</b>。</p>
+
+<h3>建文件：<code>week3-rag/day16-loaders/loaders.py</code></h3>
+<p class="kv">整段粘进去，先跑通再改。这段我已在你的 venv 里<b>从真实路径完整跑过</b>，下面的「预期输出」是实际打印，不是推测。</p>
+
+<pre>"""D16 · 文档加载：把 PDF / HTML / Markdown 变成 Document"""
+import time
+from itertools import islice
+from pathlib import Path
+
+from langchain_community.document_loaders import BSHTMLLoader, PyPDFLoader, TextLoader
+
+ROOT = Path(__file__).resolve().parents[2]
+PDF = ROOT / "datasets/raw/x4-manual-pdf/X4_UserManual_CN.pdf"
+HTML_DIR = ROOT / "datasets/raw/x4-manual"
+MD = ROOT / "docs/journal/2026-10-05.md"
+
+
+def show(docs, n=1):
+    """打印前 n 条：正文多长、开头是什么、metadata 有哪些字段"""
+    for d in docs[:n]:
+        print(f"  [{len(d.page_content):>5} 字] {d.page_content[:60]!r}")
+        for k, v in d.metadata.items():
+            print(f"      {k} = {str(v)[:60]}")
+
+
+def load_pdf():
+    t0 = time.time()
+    docs = PyPDFLoader(str(PDF)).load()
+    print(f"\n[PDF] {len(docs)} 条，{time.time() - t0:.2f}s")
+    show(docs)
+    return docs
+
+
+def load_one_html():
+    t0 = time.time()
+    files = sorted(HTML_DIR.rglob("*.html"))
+    docs = BSHTMLLoader(str(files[0])).load()
+    print(f"\n[HTML 单页] {len(docs)} 条，{time.time() - t0:.2f}s  文件={files[0].name}")
+    show(docs)
+    return docs
+
+
+def load_all_html():
+    t0 = time.time()
+    total, longest = 0, ("", 0)
+    for f in sorted(HTML_DIR.rglob("*.html")):
+        docs = BSHTMLLoader(str(f)).load()
+        total += len(docs)
+        if docs and len(docs[0].page_content) &gt; longest[1]:
+            longest = (f.name, len(docs[0].page_content))
+    print(f"\n[HTML 全量] {total} 个 Document，{time.time() - t0:.2f}s")
+    print(f"  最长一篇：{longest[0]} {longest[1]} 字")
+    return total
+
+
+def load_md():
+    t0 = time.time()
+    docs = TextLoader(str(MD), encoding="utf-8").load()
+    print(f"\n[Markdown] {len(docs)} 条，{time.time() - t0:.2f}s")
+    show(docs)
+    return docs
+
+
+if __name__ == "__main__":
+    load_pdf()
+    load_one_html()
+    load_md()
+    load_all_html()</pre>
+
+<h3>预期输出（实测，数字要对得上）</h3>
+<pre>[PDF] 42 条，0.82s
+  [   24 字] 'X4 用户手册\nUser Manual\n用户手册'
+      producer = macOS 版本12.6.6（版号21G646） Quartz PDFContext
+      creator = WPS 文字
+      creationdate = 2024-05-20T17:09:00+09:09
+      author = Apache POI
+      ...
+      source = D:\AI_learning_project\03-Internship preparation\datasets\ra
+      total_pages = 42
+      page = 0
+      page_label = 1
+
+[HTML 单页] 1 条，0.07s  文件=fast-charge-hub.html
+  [ 4990 字] '影石Insta360 x4 操作指南-X系列：（多功能）充电管家、充电座搜索您的问题简体中文简体中文English日本語'
+      source = D:\AI_learning_project\03-Internship preparation\datasets\ra
+      title = 影石Insta360 x4 操作指南-X系列：（多功能）充电管家、充电座
+
+[Markdown] 1 条，0.00s
+  [ 2725 字] '# 2026-10-05 · D15 RAG 原理与三种架构\n\n## 一句话结论\n\nRAG 不训练模型、不改参数，它只是'
+      source = D:\AI_learning_project\03-Internship preparation\docs\journa
+
+[HTML 全量] 114 个 Document，0.42s
+  最长一篇：shooting-specs.html 7627 字</pre>
+
+<p class="kv">耗时会在 0.4–0.9 秒之间浮动，<b>数字对不上不用管</b>；要盯的是这四个：</p>
+<table>
+  <tr><th class="num">数字</th><th>说明</th></tr>
+  <tr><td class="num">42 条</td><td>PDF 是<b>一页一个 Document</b>，不是整本一个。你拿到的是一本 42 页的手册，所以 42 条</td></tr>
+  <tr><td class="num">1 vs 1 vs 1</td><td>HTML 一个文件、Markdown 一个文件，各自只产出 <b>1 条</b>。同一个 <code>load()</code>，切分单位由加载器决定</td></tr>
+  <tr><td class="num">16 / 2 / 1</td><td>三种格式的 metadata 字段数：PDF <b>16 个</b>（作者、创建时间、总页数…）、HTML <b>2 个</b>（source、title）、Markdown <b>只有 1 个</b>（source）</td></tr>
+  <tr><td class="num">24 字</td><td>PDF 第 1 页只有 24 字 —— 封面。它也会变成一个 Document，后面会污染检索</td></tr>
+</table>
+
+<h3>三处「你的活」（必须自己写，不许照抄）</h3>
+
+<div class="card">
+  <p class="kv"><b>① 找出口袋里的空页。</b>用 <code>load_pdf()</code> 的返回值，统计<b>有多少页正文少于 100 字</b>，并打印它们的页码。</p>
+  <p class="kv">提示：<code>len(d.page_content)</code> 直接能算，页码在 <code>d.metadata["page_label"]</code>。写 3 行就够。</p>
+  <p class="kv">想一下：<b>这些页该不该留？</b>如果留着，D19 检索「X4 怎么开机」时，封面这 24 个字可能被召回，白占一个 top-k 名额。</p>
+</div>
+
+<div class="card">
+  <p class="kv"><b>② 给每个 Document 补一个可过滤的字段。</b>114 页分属 5 个栏目，但 metadata 里<b>只有 source 和 title</b>，没有「这是哪个栏目」。</p>
+  <p class="kv">要求：遍历 114 个文件，给每条 <code>doc.metadata</code> 加上 <code>"section"</code>（取相对路径的第一段，例如 <code>camera/maintenance/waterproof.html</code> → <code>camera</code>），再统计每个栏目各有几条。</p>
+  <p class="kv">预期能数出：<code>operating_tutorials 47</code>、<code>troubleshooting 32</code>、<code>camera 25</code>、<code>specs 7</code>、<code>accessories-kit 3</code>。</p>
+  <p class="kv">这一条不是练手：<b>D20「检索优化」里的 metadata 过滤，靠的就是这个字段</b>——「只在 specs 里搜参数」比全库搜准得多。</p>
+</div>
+
+<div class="card">
+  <p class="kv"><b>③ 把 <code>load()</code> 换成 <code>lazy_load()</code>。</b>用 <code>islice(loader.lazy_load(), 2)</code> 只取前 2 条并打印。</p>
+  <p class="kv">顶部已经 import 了 <code>islice</code>（来自 <code>itertools</code>），等你用。写完回答自己一句：<b><code>load()</code> 和 <code>lazy_load()</code> 的差别在哪一行代码上？</b></p>
+  <p class="kv">提示：不是「有没有 <code>list()</code>」，而是<b>「什么时候开始读文件」</b>——<code>load()</code> 调用时就全读完，<code>lazy_load()</code> 返回时一个字节都还没读。</p>
+</div>
+
+<h3>验收标准</h3>
+<ul class="check">
+  <li><input type="checkbox" id="c1"><label for="c1">PDF 打出了 <b>42 条</b>，而且能说出「为什么不是 1 条」</label></li>
+  <li><input type="checkbox" id="c2"><label for="c2">HTML 全量打出了 <b>114 个 Document</b>，最长一篇是 <code>shooting-specs.html</code></label></li>
+  <li><input type="checkbox" id="c3"><label for="c3">能指着输出说出三种格式 metadata 字段数的差别：16 / 2 / 1</label></li>
+  <li><input type="checkbox" id="c4"><label for="c4">「你的活①」跑出来：PDF 有 <b>3 页</b>正文少于 100 字</label></li>
+  <li><input type="checkbox" id="c5"><label for="c5">「你的活②」给 114 条都加上了 <code>section</code>，五个栏目条数加起来是 114</label></li>
+  <li><input type="checkbox" id="c6"><label for="c6">「你的活③」用 <code>islice</code> 只取了 2 条，并能说出 lazy 省在哪</label></li>
+</ul>
+
+<h2><span class="n">5</span>提交什么</h2>
+
+<p class="kv">两次提交。Ctrl + K 打开后<b>记得取消勾选不属于本次的文件</b>：<code>.env</code>、<code>.venv/</code>、<code>.idea/</code>、<code>__pycache__/</code>、
+<code>datasets/raw/</code> 下的原始文件（114 页 HTML 和那份 3.2 MB PDF 都不入库）。</p>
+
+<h3>第 1 条：代码</h3>
+<pre>feat(day16): 三种格式统一成 Document，先看清 metadata 再谈切分
+
+现象：
+114 页 HTML 加载成 114 个 Document、0.42 秒；PDF 42 页变成 42 条，首页只有 24 字；
+HTML 每页开头约 100 字是「搜索您的问题 简体中文 English 日本語」这类导航，不是正文。
+
+我以为：
+加载器的作用是「把正文抽出来」，metadata 只是附带信息。
+
+做法：
+分别用 PyPDFLoader / BSHTMLLoader / TextLoader 加载三类文件，逐条打印 page_content 长度与 metadata；
+统计 PDF 里正文少于 100 字的页；给每个 Document 补 section 字段（源路径第一段），再按栏目计数。
+
+结论：
+加载器不判断正文，它只做两件事 —— 决定切分单位（PDF 按页、HTML/MD 按文件）+ 把文件信息抄进 metadata；
+三种格式的 metadata 字段数是 16 / 2 / 1，这个差别直接决定了后面能不能做过滤。
+噪声和空页不会自动消失，得自己处理。</pre>
+<p class="kv">勾选：<code>week3-rag/day16-loaders/loaders.py</code>、<code>week3-rag/day16-loaders/README.md</code>（如果勾了复选框）</p>
+
+<h3>第 2 条：文档</h3>
+<pre>docs(day16): 记下「官方让你别用 community，我今天还是用了」这个取舍
+
+现象：
+官方文档明写 PyPDFLoader 等已随 langchain-community sunset、should no longer be used，
+建议换 Docling / Unstructured 这类合作方包。
+
+我以为：
+文档说不要用，就应该找替代品。
+
+做法：
+先对齐课程 API（P34/P35 讲的就是 community），只装 pypdf / bs4 / lxml 四个轻依赖；
+把迁移代价记进 decisions：load() / lazy_load() 接口由 BaseLoader 定义，换包只改 import 一行。
+
+结论：
+文档的「不要用」是面向新项目的长期建议，不是今天的禁令；
+判断标准是「迁移成本 vs 今天的学习目标」，而不是「官方说了什么」。
+代价也记清楚：每次运行都打 DeprecationWarning，而且这个包不再修 bug。</pre>
+<p class="kv">勾选：<code>docs/journal/2026-10-06.md</code>、<code>docs/decisions.md</code>、<code>docs/progress.md</code>、<code>docs/daily/D16-文档加载.html</code></p>
+
+<h2><span class="n">6</span>坑预警</h2>
+<table>
+  <tr><th>症状</th><th>真实原因</th></tr>
+  <tr>
+    <td>每次运行顶部一段 <code>DeprecationWarning: langchain-community is being sunset</code></td>
+    <td><b>不是报错</b>，程序照跑。这是官方在提醒你包已停维护；第 3 节那段取舍就是解释这件事</td>
+  </tr>
+  <tr>
+    <td><code>ModuleNotFoundError: No module named 'langchain_community'</code></td>
+    <td>装包的 Python 和跑代码的不是同一个。PyCharm 右下角确认解释器是项目里的 <code>.venv</code></td>
+  </tr>
+  <tr>
+    <td><code>ValueError: File path ... is not a valid file or url</code></td>
+    <td>PDF 没下载到 <code>datasets/raw/x4-manual-pdf/</code>，或者文件名不是 <code>X4_UserManual_CN.pdf</code>。先 <code>ls</code> 一下</td>
+  </tr>
+  <tr>
+    <td>PDF 只有 42 条，但阅读器显示 43 页</td>
+    <td>手册确实是 42 页；阅读器的页码含封面偏移。<b>另外注意 <code>page</code> 从 0 开始、<code>page_label</code> 从 1 开始</b>，两者差 1</td>
+  </tr>
+  <tr>
+    <td>HTML 正文里混着「搜索您的问题简体中文English日本語…」</td>
+    <td>导航和语言切换块也是 HTML 文本，<code>BSHTMLLoader</code> 只按标签抽文字，不判断哪块是正文。每页约 100 字</td>
+  </tr>
+  <tr>
+    <td>中文变成乱码或方块</td>
+    <td>编码没对上。<code>BSHTMLLoader(path, open_encoding="utf-8")</code>；<code>TextLoader(path, encoding="utf-8")</code></td>
+  </tr>
+  <tr>
+    <td>Windows 报路径错误（<code>\U</code> 之类）</td>
+    <td>手拼路径碰上反斜杠转义。用 <code>Path</code> 拼，别写字符串</td>
+  </tr>
+</table>
+
+<h2><span class="n">7</span>今天完成的标准</h2>
+<ul class="check">
+  <li><input type="checkbox" id="c7"><label for="c7">视频 P34 / P35 看完（42:53），知道「加载器决定切分单位」</label></li>
+  <li><input type="checkbox" id="c8"><label for="c8">读了官方 Interface 小节，能说出 <code>load()</code> 与 <code>lazy_load()</code> 的区别</label></li>
+  <li><input type="checkbox" id="c9"><label for="c9">三种格式都跑通：42 条 PDF / 114 个 HTML / 1 条 Markdown</label></li>
+  <li><input type="checkbox" id="c10"><label for="c10">三处「你的活」写完（空页统计 / section 字段 / lazy_load）</label></li>
+  <li><input type="checkbox" id="c11"><label for="c11">能不看稿说出：加载器不做判断，只切分 + 抄 metadata</label></li>
+  <li><input type="checkbox" id="c12"><label for="c12">两次提交完成，<code>progress.md</code> 的 D16 打勾</label></li>
+</ul>
+
+<p class="foot">
+  D16 · 文档加载 ｜ 下一站 D17：文本切分（★ 关键实验）<br>
+  今天你只决定了「一份文档算多大」，明天才决定「一句话会被切成几段」。
+</p>
+
+</div>
+
+<script>
+document.querySelectorAll('.check input').forEach(function(box){
+  var key = 'd16-' + box.id;
+  if (localStorage.getItem(key) === '1') { box.checked = true; }
+  box.addEventListener('change', function(){
+    localStorage.setItem(key, box.checked ? '1' : '0');
+  });
+});
+</script>
+</body>
+</html>
