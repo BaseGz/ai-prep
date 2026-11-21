@@ -1,0 +1,59 @@
+{
+  "device": "Insta360 X4",
+  "category": "运动相机",
+  "released": "2024-04",
+  "specs": [
+    {
+      "id": 1,
+      "name": "传感器尺寸",
+      "value": "1/2",
+      "unit": "英寸",
+      "tags": ["影像", "核心"]
+    },
+    {
+      "id": 2,
+      "name": "光圈",
+      "value": "f/1.9",
+      "unit": null,
+      "tags": ["影像"]
+    },
+    {
+      "id": 3,
+      "name": "最高视频规格",
+      "value": "8K30",
+      "unit": "fps",
+      "tags": ["视频", "核心"],
+      "modes": ["8K30", "5.7K60", "4K100"]
+    },
+    {
+      "id": 4,
+      "name": "电池容量",
+      "value": 2290,
+      "unit": "mAh",
+      "tags": ["续航"]
+    },
+    {
+      "id": 5,
+      "name": "裸机防水",
+      "value": 10,
+      "unit": "米",
+      "tags": ["防护"],
+      "note": "需装镜头保护镜"
+    },
+    {
+      "id": 6,
+      "name": "整机重量",
+      "value": 203,
+      "unit": "g",
+      "tags": ["便携"]
+    },
+    {
+      "id": 7,
+      "name": "存储介质",
+      "value": "microSD",
+      "unit": null,
+      "tags": ["存储"],
+      "note": "推荐 U3/V30 以上"
+    }
+  ]
+}
