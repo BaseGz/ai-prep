@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>D17 · 文本切分 ｜ 影石实习准备</title>
+<style>
+:root{
+  --bg:#f6f7f9; --card:#fff; --line:#e5e7eb; --line2:#eef0f3;
+  --tx:#1a1d21; --tx2:#586170; --tx3:#8b939e;
+  --must:#b4232a; --mustbg:#fdecec;
+  --accent:#0f766e; --accentbg:#e6f4f2;
+  --vidbg:#eef2ff; --vidtx:#3538cd;
+  --docbg:#e9f7ef; --doctx:#1a7f4b;
+  --labbg:#fdf3e3; --labtx:#8a5200;
+  --codbg:#f3f4f6;
+  --radius:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0e1014; --card:#161920; --line:#252a33; --line2:#1e222a;
+    --tx:#e7e9ec; --tx2:#a2aab6; --tx3:#767e8a;
+    --must:#f08b8b; --mustbg:#3a1e20;
+    --accent:#2dd4bf; --accentbg:#12312e;
+    --vidbg:#1d2440; --vidtx:#9aa8f5;
+    --docbg:#12281c; --doctx:#6fd39c;
+    --labbg:#3a2e18; --labtx:#e0b070;
+    --codbg:#1b1f27;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0; padding:0 20px 90px; background:var(--bg); color:var(--tx);
+  font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif;
+  font-size:15px; line-height:1.7; -webkit-font-smoothing:antialiased;}
+.wrap{max-width:900px; margin:0 auto}
+header{padding:44px 0 6px}
+.dtag{display:inline-block; font-size:12px; font-weight:600; color:#fff; background:var(--accent);
+  padding:2px 10px; border-radius:6px; margin-bottom:12px; letter-spacing:.02em}
+h1{font-size:25px; font-weight:600; margin:0 0 8px; letter-spacing:-.01em}
+.sub{color:var(--tx2); font-size:14px; margin:0 0 6px}
+.meta{color:var(--tx3); font-size:13px; margin:0 0 22px}
+.note{background:var(--accentbg); border-left:3px solid var(--accent); padding:14px 18px;
+  border-radius:0 var(--radius) var(--radius) 0; font-size:14.5px; margin:18px 0}
+.note b{color:var(--accent)}
+.warn{background:var(--mustbg); border-left:3px solid var(--must); padding:14px 18px;
+  border-radius:0 var(--radius) var(--radius) 0; font-size:14px; margin:18px 0}
+.warn b{color:var(--must)}
+h2{font-size:17px; font-weight:600; margin:40px 0 12px; padding-bottom:9px;
+  border-bottom:1px solid var(--line); display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+h2 .n{font-size:12px; font-weight:600; background:var(--accentbg); color:var(--accent);
+  padding:2px 9px; border-radius:99px}
+h3{font-size:14.5px; font-weight:600; margin:22px 0 8px; color:var(--tx)}
+.card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+  padding:16px 20px; margin:12px 0}
+table{width:100%; border-collapse:collapse; font-size:14px; margin:10px 0;
+  background:var(--card); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden}
+th{text-align:left; font-weight:600; font-size:12.5px; color:var(--tx3); background:var(--line2);
+  padding:9px 12px; white-space:nowrap}
+td{padding:9px 12px; border-top:1px solid var(--line2); vertical-align:top}
+td.num,th.num{font-variant-numeric:tabular-nums; white-space:nowrap; color:var(--tx2)}
+.tagline{display:inline-block; font-size:11.5px; font-weight:600; padding:1px 7px; border-radius:5px; white-space:nowrap}
+.t-vid{background:var(--vidbg); color:var(--vidtx)}
+.t-doc{background:var(--docbg); color:var(--doctx)}
+.t-lab{background:var(--labbg); color:var(--labtx)}
+.t-skip{background:var(--line2); color:var(--tx3)}
+a{color:var(--accent); text-decoration:none; border-bottom:1px solid var(--accentbg)}
+a:hover{border-bottom-color:var(--accent)}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,"Courier New",monospace; font-size:13px;
+  background:var(--codbg); padding:1px 5px; border-radius:5px}
+pre{background:var(--codbg); border:1px solid var(--line); border-radius:10px; padding:14px 16px;
+  overflow-x:auto; font-family:ui-monospace,SFMono-Regular,Consolas,"Courier New",monospace;
+  font-size:12.8px; line-height:1.6; white-space:pre-wrap; word-break:break-word; margin:8px 0}
+ol,ul{padding-left:22px; margin:8px 0}
+li{margin:5px 0}
+.check{list-style:none; padding-left:0}
+.check li{display:flex; gap:10px; align-items:flex-start; margin:9px 0}
+.check input{margin-top:6px; width:16px; height:16px; accent-color:var(--accent); flex:0 0 auto; cursor:pointer}
+.check label{cursor:pointer}
+.check input:checked + label{color:var(--tx3); text-decoration:line-through}
+.kv{font-size:14px; color:var(--tx2); margin:4px 0}
+.kv b{color:var(--tx)}
+.foot{color:var(--tx3); font-size:12.5px; text-align:center; margin:44px 0 0; line-height:1.9}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="dtag">D17 ／ 35 · ★ 关键实验</div>
+  <h1>文本切分</h1>
+  <p class="sub">2026-11-22（周日）实际执行 ｜ 预计 3.5h ｜ 阶段：W3 第 3 天</p>
+  <p class="meta">目录 <code>experiments/chunking/</code> ｜ 计划日 10-07 ｜ 数据直接复用 D16 的 114 页语料</p>
+</header>
+
+<div class="note">
+  <b>今天只干一件事：决定「一段话算多大」。</b><br>
+  昨天你把 114 个 HTML 变成了 Document，但那 114 条还是整页整页的 —— 最长的一页 7627 字，
+  塞进模型会超长，做检索又太笼统。今天要把「整页」切成「段」。<br>
+  今天结束时你要能不看稿说出：<b>「chunk 边界决定检索能返回什么。切太碎丢上下文，切太大糊掉语义，
+  重叠是用冗余换边界处的完整。」</b>
+</div>
+
+<div class="warn">
+  <b>计划表这条又错了，已核实。</b> 计划表里「RAG 入门到精通 第 36–39 讲」挂的链接是
+  <code>BV1hccSeJEUD</code>，<b>2026-11-22 复核仍是 404</b>（这是第三次）。<br>
+  实际这四讲在 <code>BV1TKe3zmEQT</code> —— 就是<b>你昨天看 P34 / P35 的同一个合集</b>，
+  接着往下就是 P36–P39。时长 21:19 + 26:06 + 06:36 + 17:45 = <b>71:46</b>，跟计划表写的「约 72 分钟」一致，
+  错的只是 BV 号。
+</div>
+
+<h2><span class="n">1</span>三个半小时怎么切</h2>
+<table>
+  <tr><th>时段</th><th>做什么</th><th class="num">时长</th></tr>
+  <tr><td class="num">0:00 – 1:12</td><td><span class="tagline t-vid">视频</span> P36–P39 文本拆分器四集</td><td class="num">72 分钟</td></tr>
+  <tr><td class="num">1:12 – 1:37</td><td><span class="tagline t-doc">文档</span> 官方 chunking 页（七个小节）</td><td class="num">25 分钟</td></tr>
+  <tr><td class="num">1:37 – 3:02</td><td><span class="tagline t-lab">动手</span> 四种粒度 + 两档重叠，跑对比</td><td class="num">85 分钟</td></tr>
+  <tr><td class="num">3:02 – 3:22</td><td>写结论（进 <code>decisions.md</code>）+ journal</td><td class="num">20 分钟</td></tr>
+  <tr><td class="num">3:22 – 3:30</td><td>缓冲 / 补昨天的遗留</td><td class="num">8 分钟</td></tr>
+</table>
+<p class="kv">合计 <b>210 分钟</b>。今天是重点日，视频占 72 分钟是有意的 —— 四集连看才成体系，
+别拆成两天。</p>
+
+<h2><span class="n">2</span>视频：P36–P39（71:46）</h2>
+<p class="kv">同一个合集：<a href="https://www.bilibili.com/video/BV1TKe3zmEQT/" target="_blank">BV1TKe3zmEQT</a>（AI大模型技术 · 41 P · 2025-08-20）</p>
+
+<table>
+  <tr><th>分 P</th><th>标题</th><th class="num">时长</th><th>看完请回答</th></tr>
+  <tr>
+    <td><a href="https://www.bilibili.com/video/BV1TKe3zmEQT/?p=36" target="_blank">P36</a></td>
+    <td>36.RAG文本拆分器（一）</td>
+    <td class="num">21:19</td>
+    <td>切分器到底在解决什么问题？为什么不能直接把整页丢给模型？</td>
+  </tr>
+  <tr>
+    <td><a href="https://www.bilibili.com/video/BV1TKe3zmEQT/?p=37" target="_blank">P37</a></td>
+    <td>37.RAG文本拆分器（二）</td>
+    <td class="num">26:06</td>
+    <td><code>CharacterTextSplitter</code> 和 <code>RecursiveCharacterTextSplitter</code> 差在哪？为什么后者才是默认选项？</td>
+  </tr>
+  <tr>
+    <td><a href="https://www.bilibili.com/video/BV1TKe3zmEQT/?p=38" target="_blank">P38</a></td>
+    <td>38.RAG文本拆分器（三）</td>
+    <td class="num">06:36</td>
+    <td>这一集最短，通常是某个具体切分器或参数。看完能说清它对应哪种文档类型吗？</td>
+  </tr>
+  <tr>
+    <td><a href="https://www.bilibili.com/video/BV1TKe3zmEQT/?p=39" target="_blank">P39</a></td>
+    <td>39.RAG文本拆分器（四）</td>
+    <td class="num">17:45</td>
+    <td><code>chunk_overlap</code> 为什么需要？重叠多了会付出什么代价？</td>
+  </tr>
+</table>
+
+<p class="kv"><b>看的时候注意</b>：这四集的 <code>import</code> 大概还是 <code>langchain.text_splitter</code> 或
+<code>langchain_community</code> 的旧路径。你的环境是 <code>langchain_text_splitters</code>（1.1.3，已装），
+<b>代码照执行单写，别照视频抄</b>。判据昨天说过：看 import 路径的世代，不看投稿日期。</p>
+
+<h2><span class="n">3</span>文档：官方 chunking 页（25 分钟）</h2>
+<p class="kv">主页面：<a href="https://docs.langchain.com/oss/python/langchain/chunking" target="_blank">docs.langchain.com/oss/python/langchain/chunking</a></p>
+<p class="kv">这页是 v1 新写的，<b>比计划表指的「站内搜 text splitters」精确得多</b>。七个小节，按下面的顺序读：</p>
+
+<table>
+  <tr><th>小节</th><th>读什么</th><th class="num">分钟</th></tr>
+  <tr>
+    <td><code>Balance chunk size and overlap</code></td>
+    <td>小 chunk 与 大 chunk 各自的代价；<b>官方的重叠起点是 10%–20%</b>；那张三行的「碎 / 糊 / 切断」诊断表 —— 这是今天最值钱的一屏</td>
+    <td class="num">5</td>
+  </tr>
+  <tr>
+    <td><code>Start with recursive character splitting</code></td>
+    <td>官方明确推荐 <code>RecursiveCharacterTextSplitter</code> 作为通用默认；示例给的是 <code>1000 / 200</code></td>
+    <td class="num">3</td>
+  </tr>
+  <tr>
+    <td><code>Size chunks by tokens</code></td>
+    <td>为什么字符数只是「代理指标」，真正受限的是 token；<code>from_tiktoken_encoder</code> 怎么写</td>
+    <td class="num">4</td>
+  </tr>
+  <tr>
+    <td><code>Split on document structure</code></td>
+    <td>Markdown 按标题切、代码按函数切；注意它给的两步走：先按标题切，再按大小切</td>
+    <td class="num">4</td>
+  </tr>
+  <tr>
+    <td><code>Chunk by meaning</code></td>
+    <td><b>只读结论</b>：<code>SemanticChunker</code> 在 <code>langchain-experimental</code>（已不维护），官方说新项目别用</td>
+    <td class="num">2</td>
+  </tr>
+  <tr>
+    <td><code>Attach metadata to chunks</code></td>
+    <td><code>add_start_index=True</code> 记的是什么；为什么 source / section / 位置 三样都要带</td>
+    <td class="num">4</td>
+  </tr>
+  <tr>
+    <td><code>Choose a strategy</code> + <code>Evaluate your chunking</code></td>
+    <td>那张「文档类型 → 策略」对照表；最后一句 <b>“Chunking choices are empirical”</b> —— 今天动手部分的全部理由</td>
+    <td class="num">3</td>
+  </tr>
+</table>
+
+<p class="kv">辅助页（只用来查类名和包名，别通读）：<a href="https://docs.langchain.com/oss/python/integrations/splitters" target="_blank">Text splitter integrations</a></p>
+
+<h2><span class="n">4</span>动手：四种粒度 + 两档重叠（85 分钟）</h2>
+
+<p class="kv">新建 <code>experiments/chunking/chunking.py</code>。<b>下面这段我已在你的 venv 里整段跑过</b>，
+输出与第 4.3 节印的数字逐行一致。</p>
+
+<pre>"""D17 · 文本切分：同一份文档，四种粒度各切一遍"""
+from pathlib import Path
+
+from langchain_community.document_loaders import BSHTMLLoader
+from langchain_core.documents import Document
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+
+ROOT = Path(__file__).resolve().parents[2]
+HTML_DIR = ROOT / "datasets/raw/x4-manual"
+MD = ROOT / "docs/journal/2026-10-05.md"
+
+
+def load_all_html():
+    """加载 114 个 HTML，并补上 section（昨天欠的那一步，这次要返回 docs）"""
+    docs = []
+    for f in sorted(HTML_DIR.rglob("*.html")):
+        section = f.relative_to(HTML_DIR).parts[0]
+        for d in BSHTMLLoader(str(f), open_encoding="utf-8").load():
+            d.metadata["section"] = section
+            docs.append(d)
+    return docs
+
+
+def report(chunks, label):
+    """一组 chunk 的统计：条数 / 平均 / 最短 / 最长"""
+    lens = [len(c.page_content) for c in chunks]
+    avg = sum(lens) // len(lens)
+    print(f"{label:28} {len(chunks):>4} 块 | 平均 {avg:>4} | 最短 {min(lens):>4} | 最长 {max(lens):>4}")
+
+
+def main():
+    md_text = MD.read_text(encoding="utf-8")
+    doc = Document(page_content=md_text, metadata={"source": MD.name, "section": "journal"})
+    print(f"源文档：{MD.name}，{len(md_text)} 字\n")
+
+    for size in (300, 500, 1000, 2000):
+        sp = RecursiveCharacterTextSplitter(chunk_size=size, chunk_overlap=0)
+        report(sp.split_documents([doc]), f"size={size} overlap=0")
+
+    print()
+    for size, pct in ((500, 0.15), (1000, 0.15), (1000, 0.3)):
+        ov = int(size * pct)
+        sp = RecursiveCharacterTextSplitter(chunk_size=size, chunk_overlap=ov)
+        report(sp.split_documents([doc]), f"size={size} overlap={ov}")
+
+
+if __name__ == "__main__":
+    main()</pre>
+
+<h3>4.1 先跑一遍，确认这 7 行</h3>
+<pre>源文档：2026-10-05.md，2725 字
+
+size=300 overlap=0             14 块 | 平均  192 | 最短   22 | 最长  291
+size=500 overlap=0              7 块 | 平均  387 | 最短  246 | 最长  497
+size=1000 overlap=0             3 块 | 平均  906 | 最短  829 | 最长  986
+size=2000 overlap=0             2 块 | 平均 1361 | 最短  829 | 最长 1893
+
+size=500 overlap=75             7 块 | 平均  414 | 最短  300 | 最长  494
+size=1000 overlap=150           4 块 | 平均  757 | 最短  414 | 最长  986
+size=1000 overlap=300           4 块 | 平均  828 | 最短  511 | 最长  997</pre>
+
+<p class="kv">盯着两个数字看：<b>size=300 最短只有 22 字</b>（一块里什么都装不下），
+<b>size=2000 最短 829、最长 1893</b>（切不满了，因为整篇才 2725 字）。</p>
+
+<h3>4.2 三处「你的活」</h3>
+
+<p class="kv"><b>① <code>cut_ratio(chunks)</code> —— 写「有没有把一句话切断」的判据</b></p>
+<p class="kv">执行单要求你记录「是否把一句话切断」，但<b>「切断」得先被定义成一件事，代码才能数</b>。
+一个够用的判据：块的结尾如果不是句末标点，就算切断了。填空：</p>
+<pre>ENDS = ("。", "！", "？", "；", "\n", "”", "」")
+
+def cut_ratio(chunks):
+    """返回 (被切断的块数, 总块数_不含最后一块)"""
+    cut = 0
+    for c in chunks[____]:          # ① 最后一块没有「后面」可以接，排除掉
+        text = c.page_content.____()   # ② 去掉尾部空白，否则 '\n' 会被当成正常结尾
+        if not text.endswith(____):    # ③ 填判据
+            cut += 1
+    return cut, len(chunks) - 1</pre>
+<p class="kv">跑完你会看到 size=300 时切断率最高。但注意：<b>这个判据只在「有完整句子」的文档上成立</b> ——
+拿 shooting-specs.html（一堆参数短行，本来就没句号）去算，会得到 96% 的假阳性。所以活①请只用 journal 那份。</p>
+
+<p class="kv"><b>② <code>tag_after_split()</code> —— 把昨天的欠账补上，并验证 metadata 能不能穿过切分</b></p>
+<pre>def tag_after_split():
+    """全量 114 个 Document 切一遍，验证 section 还在，并按栏目统计块数"""
+    docs = load_all_html()
+    chunks = RecursiveCharacterTextSplitter(
+        chunk_size=1000,
+        chunk_overlap=150,
+        ____=True,          # ① 让每块记住自己在原文里的起始位置
+    ).____(docs)            # ② 哪个方法？注意不是 split_text
+
+    print(f"{len(docs)} 个 Document -> {len(chunks)} 块")
+    print("首块 metadata:", chunks[0].metadata)
+
+    counts = {}
+    for c in chunks:
+        s = c.metadata.____("section", "?")   # ③ 取不到就给 "?"
+        counts[s] = counts.get(s, 0) + 1
+    for k, v in sorted(counts.items()):
+        print(f"  {k:22} {v}")</pre>
+<p class="kv">预期：<b>114 → 250 块，膨胀 2.2 倍</b>，且每块 metadata 里 <code>section</code> 还在。
+如果 <code>section</code> 打印成 <code>?</code>，说明你用了 <code>split_text()</code> —— 它会丢光 metadata。</p>
+
+<p class="kv"><b>③ <code>try_token_split()</code> —— 字符 vs token，差多少</b></p>
+<pre>def try_token_split():
+    """同样「1000 的大小」，按 token 量会得到不同的块"""
+    from langchain_text_splitters import RecursiveCharacterTextSplitter
+    import tiktoken
+
+    text = MD.read_text(encoding="utf-8")
+    enc = tiktoken.get_encoding("cl100k_base")
+    n_tok = len(enc.encode(text))
+    print(f"{len(text)} 字 = {n_tok} token，1 token 约 {len(text)/n_tok:.2f} 字")
+
+    sp = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
+        encoding_name="cl100k_base", chunk_size=256, chunk_overlap=32
+    )
+    chunks = sp.split_text(text)
+    print(f"token 切分 256/32 -> {len(chunks)} 块，平均 {sum(len(c) for c in chunks)//len(chunks)} 字符")</pre>
+<p class="kv">预期：<b>2725 字 = 2099 token，1 token ≈ 1.3 字；切出 11 块，平均 251 字符</b>。
+中文比英文「字少 token 多」，所以按字符切的 1000，实际可能是 700–800 个 token —— 这就是官方说
+「字符数只是代理指标」的意思。</p>
+
+<h3>4.3 验收标准</h3>
+<ul class="check">
+  <li><input type="checkbox" id="c1"><label for="c1">骨架跑通，7 行统计与 4.1 节的数字一致</label></li>
+  <li><input type="checkbox" id="c2"><label for="c2">活① 写完，能说出「size 越小切断越多」以及这个判据的适用边界</label></li>
+  <li><input type="checkbox" id="c3"><label for="c3">活② 跑出 250 块，<code>section</code> 在 metadata 里还在</label></li>
+  <li><input type="checkbox" id="c4"><label for="c4">活③ 跑出 2099 token、11 块，能解释「1 token ≈ 1.3 字」</label></li>
+  <li><input type="checkbox" id="c5"><label for="c5">手写一句结论：<b>我选 chunk_size=____ + overlap=____，因为____</b></label></li>
+</ul>
+
+<h2><span class="n">5</span>提交什么</h2>
+<p class="kv">分 <b>2 次</b>提交，PyCharm 里 <code>Ctrl + K</code>。<b>取消勾选</b>
+<code>.venv/</code>、<code>.idea/</code>、<code>__pycache__/</code>、<code>.env</code>、<code>datasets/raw/</code>。</p>
+
+<h3>第 1 条：代码</h3>
+<p class="kv">勾选：<code>experiments/chunking/chunking.py</code>（若有切分结果样本也一起勾）</p>
+<pre>exp(chunking): 同一份文档切 300/500/1000/2000 四种粒度，量出边界代价
+
+现象：
+2725 字的中文文档，size=300 切成 14 块、最短只有 22 字；size=2000 只切 2 块；
+114 个 HTML（17.7 万字）按 1000/150 切成 250 块，膨胀 2.2 倍，耗时 0.00s。
+
+我以为：
+切分就是按长度硬切，chunk_size 越小越精确。
+
+做法：
+RecursiveCharacterTextSplitter 四种 size 各切一遍，统计块数/最短/最长；
+再加 15% 与 30% 两档重叠对比；全量 114 个 Document 走 split_documents 保留 section 与 start_index。
+
+结论：
+chunk 边界决定检索能返回什么 —— 切太碎丢上下文，切太大糊掉语义，重叠是用冗余换边界处的完整。
+size 是上限不是定值：递归切分优先在段落处断开，实际长度普遍小于上限。</pre>
+
+<h3>第 2 条：文档</h3>
+<p class="kv">勾选：<code>docs/decisions.md</code>、<code>docs/journal/2026-10-07.md</code>、<code>docs/progress.md</code>、
+<code>docs/daily/D17-文本切分.html</code>、<code>docs/plan/35天学习计划表.html</code>（我改了 D17 那行的 BV 号）</p>
+<pre>docs(day17): 选定 chunk_size=1000 + overlap=150（15%）
+
+现象：
+同一份文档，300 切出 14 块、最短 22 字；2000 只切 2 块、每块 1361 字；
+1000+150 得到 4 块，平均 757 字，最短 414 字。全量 114 页按此参数得 250 块。
+
+我以为：
+官方示例给的是 1000/200，照抄就行。
+
+做法：
+四种粒度 + 两档重叠实测，记录块数与长度分布；对照官方 chunking 页「碎 / 糊 / 切断」三条诊断；
+把 15% 而不是 20% 的理由写进 decisions。
+
+结论：
+选 15% 是因为中文单块信息密度高，重叠再多只是重复计费；选 1000 是因为这是手册的段落尺度。
+前提是「114 页操作手册 + 问答式检索」，换文档必须重测 —— chunking 是经验值，不是常数。</pre>
+
+<h2><span class="n">6</span>坑预警</h2>
+<table>
+  <tr><th>症状</th><th>真实原因</th></tr>
+  <tr>
+    <td><code>AttributeError: 'str' object has no attribute 'page_content'</code></td>
+    <td><code>split_text()</code> 返回 <b>list[str]</b>，<code>split_documents()</code> 返回 <b>list[Document]</b>。
+    统计函数混用两种返回值就会炸（我写骨架时就撞了一次）</td>
+  </tr>
+  <tr>
+    <td>切完 <code>metadata</code> 里的 <code>section</code> 没了</td>
+    <td>用了 <code>split_text()</code>。它只认字符串，不认 Document，metadata 全丢。
+    要保留就 <code>split_documents()</code></td>
+  </tr>
+  <tr>
+    <td>中文被从句子中间硬切开</td>
+    <td>默认 <code>separators</code> 是 <code>["\n\n","\n"," ",""]</code>，中文没空格，
+    段落之外会一路退到 <code>""</code>（字符级）硬切。实测加中文标点作为分隔符<b>效果有限</b>，
+    真要优化得配 <code>is_separator_regex</code></td>
+  </tr>
+  <tr>
+    <td>块数暴涨、内容大量重复</td>
+    <td><code>chunk_overlap</code> 接近 <code>chunk_size</code> 了。实测 size=100/overlap=100 会切出 49 块。
+    重叠保持在 10%–20%</td>
+  </tr>
+  <tr>
+    <td><code>UnicodeDecodeError: 'gbk' codec ...</code></td>
+    <td>昨天那条又来了。HTML 一律 <code>BSHTMLLoader(path, open_encoding="utf-8")</code></td>
+  </tr>
+  <tr>
+    <td>向量库报 <code>Expected metadata value to be a str, int, float or bool</code></td>
+    <td>D18 才会撞。metadata 里塞了 list（比如 JSON 的 <code>tags</code>）。
+    入向量库前统一转成 <code>",".join(...)</code></td>
+  </tr>
+</table>
+
+<h2><span class="n">7</span>今天完成的标准</h2>
+<ul class="check">
+  <li><input type="checkbox" id="c6"><label for="c6">视频 P36–P39 看完（71:46），能说出递归切分和固定长度切分的差别</label></li>
+  <li><input type="checkbox" id="c7"><label for="c7">读了官方 chunking 页的 <code>Balance chunk size and overlap</code> 与 <code>Attach metadata</code> 两节</label></li>
+  <li><input type="checkbox" id="c8"><label for="c8">骨架跑通，7 行统计与执行单一致</label></li>
+  <li><input type="checkbox" id="c9"><label for="c9">三处「你的活」写完（判据 / 全量 250 块 / token 对比）</label></li>
+  <li><input type="checkbox" id="c10"><label for="c10">写出一句能被面试官追问的结论：选了多大、为什么、换文档怎么办</label></li>
+  <li><input type="checkbox" id="c11"><label for="c11">两次提交完成，<code>progress.md</code> 的 D17 打勾</label></li>
+</ul>
+
+<p class="foot">
+  D17 · 文本切分 ｜ 下一站 D18：向量与 Embedding<br>
+  今天你决定了「一段话算多大」，明天才决定「这段话被压成什么样的数字」。
+</p>
+
+</div>
+
+<script>
+document.querySelectorAll('.check input').forEach(function(box){
+  var key = 'd17-' + box.id;
+  if (localStorage.getItem(key) === '1') { box.checked = true; }
+  box.addEventListener('change', function(){
+    localStorage.setItem(key, box.checked ? '1' : '0');
+  });
+});
+</script>
+</body>
+</html>

@@ -122,6 +122,7 @@ var S = {
   dPersist: "https://docs.langchain.com/oss/python/langgraph/checkpointers",
   dRetrieval: "https://docs.langchain.com/oss/python/langchain/retrieval",
   dLoaders: "https://docs.langchain.com/oss/python/integrations/document_loaders",
+  dChunk: "https://docs.langchain.com/oss/python/langchain/chunking",
   dSmith: "https://docs.langchain.com/langsmith/observability",
   dTrace: "https://docs.langchain.com/langsmith/trace-with-langchain",
   chroma: "https://docs.trychroma.com/"
@@ -233,8 +234,8 @@ var PLAN = [
      {k:"lab", x:"<b>实操：</b>加载 3 种格式（PDF / Markdown / 网页），打印 Document 的正文和 metadata，看清元数据里有什么可用信息", tm:"70 分钟"}
    ]},
    { t:"文本切分（关键实验）", h:"3.5h", star:true, tasks:[
-     {k:"vid", x:"RAG 入门到精通 <b>第 36–39 讲 文本拆分器</b>（21:19 / 26:06 / 06:36 / 17:45）", l:S.rag, tm:"约 72 分钟"},
-     {k:"doc", x:"官方文本切分器页面（站内搜 text splitters）参数说明", l:S.dOverview, tm:"20 分钟"},
+     {k:"vid", x:"《RAG 向量数据库全套》<b>P36 RAG文本拆分器(一) 21:19 + P37 (二) 26:06 + P38 (三) 06:36 + P39 (四) 17:45</b>（<s>原「RAG 入门到精通 第 36–39 讲」所属合集 BV1hccSeJEUD 已 404，这四讲实际就在 D16 用的同一个合集里</s>）", l:S.ragfull, tm:"72 分钟"},
+     {k:"doc", x:"官方 <b>Chunk documents for retrieval</b> 页：Balance chunk size and overlap（含 10%–20% 重叠经验值与「碎/糊/切断」三行诊断表）+ Size chunks by tokens + Split on document structure + Attach metadata（<s>原写的「站内搜 text splitters」与切分策略无关</s>）", l:S.dChunk, tm:"25 分钟"},
      {k:"lab", x:"<b>实操：</b>同一份文档用 500 / 1000 / 2000 三种粒度、不同重叠各切一遍，记录 chunk 数量、内容完整性、有没有把一句话切断", tm:"80 分钟"},
      {k:"key", x:"把这份对比结果写成结论（例如「500 太碎丢上下文，2000 检索精度下降，最终选 1000 + 15% 重叠」）。<b>面试必问「你怎么切的、为什么」，这就是答案。</b>"}
    ]},

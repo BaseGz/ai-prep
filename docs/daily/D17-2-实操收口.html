@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>D17-2 · 文本切分实操收口 ｜ 影石实习准备</title>
+<style>
+:root{
+  --bg:#f6f7f9; --card:#fff; --line:#e5e7eb; --line2:#eef0f3;
+  --tx:#1a1d21; --tx2:#586170; --tx3:#8b939e;
+  --must:#b4232a; --mustbg:#fdecec;
+  --accent:#0f766e; --accentbg:#e6f4f2;
+  --vidbg:#eef2ff; --vidtx:#3538cd;
+  --docbg:#e9f7ef; --doctx:#1a7f4b;
+  --labbg:#fdf3e3; --labtx:#8a5200;
+  --codbg:#f3f4f6;
+  --radius:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0e1014; --card:#161920; --line:#252a33; --line2:#1e222a;
+    --tx:#e7e9ec; --tx2:#a2aab6; --tx3:#767e8a;
+    --must:#f08b8b; --mustbg:#3a1e20;
+    --accent:#2dd4bf; --accentbg:#12312e;
+    --vidbg:#1d2440; --vidtx:#9aa8f5;
+    --docbg:#12281c; --doctx:#6fd39c;
+    --labbg:#3a2e18; --labtx:#e0b070;
+    --codbg:#1b1f27;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0; padding:0 20px 90px; background:var(--bg); color:var(--tx);
+  font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif;
+  font-size:15px; line-height:1.7; -webkit-font-smoothing:antialiased;}
+.wrap{max-width:900px; margin:0 auto}
+header{padding:44px 0 6px}
+.dtag{display:inline-block; font-size:12px; font-weight:600; color:#fff; background:var(--accent);
+  padding:2px 10px; border-radius:6px; margin-bottom:12px; letter-spacing:.02em}
+h1{font-size:25px; font-weight:600; margin:0 0 8px; letter-spacing:-.01em}
+.sub{color:var(--tx2); font-size:14px; margin:0 0 6px}
+.meta{color:var(--tx3); font-size:13px; margin:0 0 22px}
+.note{background:var(--accentbg); border-left:3px solid var(--accent); padding:14px 18px;
+  border-radius:0 var(--radius) var(--radius) 0; font-size:14.5px; margin:18px 0}
+.note b{color:var(--accent)}
+.warn{background:var(--mustbg); border-left:3px solid var(--must); padding:14px 18px;
+  border-radius:0 var(--radius) var(--radius) 0; font-size:14px; margin:18px 0}
+.warn b{color:var(--must)}
+h2{font-size:17px; font-weight:600; margin:40px 0 12px; padding-bottom:9px;
+  border-bottom:1px solid var(--line); display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+h2 .n{font-size:12px; font-weight:600; background:var(--accentbg); color:var(--accent);
+  padding:2px 9px; border-radius:99px}
+h3{font-size:14.5px; font-weight:600; margin:22px 0 8px; color:var(--tx)}
+.card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+  padding:16px 20px; margin:12px 0}
+table{width:100%; border-collapse:collapse; font-size:14px; margin:10px 0;
+  background:var(--card); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden}
+th{text-align:left; font-weight:600; font-size:12.5px; color:var(--tx3); background:var(--line2);
+  padding:9px 12px; white-space:nowrap}
+td{padding:9px 12px; border-top:1px solid var(--line2); vertical-align:top}
+td.num,th.num{font-variant-numeric:tabular-nums; white-space:nowrap; color:var(--tx2)}
+.tagline{display:inline-block; font-size:11.5px; font-weight:600; padding:1px 7px; border-radius:5px; white-space:nowrap}
+.t-vid{background:var(--vidbg); color:var(--vidtx)}
+.t-doc{background:var(--docbg); color:var(--doctx)}
+.t-lab{background:var(--labbg); color:var(--labtx)}
+.t-skip{background:var(--line2); color:var(--tx3)}
+a{color:var(--accent); text-decoration:none; border-bottom:1px solid var(--accentbg)}
+a:hover{border-bottom-color:var(--accent)}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,"Courier New",monospace; font-size:13px;
+  background:var(--codbg); padding:1px 5px; border-radius:5px}
+pre{background:var(--codbg); border:1px solid var(--line); border-radius:10px; padding:14px 16px;
+  overflow-x:auto; font-family:ui-monospace,SFMono-Regular,Consolas,"Courier New",monospace;
+  font-size:12.8px; line-height:1.6; white-space:pre-wrap; word-break:break-word; margin:8px 0}
+ol,ul{padding-left:22px; margin:8px 0}
+li{margin:5px 0}
+.check{list-style:none; padding-left:0}
+.check li{display:flex; gap:10px; align-items:flex-start; margin:9px 0}
+.check input{margin-top:6px; width:16px; height:16px; accent-color:var(--accent); flex:0 0 auto; cursor:pointer}
+.check label{cursor:pointer}
+.check input:checked + label{color:var(--tx3); text-decoration:line-through}
+.kv{font-size:14px; color:var(--tx2); margin:4px 0}
+.kv b{color:var(--tx)}
+.foot{color:var(--tx3); font-size:12.5px; text-align:center; margin:44px 0 0; line-height:1.9}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="dtag">D17-2 ／ 35 · ★ 关键实验</div>
+  <h1>文本切分 · 实操收口</h1>
+  <p class="sub">七级练习走完 d5–d7，然后把 <code>chunking.py</code> 里那三处 <code>pass</code> 换成你自己的代码</p>
+  <p class="meta">实际执行 11-25（周三）｜ 预计 2.5–3 小时 ｜ W3 · RAG 基础</p>
+</header>
+
+<div class="note">
+  <b>今天只干一件事：把「参数为什么是这个数」变成「我量过」。</b><br>
+  昨天你已经确认了三件事：短块是装不下的副产品、块数是挤出来的、<code>overlap</code> 设了不等于有。
+  今天补上最后三块拼图（分隔符 / metadata / token 尺），然后回去把那三处 <code>pass</code> 填掉。<br>
+  跑完要能不看稿说出这句话：<b>「<code>chunk_size</code> 和 <code>chunk_overlap</code> 都是上限，
+  这把尺子的单位由 <code>length_function</code> 决定，默认数的是字符。」</b>
+</div>
+
+<div class="warn">
+  <b>上一份执行单怎么用：</b> <code>docs/daily/D17-文本切分.html</code> 的第 1–3 节（时间表 / 视频 P36–P39 / 官方文档）
+  昨天已经完成，<b>今天不用再打开</b>。只把它的第 4 节「动手」当作<b>目标</b>——那三处活就是今天下午要填掉的东西。
+  视频如果还想回看，P37 讲 <code>RecursiveCharacterTextSplitter</code> 参数那段（约 08:00 起）值得重看一遍。
+</div>
+
+<h2><span class="n">1</span>今天的时间怎么切</h2>
+<table>
+  <tr><th>时段</th><th>干什么</th><th>类型</th><th>产出</th></tr>
+  <tr><td class="num">16:15–16:45</td><td>d5：加 <code>separators</code>，两个 size 各跑两轮</td><td><span class="tagline t-lab">动手</span></td><td><code>drill/d5.py</code></td></tr>
+  <tr><td class="num">16:45–17:15</td><td>d6：<code>split_text</code> vs <code>split_documents</code>，看 metadata 穿不穿得过</td><td><span class="tagline t-lab">动手</span></td><td><code>drill/d6.py</code></td></tr>
+  <tr><td class="num">17:15–17:40</td><td>d7：换成 token 尺子，和字符尺对比</td><td><span class="tagline t-lab">动手</span></td><td><code>drill/d7.py</code></td></tr>
+  <tr><td class="num">17:40–19:00</td><td>回填 <code>chunking.py</code> 三处活</td><td><span class="tagline t-lab">动手</span></td><td>三处 <code>pass</code> → 真代码</td></tr>
+  <tr><td class="num">19:00–19:30</td><td>补 journal、打勾、两次提交</td><td><span class="tagline t-doc">收口</span></td><td>两个 commit</td></tr>
+</table>
+
+<h2><span class="n">2</span>d5 · 加分隔符，然后发现它不是万能药</h2>
+
+<h3>干什么</h3>
+<p>新建 <code>experiments/chunking/drill/d5.py</code>。这一次<b>不是</b>只改一个参数，而是让两个对象并排比：</p>
+<pre>doc = Document(page_content=git_data, metadata={"source": "git-guide.txt"})
+
+SEP = ["\n\n", "\n", "。", "，", " "]
+
+for size in (200, 300):
+    默认 = RecursiveCharacterTextSplitter(chunk_size=size, chunk_overlap=0)
+    加句号 = RecursiveCharacterTextSplitter(chunk_size=size, chunk_overlap=0, separators=SEP)
+    for 标签, sp in (("默认", 默认), ("加句号", 加句号)):
+        chunks = sp.split_documents([doc])
+        # 打印：size / 标签 / 块数 / 长度列表</pre>
+<p class="kv"><b>注意</b>：两个 splitter 都必须建在 <code>for size</code> 里面。建在外面，第二轮的三次输出会和第一轮一模一样——这就是「配置没进对象，调用再多也没用」。</p>
+
+<h3>我已实跑的结果</h3>
+<table>
+  <tr><th>size</th><th>配置</th><th class="num">块数</th><th>各块长度</th></tr>
+  <tr><td class="num">200</td><td>默认</td><td class="num">12</td><td>[151, 144, 198, 9, 165, 199, 19, 72, 166, 163, 90, 127]</td></tr>
+  <tr><td class="num">200</td><td>加句号</td><td class="num"><b>11</b></td><td>[151, 144, 198, 9, <b>130, 190, 137</b>, 166, 163, 90, 127]</td></tr>
+  <tr><td class="num">300</td><td>默认</td><td class="num">7</td><td>[297, 209, 165, 291, 247, 174, 127]</td></tr>
+  <tr><td class="num">300</td><td>加句号</td><td class="num">7</td><td>[297, 209, <b>256, 201</b>, 247, 174, 127]</td></tr>
+</table>
+
+<h3>这一级要你看清的两件事</h3>
+<p><b>① 只有 <code>size=200</code> 有效果。</b> 块数 12 → 11，那几个 <code>19</code>、<code>72</code> 的碎片被合并成了 <code>130 / 190 / 137</code>。因为 200 太小，段落普遍装不下，切分器必须一路降级到「按空格切」——中文没有空格，于是退成逐字硬切，切出碎片。加上 <code>。</code> 之后它有了中文边界可用，碎片就没了。</p>
+<p><b>② <code>size=300</code> 一个块都没少。</b> 块数还是 7，只是中间那两块的位置挪了（165+291 → 256+201）。</p>
+<p class="kv">这和第二级那条结论是同一件事：<b>分隔符只在「某一片自己就超过上限」的时候才登场。</b>
+段落都装得下时，它是装饰品；装不下时，它决定刀落在哪。</p>
+
+<ul class="check">
+  <li><input type="checkbox" id="c1"><label for="c1">四行输出全部对上（200 的两行块数 12 / 11，300 的两行都是 7）</label></li>
+  <li><input type="checkbox" id="c2"><label for="c2">能说出「为什么 300 加句号没变、200 加句号变了」</label></li>
+</ul>
+
+<h2><span class="n">3</span>d6 · metadata 到底穿不穿得过切分</h2>
+
+<h3>干什么</h3>
+<p>新建 <code>d6.py</code>，同一份文本、同一个 splitter，走两个入口，各打一行：</p>
+<pre>doc = Document(page_content=git_data, metadata={"source": "git-guide.txt", "section": "练习"})
+
+a = sp.split_text(git_data)          # 入口一
+b = sp.split_documents([doc])        # 入口二
+
+print(len(a), type(a[0]))
+print(len(b), type(b[0]), b[0].metadata)</pre>
+<p>然后再建第三个对象，加一个参数：</p>
+<pre>sp3 = RecursiveCharacterTextSplitter(chunk_size=300, chunk_overlap=0,
+                                     separators=SEP, add_start_index=True)
+c3 = sp3.split_documents([doc])
+print([c.metadata["start_index"] for c in c3[:5]])</pre>
+
+<h3>我已实跑的结果</h3>
+<table>
+  <tr><th>入口</th><th class="num">数量</th><th>元素类型</th><th>第 0 个的 metadata</th></tr>
+  <tr><td><code>split_text(git_data)</code></td><td class="num">7</td><td><code>str</code></td><td>不存在（字符串没有 metadata）</td></tr>
+  <tr><td><code>split_documents([doc])</code></td><td class="num">7</td><td><code>Document</code></td><td><code>{'source': 'git-guide.txt', 'section': '练习'}</code></td></tr>
+  <tr><td>加 <code>add_start_index=True</code></td><td class="num">7</td><td><code>Document</code></td><td><code>{'source': …, 'section': '练习', 'start_index': 0}</code></td></tr>
+</table>
+<p class="kv">前 5 块的 <code>start_index</code>：<code>[0, 299, 510, 766, 969]</code>。它记的是<b>这一块在原文里的起始字符位置</b>，
+将来要做「高亮原文出处」就靠它。</p>
+
+<div class="note">
+  <b>为什么要专门做这一级：</b> 你 D16 花了半天把 <code>section</code> 塞进 metadata，D19 建库时要按栏目过滤。
+  如果切分时用错入口，<code>section</code> 会<b>静默消失</b>——不报错，只是全变成 <code>?</code>。
+  今天这一级就是把这条管道亲手验一遍。
+</div>
+
+<ul class="check">
+  <li><input type="checkbox" id="c3"><label for="c3">两个入口的数量都是 7，但元素类型一个 <code>str</code> 一个 <code>Document</code></label></li>
+  <li><input type="checkbox" id="c4"><label for="c4"><code>start_index</code> 打出来是 <code>[0, 299, 510, 766, 969]</code></label></li>
+</ul>
+
+<h2><span class="n">4</span>d7 · 换一把尺子，块数立刻变</h2>
+
+<h3>干什么</h3>
+<p>新建 <code>d7.py</code>，三件事：</p>
+<pre>import tiktoken
+enc = tiktoken.get_encoding("cl100k_base")
+
+# ① 量一量这份文档：字符多少、token 多少、一个 token 折合几个字
+print(len(git_data), len(enc.encode(git_data)))
+
+# ② 换成 token 尺
+sp = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
+        encoding_name="cl100k_base", chunk_size=256, chunk_overlap=32)
+chunks = sp.split_documents([doc])
+
+# ③ 每块实际占多少 token，验证没有一块超 256
+print([len(enc.encode(c.page_content)) for c in chunks])</pre>
+
+<h3>我已实跑的结果</h3>
+<table>
+  <tr><th>量</th><th class="num">值</th><th>说明</th></tr>
+  <tr><td>字符数（<code>len</code>）</td><td class="num">1522</td><td>这就是昨天 <code>chunk_size</code> 一直在量的数</td></tr>
+  <tr><td>token 数（cl100k）</td><td class="num">1452</td><td>1 token ≈ <b>1.05 字</b></td></tr>
+  <tr><td>token 尺 256/32 切出</td><td class="num">9 块</td><td>每块 token：[224, 248, 8, 161, 237, 79, 212, 193, 109]</td></tr>
+</table>
+
+<p class="kv"><b>同一个 1522 字的文档：</b>字符尺 <code>chunk_size=300</code> 切 7 块；token 尺 <code>chunk_size=256</code> 切 9 块。
+块数不是一个「按公式算出来」的数，<b>换尺子就换结果</b>。</p>
+<p class="kv"><b>为什么这份文档的比值是 1.05，而 <code>chunking.py</code> 里那份 journal 是 1.30：</b>
+这份里有 <code>- feat：</code> 这种列表、<code>merge message</code> 这种英文词，英文被切得更碎（一个词常拆成两三个 token）；
+journal 那份全是中文长句，一个汉字一个 token 居多。所以<b>比值是跟着内容变的，不能背一个固定系数</b>。</p>
+<p class="kv">还有一个反常的：最后那个 <code>8</code> 块。token 尺也保留短块——<b>上限从来不是下限</b>，这条规律换什么尺子都成立。</p>
+
+<ul class="check">
+  <li><input type="checkbox" id="c5"><label for="c5">1522 字符 / 1452 token 两个数对上</label></li>
+  <li><input type="checkbox" id="c6"><label for="c6">9 块，且每块 token 都不超过 256</label></li>
+</ul>
+
+<h2><span class="n">5</span>回填 <code>chunking.py</code> 三处活</h2>
+<p>七级走完，回到 <code>experiments/chunking/chunking.py</code>。三个函数现在都是 <code>pass</code>，只填函数体，<b>不要动 <code>main()</code> 和其它函数</b>。</p>
+
+<h3>活① <code>cut_ratio(chunks)</code>：返回 <code>(被切断的块数, 总块数)</code></h3>
+<p>你昨天在 d4 里已经写过一遍同样的判断，只是这次要包成函数。三步：</p>
+<ol>
+  <li>只遍历 <code>chunks[:-1]</code>——最后一块没有「后面」可以接，算进去会误判</li>
+  <li>先 <code>.rstrip()</code> 去掉尾部空白，再 <code>.endswith(ENDS)</code></li>
+  <li>返回两个数，顺序不能反</li>
+</ol>
+<p>写完把 <code>main()</code> 第 85 行那句注释放开。验收（我已在你环境里跑过）：</p>
+<table>
+  <tr><th>size</th><th class="num">块数</th><th class="num">切断</th></tr>
+  <tr><td class="num">300</td><td class="num">14</td><td class="num"><b>11 / 13</b></td></tr>
+  <tr><td class="num">500</td><td class="num">7</td><td class="num">4 / 6</td></tr>
+  <tr><td class="num">1000</td><td class="num">3</td><td class="num">2 / 2</td></tr>
+  <tr><td class="num">2000</td><td class="num">2</td><td class="num">1 / 1</td></tr>
+</table>
+<p class="kv">趋势是<b>块越大、切断率越低</b>（11/13 → 1/1），因为块一大，切点就能落在段落边界上。
+但记住 d4 那条：这个数<b>高估</b>，标题和冒号都会让它虚报。</p>
+
+<h3>活② <code>tag_after_split()</code>：全量 114 个 Document 切一遍</h3>
+<p>三个要点：</p>
+<ol>
+  <li><code>load_all_html()</code> 返回的 <code>docs</code> 拿进来</li>
+  <li><code>RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=150, add_start_index=True)</code></li>
+  <li>用 <code>split_documents(docs)</code>，然后 <code>c.metadata.get("section", "?")</code> 统计</li>
+</ol>
+<p>验收（已实跑）：</p>
+<pre>114 个 Document -> 250 块（膨胀 2.19 倍）
+栏目统计：
+  operating_tutorials   103
+  troubleshooting        66
+  specs                  34
+  camera                 33
+  accessories-kit        14</pre>
+<p class="kv"><b>看到 <code>?</code> 就是错了</b>，说明你用了 <code>split_text</code>——它把 metadata 全丢了。
+五个栏目加起来正好 250，这个交叉验证别省。</p>
+
+<h3>活③ <code>try_token_split()</code>：字符 vs token</h3>
+<p>用 <code>docs/journal/2026-10-05.md</code> 那份（2725 字），验三行数：</p>
+<pre>2725 字 = 2099 token，1 token 约 1.30 字
+token 尺 chunk_size=256, chunk_overlap=32 -> 11 块</pre>
+<p class="kv">写完 <code>main()</code> 底部两行注释一起放开，一次跑完：
+<b>7 行统计 + 4 行切断率 + 114→250 + token 对比</b>。</p>
+
+<ul class="check">
+  <li><input type="checkbox" id="c7"><label for="c7">活①：切断率四行是 11/13、4/6、2/2、1/1</label></li>
+  <li><input type="checkbox" id="c8"><label for="c8">活②：114 → 250 块，五个栏目加起来 250，<b>没有 <code>?</code></b></label></li>
+  <li><input type="checkbox" id="c9"><label for="c9">活③：2725 字 / 2099 token / 11 块</label></li>
+  <li><input type="checkbox" id="c10"><label for="c10">三个函数都只填了函数体，<code>main()</code> 一行没改</label></li>
+</ul>
+
+<h2><span class="n">6</span>提交什么</h2>
+
+<div class="warn">
+  <b>提交前先清一个 D16 的尾巴。</b> 现在暂存区里躺着一个 <code>week3-rag/day16-loaders/RAG/__init__.py</code>（状态 <code>A</code>）。
+  在 PyCharm 的「提交」窗口里它会被默认勾上，一旦提交就混进 D17 的 commit 里。
+  <b>先取消勾选</b>，然后在项目树里右键这个文件 → 删除。
+</div>
+
+<h3>第一次提交：代码</h3>
+<p>勾选：</p>
+<ul>
+  <li><code>experiments/chunking/chunking.py</code></li>
+  <li><code>experiments/chunking/drill/</code> 下全部（<code>d1</code>–<code>d7</code>、<code>git-guide.txt</code>）</li>
+  <li><code>experiments/chunking/splitter01.py</code> – <code>splitter04.py</code></li>
+  <li><code>experiments/chunking/semantic-mix.txt</code>、<code>x4-guide.txt</code>、<code>x4-faq.html</code>、<code>x4-shooting.md</code></li>
+</ul>
+<p class="kv"><b>不要勾</b>：<code>.env</code>、<code>.venv/</code>、<code>.idea/</code>、<code>__pycache__/</code>、<code>datasets/raw/</code>（已在 <code>.gitignore</code>）。</p>
+
+<p>提交消息（标题 + 正文整段复制）：</p>
+<pre>feat(day17): 七级练习走完，切分参数第一次有了实测依据
+
+现象：chunking.py 的骨架放了三天没动。chunk_size 为什么是 300、overlap 为什么是 20，
+一个都答不上来，照着 docstring 填空只能抄出一份跑得通但说不清的代码。
+
+我以为：是我没看懂参数的含义，多看几遍文档就行。实际不是——我能背出「overlap 取
+size 的 10%~20%」，却答不出「设了 60 为什么会有一个边界重叠 0 字」。
+
+做法：把一天拆成七级，每级只改一个变量，素材换成自己天天在用的 Git 提交规范（1522 字、
+21 段，最短一段 9 字、最长 457 字）。d1 切一刀 → d2 改四个 size → d3 改三个 overlap →
+d4 判断切断 → d5 加分隔符 → d6 换成 Document → d7 换成 token 尺。
+
+结论：chunk_size 和 chunk_overlap 都是上限，不是保证值。块停在哪由「下一片装不装得下」
+决定，重叠能退多少由「退回去的那一片有多长」决定——size=300 / overlap=60 时 6 个边界
+只有 3 个真的重叠了，总共多 48 字而不是 360 字。另外分隔符不是万能药：段落装得下时它
+完全不登场（size=300 加不加「。」都是 7 块），装不下时才决定刀落在哪（size=200 从 12
+块降到 11 块）。</pre>
+
+<h3>第二次提交：文档</h3>
+<p>勾选：</p>
+<ul>
+  <li><code>docs/journal/2026-11-24.md</code>、<code>docs/journal/2026-11-25.md</code></li>
+  <li><code>docs/daily/D17-文本切分.html</code>、<code>docs/daily/D17-2-实操收口.html</code></li>
+  <li><code>docs/plan/35天学习计划表.html</code>（D17 视频源与文档路径那两处修正）</li>
+  <li><code>docs/progress.md</code>（D17 打勾）</li>
+  <li>今天如果补了 <code>errors/index.md</code>，一起勾上</li>
+</ul>
+<pre>docs(day17): D17 收口，三处活各自留下一个数
+
+现象：三处活填完之后，chunking.py 从「能跑」变成「能讲」。
+
+做法：活① 记四个切断率（11/13、4/6、2/2、1/1，块越大越低）；活② 记全量 114 → 250 块、
+五个栏目加起来正好 250；活③ 记 2725 字 = 2099 token，token 尺切出 11 块。
+
+结论：cut_ratio 给的是上界不是真值——d4 实测判据报 5 个、真被劈开的只有 1 个，
+因为标题和冒号都会让它虚报。所以这个数只适合在同一份文档上横向比较不同参数，
+不能跨文档比较。</pre>
+
+<h3>打勾</h3>
+<p><code>docs/progress.md</code> 里 D17 那行改成 <code>[x] 11-25 完成</code>，并把上面那条「进度说明（11-25 更新）」保留——每日推送的自动化靠它判断哪些部分已完成。</p>
+
+<h2><span class="n">7</span>坑预警</h2>
+<table>
+  <tr><th>症状</th><th>真实原因</th></tr>
+  <tr><td>三次输出一模一样</td><td>splitter 建在循环外面。<code>chunk_size</code>/<code>separators</code> 是<b>建对象时</b>的配置，不是调用时的参数</td></tr>
+  <tr><td><code>object of type 'Document' has no len()</code></td><td>长度在 <code>.page_content</code> 上，不在 Document 对象上</td></tr>
+  <tr><td><code>'str' object has no attribute 'page_content'</code></td><td>用了 <code>split_text</code>，它返回 <code>list[str]</code>。要 Document 就走 <code>split_documents</code></td></tr>
+  <tr><td>活② 的栏目全是 <code>?</code></td><td>同上：<code>split_text</code> 把 metadata 丢光了。换 <code>split_documents(docs)</code></td></tr>
+  <tr><td><code>create_documents</code> 返回一千多个块</td><td>参数要 <code>list[str]</code>，少了一层方括号，字符串被逐字符遍历</td></tr>
+  <tr><td><code>from_tiktoken_encoder</code> 报找不到编码</td><td><code>encoding_name</code> 写错（是 <code>cl100k_base</code>），不是 <code>chunk_size</code> 的问题</td></tr>
+  <tr><td>打印出来中文是乱码</td><td>终端编码不是 UTF-8。PyCharm 运行配置里加 <code>PYTHONIOENCODING=utf-8</code>，别去改 <code>encode</code></td></tr>
+</table>
+
+<h2><span class="n">8</span>今天完成的标准</h2>
+<ul class="check">
+  <li><input type="checkbox" id="c11"><label for="c11">d5 / d6 / d7 三个脚本跑通，数字全部对上</label></li>
+  <li><input type="checkbox" id="c12"><label for="c12"><code>chunking.py</code> 三处 <code>pass</code> 填完，一次跑出「7 行 + 4 行切断率 + 114→250 + token 对比」</label></li>
+  <li><input type="checkbox" id="c13"><label for="c13">能对着屏幕说出：<code>chunk_size</code> 量的是什么、<code>overlap</code> 为什么可能为 0、<code>section</code> 为什么会丢</label></li>
+  <li><input type="checkbox" id="c14"><label for="c14">D16 的 <code>RAG/__init__.py</code> 已取消勾选并删除</label></li>
+  <li><input type="checkbox" id="c15"><label for="c15">两次提交完成，<code>progress.md</code> 的 D17 打勾</label></li>
+</ul>
+
+<p class="foot">
+  D17-2 · 实操收口 ｜ 下一站 D18：向量与 Embedding<br>
+  昨天你决定了「一段话算多大」，今天你量出了「这把尺子到底是什么」。明天才开始决定「这段话被压成什么样的数字」。
+</p>
+
+</div>
+
+<script>
+document.querySelectorAll('.check input').forEach(function(box){
+  var key = 'd17b-' + box.id;
+  if (localStorage.getItem(key) === '1') { box.checked = true; }
+  box.addEventListener('change', function(){
+    localStorage.setItem(key, box.checked ? '1' : '0');
+  });
+});
+</script>
+</body>
+</html>
